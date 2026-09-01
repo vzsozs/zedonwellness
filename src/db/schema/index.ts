@@ -23,6 +23,10 @@ export const categories = pgTable("categories", {
   slug: text("slug").notNull().unique(),
   nameHu: text("name_hu").notNull(),
   nameEn: text("name_en"),
+  // Short line shown under the category title on its listing page,
+  // e.g. "HC Design, Celtic, OKA — 25+ modell".
+  descriptionHu: text("description_hu"),
+  descriptionEn: text("description_en"),
   parentId: integer("parent_id"),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -36,6 +40,12 @@ export const products = pgTable("products", {
     .references(() => categories.id),
   nameHu: text("name_hu").notNull(),
   nameEn: text("name_en"),
+  // Product line/series shown above the name and used for the category
+  // filter chips, e.g. "HC Design", "Celtic Spas".
+  series: text("series"),
+  // Short line shown under the name on cards, e.g. "6 fő · 220×220 cm".
+  subtitleHu: text("subtitle_hu"),
+  subtitleEn: text("subtitle_en"),
   descriptionHu: text("description_hu"),
   descriptionEn: text("description_en"),
   // Gross price in HUF. EUR price is derived at render time from the

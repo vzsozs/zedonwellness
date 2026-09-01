@@ -17,6 +17,9 @@ const productSchema = z.object({
   categoryId: z.coerce.number().int().positive("Válassz kategóriát"),
   nameHu: z.string().min(1, "Kötelező"),
   nameEn: z.string().optional(),
+  series: z.string().optional(),
+  subtitleHu: z.string().optional(),
+  subtitleEn: z.string().optional(),
   descriptionHu: z.string().optional(),
   descriptionEn: z.string().optional(),
   priceHuf: z.coerce.number().int().nonnegative(),
@@ -57,6 +60,9 @@ function readForm(formData: FormData) {
     categoryId: formData.get("categoryId"),
     nameHu: formData.get("nameHu"),
     nameEn: formData.get("nameEn") || undefined,
+    series: formData.get("series") || undefined,
+    subtitleHu: formData.get("subtitleHu") || undefined,
+    subtitleEn: formData.get("subtitleEn") || undefined,
     descriptionHu: formData.get("descriptionHu") || undefined,
     descriptionEn: formData.get("descriptionEn") || undefined,
     priceHuf: formData.get("priceHuf"),
@@ -85,6 +91,7 @@ export async function createProduct(formData: FormData) {
   });
 
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
@@ -106,10 +113,12 @@ export async function updateProduct(id: number, formData: FormData) {
     .where(eq(products.id, id));
 
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
 export async function deleteProduct(id: number) {
   await db.delete(products).where(eq(products.id, id));
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
 }

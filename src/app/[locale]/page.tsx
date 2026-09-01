@@ -5,6 +5,8 @@ import { TrustStrip } from "@/components/home/trust-strip";
 import { CategoryGrid } from "@/components/home/category-grid";
 import { FeaturedProducts } from "@/components/home/featured-products";
 
+export const revalidate = 60;
+
 export default async function HomePage({
   params,
 }: {

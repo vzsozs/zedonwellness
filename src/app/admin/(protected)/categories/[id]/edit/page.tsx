@@ -25,6 +25,16 @@ export default async function EditCategoryPage({
         <Field label="Név (HU)" name="nameHu" defaultValue={category.nameHu} required />
         <Field label="Név (EN)" name="nameEn" defaultValue={category.nameEn ?? ""} />
         <Field
+          label="Leírás (HU)"
+          name="descriptionHu"
+          defaultValue={category.descriptionHu ?? ""}
+        />
+        <Field
+          label="Leírás (EN)"
+          name="descriptionEn"
+          defaultValue={category.descriptionEn ?? ""}
+        />
+        <Field
           label="Sorrend"
           name="sortOrder"
           type="number"

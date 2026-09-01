@@ -68,6 +68,11 @@ export default async function CategoriesPage() {
           <Field label="Slug (URL, pl. jakuzzik)" name="slug" required />
           <Field label="Név (HU)" name="nameHu" required />
           <Field label="Név (EN)" name="nameEn" />
+          <Field
+            label="Leírás (HU) — pl. HC Design, Celtic, OKA — 25+ modell"
+            name="descriptionHu"
+          />
+          <Field label="Leírás (EN)" name="descriptionEn" />
           <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
           <button
             type="submit"

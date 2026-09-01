@@ -1,10 +1,19 @@
-import { useTranslations } from "next-intl";
+import { getTranslations, getLocale } from "next-intl/server";
+import { asc } from "drizzle-orm";
+import { db } from "@/db";
+import { categories } from "@/db/schema";
 import { Link } from "@/i18n/navigation";
-import { categories } from "@/lib/catalog";
+import { getCategoryVisual } from "@/lib/visuals";
+import { localized } from "@/lib/localized";
 
-export function CategoryGrid() {
-  const t = useTranslations("home");
-  const nav = useTranslations("nav");
+export async function CategoryGrid() {
+  const t = await getTranslations("home");
+  const locale = await getLocale();
+  const items = await db.query.categories.findMany({
+    orderBy: [asc(categories.sortOrder), asc(categories.nameHu)],
+  });
+
+  if (items.length === 0) return null;
 
   return (
     <section className="px-16 pt-24 pb-10 max-lg:px-6">
@@ -17,32 +26,43 @@ export function CategoryGrid() {
         </h2>
       </div>
       <div className="grid grid-cols-4 gap-6 max-lg:grid-cols-2">
-        {categories.map((cat) => (
-          <Link
-            href={`/${cat.slug}`}
-            key={cat.slug}
-            className="overflow-hidden border border-line bg-white"
-          >
-            <div
-              className={`flex h-55 items-center justify-center bg-gradient-to-br ${cat.gradient}`}
+        {items.map((cat) => {
+          const visual = getCategoryVisual(cat.slug);
+          const name = localized(locale, cat.nameHu, cat.nameEn);
+          const description = localized(
+            locale,
+            cat.descriptionHu ?? "",
+            cat.descriptionEn,
+          );
+          return (
+            <Link
+              href={`/${cat.slug}`}
+              key={cat.slug}
+              className="overflow-hidden border border-line bg-white"
             >
-              <svg
-                width={56}
-                height={56}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={cat.iconColor}
-                strokeWidth={1.3}
+              <div
+                className={`flex h-55 items-center justify-center bg-gradient-to-br ${visual.gradient}`}
               >
-                <path d={cat.icon} />
-              </svg>
-            </div>
-            <div className="p-6">
-              <h3 className="text-lg font-semibold">{nav(cat.navKey)}</h3>
-              <p className="mt-2 text-sm text-muted">{cat.subtitleHu}</p>
-            </div>
-          </Link>
-        ))}
+                <svg
+                  width={56}
+                  height={56}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke={visual.iconColor}
+                  strokeWidth={1.3}
+                >
+                  <path d={visual.icon} />
+                </svg>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold">{name}</h3>
+                {description ? (
+                  <p className="mt-2 text-sm text-muted">{description}</p>
+                ) : null}
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

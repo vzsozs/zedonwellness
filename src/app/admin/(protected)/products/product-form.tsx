@@ -5,6 +5,9 @@ type ProductFormValues = {
   categoryId?: number;
   nameHu?: string;
   nameEn?: string | null;
+  series?: string | null;
+  subtitleHu?: string | null;
+  subtitleEn?: string | null;
   descriptionHu?: string | null;
   descriptionEn?: string | null;
   priceHuf?: string;
@@ -64,6 +67,24 @@ export function ProductForm({
       <div className="grid grid-cols-2 gap-5">
         <Field label="Név (HU)" name="nameHu" defaultValue={values?.nameHu} required />
         <Field label="Név (EN)" name="nameEn" defaultValue={values?.nameEn ?? ""} />
+      </div>
+
+      <div className="grid grid-cols-3 gap-5">
+        <Field
+          label="Sorozat (pl. HC Design)"
+          name="series"
+          defaultValue={values?.series ?? ""}
+        />
+        <Field
+          label="Alcím (HU) — pl. 6 fő · 220×220 cm"
+          name="subtitleHu"
+          defaultValue={values?.subtitleHu ?? ""}
+        />
+        <Field
+          label="Alcím (EN)"
+          name="subtitleEn"
+          defaultValue={values?.subtitleEn ?? ""}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-5">

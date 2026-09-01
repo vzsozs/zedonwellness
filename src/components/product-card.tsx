@@ -1,31 +1,50 @@
 import { Link } from "@/i18n/navigation";
-import { formatHuf } from "@/lib/catalog";
-import type { Product } from "@/lib/catalog";
+import { formatHuf } from "@/lib/config";
+import { getProductGradient } from "@/lib/visuals";
+import type { Product } from "@/db/schema";
 
 export function ProductCard({ product }: { product: Product }) {
+  const image = product.images[0];
+  const badge = product.isNew
+    ? { label: "ÚJDONSÁG", tone: "ink" as const }
+    : product.isOnSale
+      ? { label: "AKCIÓ", tone: "accent" as const }
+      : null;
+
   return (
     <Link href={`/termek/${product.slug}`} className="group block">
-      <div className={`relative h-58 bg-gradient-to-br ${product.gradient}`}>
-        {product.badge ? (
+      <div
+        className={
+          image
+            ? "relative h-58 bg-cover bg-center"
+            : `relative h-58 bg-gradient-to-br ${getProductGradient(product.id)}`
+        }
+        style={image ? { backgroundImage: `url(${image})` } : undefined}
+      >
+        {badge ? (
           <span
             className={`absolute top-3 left-3 ${
-              product.badge.tone === "ink" ? "bg-ink" : "bg-accent"
+              badge.tone === "ink" ? "bg-ink" : "bg-accent"
             } px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white`}
           >
-            {product.badge.label}
+            {badge.label}
           </span>
         ) : null}
       </div>
       <div className="py-4">
-        <div className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">
-          {product.series}
-        </div>
+        {product.series ? (
+          <div className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">
+            {product.series}
+          </div>
+        ) : null}
         <h3 className="mt-1.5 text-lg font-bold group-hover:text-accent">
           {product.nameHu}
         </h3>
-        <div className="mt-1 text-[12.5px] text-muted">{product.capacityHu}</div>
+        {product.subtitleHu ? (
+          <div className="mt-1 text-[12.5px] text-muted">{product.subtitleHu}</div>
+        ) : null}
         <div className="mt-3 text-xl font-extrabold text-accent">
-          {product.customQuote ? "Egyedi ajánlat" : formatHuf(product.priceHuf)}
+          {formatHuf(product.priceHuf)}
         </div>
       </div>
     </Link>

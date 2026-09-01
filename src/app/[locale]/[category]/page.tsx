@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { getTranslations } from "next-intl/server";
+import { eq, asc } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { categories, getCategory, getProductsByCategory } from "@/lib/catalog";
+import { db } from "@/db";
+import { categories, products } from "@/db/schema";
+import { localized } from "@/lib/localized";
 import { ProductCard } from "@/components/product-card";
 
-export function generateStaticParams() {
-  return categories.map((c) => ({ category: c.slug }));
-}
+export const revalidate = 60;
 
 export default async function CategoryPage({
   params,
@@ -18,12 +18,21 @@ export default async function CategoryPage({
   const { locale, category: categorySlug } = await params;
   setRequestLocale(locale as Locale);
 
-  const category = getCategory(categorySlug);
+  const category = await db.query.categories.findFirst({
+    where: eq(categories.slug, categorySlug),
+  });
   if (!category) notFound();
 
-  const productList = getProductsByCategory(categorySlug);
-  const seriesList = [...new Set(productList.map((p) => p.series))];
-  const nav = await getTranslations("nav");
+  const productList = await db.query.products.findMany({
+    where: eq(products.categoryId, category.id),
+    orderBy: [asc(products.nameHu)],
+  });
+  const seriesList = [
+    ...new Set(productList.map((p) => p.series).filter((s): s is string => Boolean(s))),
+  ];
+
+  const name = localized(locale, category.nameHu, category.nameEn);
+  const description = localized(locale, category.descriptionHu ?? "", category.descriptionEn);
 
   return (
     <main>
@@ -32,17 +41,14 @@ export default async function CategoryPage({
           <Link href="/" className="hover:text-accent">
             Főoldal
           </Link>{" "}
-          / Termékek /{" "}
-          <span className="font-semibold text-ink">{nav(category.navKey)}</span>
+          / Termékek / <span className="font-semibold text-ink">{name}</span>
         </div>
         <div className="mt-5 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3">
           <div>
-            <h1 className="text-4xl font-semibold max-lg:text-3xl">
-              {nav(category.navKey)}
-            </h1>
-            <p className="mt-2.5 max-w-xl text-sm text-muted">
-              {category.subtitleHu}
-            </p>
+            <h1 className="text-4xl font-semibold max-lg:text-3xl">{name}</h1>
+            {description ? (
+              <p className="mt-2.5 max-w-xl text-sm text-muted">{description}</p>
+            ) : null}
           </div>
           <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {productList.length} termék
@@ -51,7 +57,8 @@ export default async function CategoryPage({
       </div>
 
       <div className="flex gap-10 px-16 pt-9 pb-25 max-lg:px-6 max-lg:flex-col">
-        {/* Desktop filters — visual only for now; wired up once the catalog is backed by real data. */}
+        {/* Desktop filters — visual only for now; wired up once there's enough
+            catalog volume to make filtering worthwhile. */}
         {seriesList.length > 0 ? (
           <aside className="w-59 shrink-0 max-lg:hidden">
             <div className="mb-5.5 border-b border-line pb-5.5">
