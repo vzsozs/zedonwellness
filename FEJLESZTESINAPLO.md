@@ -81,5 +81,19 @@ Elindult a tényleges kódolás. Létrejött az alap Next.js 16 (App Router, Typ
 ### Következő lépések
 - **Admin felület** (soron következő) — termék/kategória/rendelés/szállítási díj CRUD, ez váltja majd le a `src/lib/catalog.ts` placeholder adatokat valós DB-re.
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
-- Drizzle migrációk generálása és lokális Postgres elindítása teszteléshez.
-- Szerverre telepítés: `zw_network` docker hálózat létrehozása, Nginx Proxy Manager proxy host beállítása a `zw.formagyar.hu` domainre, `.env` production változók beállítása a szerveren (staging noindex = true).
+- Nginx Proxy Manager proxy host beállítása a `zw.formagyar.hu` domainre, `.env` production változók beállítása a szerveren (staging noindex = true), teljes app deploy (`docker compose up -d`, jelenleg csak a `db` service fut).
+
+## 2026-09-01 — Admin felület (auth + termék/kategória/szállítás CRUD)
+
+- **Auth**: next-auth v5, credentials provider (email + jelszó, bcrypt-tel hashelve), `admin_users` tábla. Session JWT-alapú, `/admin/login` a bejelentkező oldal.
+- **Route-szerkezet**: `/admin` külön, saját gyökér-layoutot kapott (`src/app/admin/layout.tsx`, saját `<html>` fa) — **fontos technikai döntés**: eredetileg egy közös `src/app/layout.tsx`-t hoztam létre a `[locale]` és az `admin` ág fölé, de ez `getLocale()` dinamikus API-t igényelt volna, ami **az egész oldalt dinamikussá tette volna** (elveszett a publikus oldalak statikus előregenerálása — SEO-kritikus regresszió). Javítva: a Next.js "több gyökér-layout" mintáját használva a `[locale]/layout.tsx` és az `admin/layout.tsx` egymástól függetlenül definiálja a saját `<html>/<body>`-ját, közös `app/layout.tsx` nélkül — így a publikus oldalak visszakapták a statikus (`SSG`) buildet, az admin pedig dinamikus marad (ahogy kell egy session-függő felületnek).
+- Admin csoport: `src/app/admin/(protected)/` — bejelentkezés nélkül minden ide tartozó oldal `/admin/login`-ra redirectel.
+- **CRUD**: Termékek (`/admin/products`), Kategóriák (`/admin/categories`), Szállítási díjsávok (`/admin/shipping`) — Server Actionökkel + Drizzle-lel, zod validációval. Rendelések (`/admin/orders`) egyelőre csak olvasható lista (üres, amíg nincs checkout folyamat).
+- `npm run seed:admin -- <email> <jelszó> [név]` hozza létre/frissíti az admin belépést.
+- **Dev adatbázis**: mivel helyben nincs Docker/Postgres, és a user jóváhagyta, hogy a valós (még üres) céladatbázist használjuk fejlesztésre is — létrehoztam a `zw-shop-db` Postgres konténert a szerveren (`/root/projects/zw-shop/`, `zw_network` docker hálózat, `127.0.0.1:5434`-re publikálva). Helyi eléréshez SSH-alagutat nyitok igény szerint: `ssh -i ~/.ssh/hhm_shop_deploy_key -f -N -L 127.0.0.1:5434:127.0.0.1:5434 root@185.208.227.129`. A `.env.local` ehhez van beállítva.
+- Végig-tesztelve egy elkülönített worktree-ben: migráció lefutott, valódi bejelentkezés a NextAuth HTTP folyamaton keresztül (CSRF + credentials callback), kategória/termék CRUD DB-szinten (relációkkal együtt) és az admin listaoldalak helyes megjelenítése — utána a teszt adatok törölve.
+
+### Következő lépések
+- Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág, 1M Ft-os szabály a checkoutban is).
+- Termékkép-feltöltés az adminban (jelenleg csak URL-listaként kezelhető a `images` mező).
+- Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy.
