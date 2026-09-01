@@ -149,7 +149,28 @@ A user átnézte a jelenleg is élő `zedonwellness.com/termekek/hc-1` terméket
 - Végig tesztelve egy elkülönített worktree-ben, **a tényleges `node .next/standalone/server.js` induló paranccsal** (nem `next start`, mert az nem támogatja a standalone configot) — admin bejelentkezés, sorozat-kezelés, termék szerkesztő form (minden új mező jelen van, slug írásvédett, meglévő kép megjelenik), és a feltöltési route valóban kiszolgál egy indítás után hozzáadott fájlt.
 
 ### Következő lépések
-- Néhány valós termék felvitele az adminon keresztül (a user viszi fel a maradék terméket, most már valódi képfeltöltéssel).
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
-- Vásárlói oldali konfigurációs opció-választó (a most bevezetett `variantOptions`/`extras` adatokra épülve, ár-újraszámolással).
+- Vásárlói oldali konfigurációs opció-választó (a `variantOptions`/`extras` adatokra épülve, ár-újraszámolással).
+- Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy — ekkor kell majd az `uploads/` mappát is perzisztens volume-ként bekötni (`docker-compose.yml`-ben már megvan).
+
+## 2026-09-01 — GitHub repó feltöltve
+
+Létrejött a projekt GitHub repója: `git@github.com:vzsozs/zedonwellness.git`. `origin/master` beállítva, minden eddigi és jövőbeli commit ide pusholva.
+
+## 2026-09-01 — Admin "kreativitási kör": valódi widgetek a szöveges trükkök helyett
+
+A user visszajelzése szerint az előző admin-bővítés még "fapados" volt (textarea-alapú, sor-parse-olós mezők) — ez a kör ezeket lecseréli valódi, interaktív felületre.
+
+- **Képgaléria**: feltöltéskor azonnali előnézet (böngésző-oldali object URL, nem kell megvárni a mentést), **csillag ikonnal** kijelölhető a főkép, **fel/le nyilakkal** állítható a sorrend — egy egységes listában (nincs többé külön főkép/galéria mező). Technikai megoldás: a kliens-komponens minden képet stabil kulccsal azonosít (nem tömbindexszel), hogy törlés/átrendezés közben ne csúszhasson el, melyik kép a főkép; az újonnan választott fájlokat egy `DataTransfer`-rel szinkronban tartott valódi `<input type="file">` viszi a submitba.
+- **Specifikáció**: két beviteli mezős, dinamikusan bővíthető sorok (Címke | Érték, "Sor hozzáadása" gombbal) — a korábbi "Címke: érték soronként" textarea helyett. Adatszerkezet `Record<string,string>` → rendezett `{label, value}[]` tömbre változott, a meglévő 3 termék adatai át lettek konvertálva.
+- **Konfigurációs opciók** (Héj színe / Sarok elem / Oldalborítás, a `hc-1` minta alapján): csoportok, mindegyik választásnál **fotó-feltöltés + név** — nem csak szöveg, mert az élő oldalon is fotós színválasztó van.
+- **Extrák valódi, globális katalógussá alakítva**: új `extras` tábla + `product_extras` kapcsolótábla, saját **"Extrák" oldalsáv-menüpont** alatt szerkeszthető (ahogy kérted) — a termék szerkesztésénél már csak pipálni kell a listából, nem kell újra begépelni a nevet/árat minden termékhez.
+- **Fontos hiba, amit tesztelés közben találtunk és javítottunk élesítés előtt**: a "melyik kép a főkép" azonosítás tömbindex alapján történt volna, ami átrendezés/törlés után rossz képet jelölt volna ki főképnek. Csak azért derült ki, mert nem csak a felületet, hanem a **teljes mentési logikát is végigteszteltem** (nem csak azt, hogy megjelenik-e a form) — a kliens JSON payloadba és a szerver oldali feldolgozásba is bekötöttük a stabil kulcsot, a hiba nem jutott ki éles kódba.
+- **Tesztelési módszer**: mivel a böngésző Server Action HTTP-protokollját kézzel szimulálni korábban ebben a projektben megbízhatatlannak bizonyult, ezúttal közvetlenül meghívtam a `createProduct`/`updateProduct` függvényeket egy a valós formhoz pontosan hasonló `FormData`-val (**valódi fájlfeltöltéssel** is — egy galéria-kép és egy variáns-fotó), majd visszaolvastam az adatbázisból az eredményt (`mainImage`, `images`, `specs`, `variantOptions`, `extras` mind helyesen landolt), és lekértem a feltöltött fájlokat a `/uploads` route-on is.
+- **Fontos**: ez a teszt a megosztott dev-adatbázis ellen futott (ugyanaz, amit a te dev szervered is használ), így a `hc-design-5` termék átmenetileg teszt-nevet és törött képet kapott — ezt azonnal helyreállítottam az eredeti valós adatokra, a teszt-extrákat és a teszt admin fiókot is töröltem.
+
+### Következő lépések
+- Néhány valós termék felvitele az adminon keresztül (a user viszi fel a maradék terméket, most már valódi képfeltöltéssel, sorozat-választóval, extrákkal).
+- Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
+- Vásárlói oldali konfigurációs opció-választó (a `variantOptions`/`extras` adatokra épülve, ár-újraszámolással).
 - Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy — ekkor kell majd az `uploads/` mappát is perzisztens volume-ként bekötni (`docker-compose.yml`-ben már megvan).
