@@ -1,13 +1,14 @@
 import { db } from "@/db";
-import { categories, productSeries } from "@/db/schema";
+import { categories, productSeries, extras } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { ProductForm } from "../product-form";
 import { createProduct } from "../actions";
 
 export default async function NewProductPage() {
-  const [categoryList, seriesList] = await Promise.all([
+  const [categoryList, seriesList, extraList] = await Promise.all([
     db.query.categories.findMany({ orderBy: [asc(categories.sortOrder)] }),
     db.query.productSeries.findMany({ orderBy: [asc(productSeries.sortOrder)] }),
+    db.query.extras.findMany({ orderBy: [asc(extras.sortOrder)] }),
   ]);
 
   return (
@@ -16,6 +17,8 @@ export default async function NewProductPage() {
       <ProductForm
         categories={categoryList}
         seriesList={seriesList}
+        allExtras={extraList}
+        selectedExtraIds={[]}
         action={createProduct}
         submitLabel="Létrehozás"
       />

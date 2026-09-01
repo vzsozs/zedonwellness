@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { eq, asc } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, products, productSeries } from "@/db/schema";
+import { categories, products, productSeries, extras } from "@/db/schema";
 import { ProductForm } from "../../product-form";
 import { updateProduct } from "../../actions";
 
@@ -11,15 +11,21 @@ export default async function EditProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [product, categoryList, seriesList] = await Promise.all([
-    db.query.products.findFirst({ where: eq(products.id, Number(id)) }),
+  const productId = Number(id);
+  const [product, categoryList, seriesList, extraList] = await Promise.all([
+    db.query.products.findFirst({
+      where: eq(products.id, productId),
+      with: { extras: true },
+    }),
     db.query.categories.findMany({ orderBy: [asc(categories.sortOrder)] }),
     db.query.productSeries.findMany({ orderBy: [asc(productSeries.sortOrder)] }),
+    db.query.extras.findMany({ orderBy: [asc(extras.sortOrder)] }),
   ]);
 
   if (!product) notFound();
 
   const updateWithId = updateProduct.bind(null, product.id);
+  const selectedExtraIds = product.extras.map((e) => e.extraId);
 
   return (
     <div>
@@ -27,6 +33,8 @@ export default async function EditProductPage({
       <ProductForm
         categories={categoryList}
         seriesList={seriesList}
+        allExtras={extraList}
+        selectedExtraIds={selectedExtraIds}
         values={product}
         action={updateWithId}
         submitLabel="Mentés"

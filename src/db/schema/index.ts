@@ -7,6 +7,7 @@ import {
   boolean,
   timestamp,
   jsonb,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -45,6 +46,17 @@ export const productSeries = pgTable("product_series", {
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
+// Reusable, globally-managed orderable add-ons (e.g. "Lépcső", "WiFi") —
+// edited from the admin sidebar's "Extrák" page, then picked per product
+// from that same list instead of retyped each time.
+export const extras = pgTable("extras", {
+  id: serial("id").primaryKey(),
+  nameHu: text("name_hu").notNull(),
+  nameEn: text("name_en"),
+  priceHuf: numeric("price_huf", { precision: 12, scale: 0 }).notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
@@ -73,22 +85,26 @@ export const products = pgTable("products", {
   // Products above ORDER_ONLY_THRESHOLD_HUF are order-only (no online
   // payment) — this flag lets it be forced on for a specific product too.
   orderOnly: boolean("order_only").notNull().default(false),
-  // Local file path (served from /uploads/...) of the hero/gallery-first image.
-  mainImage: text("main_image"),
-  // Additional gallery images, same local-path convention as mainImage.
+  // Ordered gallery of local file paths (served from /uploads/...).
   images: jsonb("images").$type<string[]>().notNull().default([]),
-  specs: jsonb("specs").$type<Record<string, string>>().notNull().default({}),
-  // Optional 3D/AR viewer link (e.g. a Matterport/Sketchfab/AR Quick Look URL).
-  threeDArUrl: text("three_d_ar_url"),
-  // No-extra-cost configuration choices, e.g. Keret színe / Héj színe —
-  // each entry is a named group of choice labels.
-  variantOptions: jsonb("variant_options")
-    .$type<{ nameHu: string; nameEn: string; choices: string[] }[]>()
+  // Which entry of `images` is the hero/gallery-first shot.
+  mainImage: text("main_image"),
+  specs: jsonb("specs")
+    .$type<{ label: string; value: string }[]>()
     .notNull()
     .default([]),
-  // Orderable add-ons with their own price, e.g. "2.1 Audio rendszer".
-  extras: jsonb("extras")
-    .$type<{ nameHu: string; nameEn: string; priceHuf: number }[]>()
+  // Optional 3D/AR viewer link (e.g. a Matterport/Sketchfab/AR Quick Look URL).
+  threeDArUrl: text("three_d_ar_url"),
+  // No-extra-cost configuration choices, e.g. Héj színe / Sarok színe —
+  // each group has named choices, each with its own swatch photo.
+  variantOptions: jsonb("variant_options")
+    .$type<
+      {
+        nameHu: string;
+        nameEn: string;
+        choices: { nameHu: string; nameEn: string; imageUrl: string | null }[];
+      }[]
+    >()
     .notNull()
     .default([]),
   inStock: boolean("in_stock").notNull().default(true),
@@ -98,6 +114,20 @@ export const products = pgTable("products", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// Which extras (from the global catalog) a product offers.
+export const productExtras = pgTable(
+  "product_extras",
+  {
+    productId: integer("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    extraId: integer("extra_id")
+      .notNull()
+      .references(() => extras.id, { onDelete: "cascade" }),
+  },
+  (t) => [primaryKey({ columns: [t.productId, t.extraId] })],
+);
 
 export const shippingRates = pgTable("shipping_rates", {
   id: serial("id").primaryKey(),
@@ -138,7 +168,22 @@ export const productSeriesRelations = relations(productSeries, ({ one, many }) =
   products: many(products),
 }));
 
-export const productsRelations = relations(products, ({ one }) => ({
+export const extrasRelations = relations(extras, ({ many }) => ({
+  products: many(productExtras),
+}));
+
+export const productExtrasRelations = relations(productExtras, ({ one }) => ({
+  product: one(products, {
+    fields: [productExtras.productId],
+    references: [products.id],
+  }),
+  extra: one(extras, {
+    fields: [productExtras.extraId],
+    references: [extras.id],
+  }),
+}));
+
+export const productsRelations = relations(products, ({ one, many }) => ({
   category: one(categories, {
     fields: [products.categoryId],
     references: [categories.id],
@@ -147,10 +192,12 @@ export const productsRelations = relations(products, ({ one }) => ({
     fields: [products.seriesId],
     references: [productSeries.id],
   }),
+  extras: many(productExtras),
 }));
 
 export type Category = typeof categories.$inferSelect;
 export type ProductSeries = typeof productSeries.$inferSelect;
+export type Extra = typeof extras.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type ShippingRate = typeof shippingRates.$inferSelect;
 export type Order = typeof orders.$inferSelect;

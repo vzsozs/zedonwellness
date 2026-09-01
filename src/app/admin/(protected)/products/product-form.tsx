@@ -1,38 +1,30 @@
-import type { Category, Product, ProductSeries } from "@/db/schema";
+import type { Category, Extra, Product, ProductSeries } from "@/db/schema";
 import { NameSlugFields } from "./name-slug-fields";
 import { CategorySeriesFields } from "./category-series-fields";
+import { ImageGalleryField } from "./image-gallery-field";
+import { SpecsEditor } from "./specs-editor";
+import { VariantOptionsEditor } from "./variant-options-editor";
+import { ExtrasPicker } from "./extras-picker";
 
 export function ProductForm({
   categories,
   seriesList,
+  allExtras,
+  selectedExtraIds,
   values,
   action,
   submitLabel,
 }: {
   categories: Category[];
   seriesList: ProductSeries[];
+  allExtras: Extra[];
+  selectedExtraIds: number[];
   values?: Product;
   action: (formData: FormData) => void;
   submitLabel: string;
 }) {
-  const specsText = values?.specs
-    ? Object.entries(values.specs)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join("\n")
-    : "";
-
-  const variantOptionsText = values?.variantOptions?.length
-    ? values.variantOptions
-        .map((g) => `${g.nameHu}: ${g.choices.join(", ")}`)
-        .join("\n")
-    : "";
-
-  const extrasText = values?.extras?.length
-    ? values.extras.map((e) => `${e.nameHu}: ${e.priceHuf}`).join("\n")
-    : "";
-
   return (
-    <form action={action} className="flex max-w-4xl flex-col gap-5">
+    <form action={action} className="flex max-w-4xl flex-col gap-6">
       <NameSlugFields defaultNameHu={values?.nameHu} defaultSlug={values?.slug} />
 
       <div className="grid grid-cols-2 gap-5">
@@ -105,29 +97,16 @@ export function ProductForm({
         />
       </div>
 
-      <MainImageField currentImage={values?.mainImage ?? null} />
-      <GalleryImagesField currentImages={values?.images ?? []} />
-
-      <TextArea
-        label="Specifikáció (formátum: Címke: érték, soronként)"
-        name="specs"
-        defaultValue={specsText}
-        rows={4}
+      <ImageGalleryField
+        existingImages={values?.images ?? []}
+        mainImage={values?.mainImage ?? null}
       />
 
-      <TextArea
-        label="Konfigurációs opciók, extra költség nélkül (formátum: Csoport neve: Választás1, Választás2, … — pl. Héj színe: Fehér, Szürke, Fekete)"
-        name="variantOptions"
-        defaultValue={variantOptionsText}
-        rows={3}
-      />
+      <SpecsEditor defaultSpecs={values?.specs ?? []} />
 
-      <TextArea
-        label="Rendelhető extrák, saját árral (formátum: Név: ár, soronként — pl. Lépcső: 59990)"
-        name="extras"
-        defaultValue={extrasText}
-        rows={3}
-      />
+      <VariantOptionsEditor defaultGroups={values?.variantOptions ?? []} />
+
+      <ExtrasPicker allExtras={allExtras} selectedIds={selectedExtraIds} />
 
       <Field
         label="3D/AR megtekintő link (opcionális)"
@@ -166,78 +145,6 @@ export function ProductForm({
         {submitLabel}
       </button>
     </form>
-  );
-}
-
-function MainImageField({ currentImage }: { currentImage: string | null }) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-xs font-semibold text-muted">
-        Főkép
-      </label>
-      <div className="flex items-center gap-4">
-        {currentImage ? (
-          <img
-            src={currentImage}
-            alt=""
-            className="h-20 w-24 border border-line object-cover"
-          />
-        ) : null}
-        <div className="flex-1">
-          <input
-            type="file"
-            name="mainImageFile"
-            accept="image/jpeg,image/png,image/webp,image/avif"
-            className="block w-full text-sm"
-          />
-          {currentImage ? (
-            <label className="mt-2 flex items-center gap-2 text-xs text-muted">
-              <input type="checkbox" name="clearMainImage" className="accent-accent" />
-              Meglévő főkép törlése (feltöltés nélkül)
-            </label>
-          ) : null}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function GalleryImagesField({ currentImages }: { currentImages: string[] }) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-xs font-semibold text-muted">
-        Egyéb képek (galéria)
-      </label>
-      {currentImages.length > 0 ? (
-        <div className="mb-3 flex flex-wrap gap-3">
-          {currentImages.map((src) => (
-            <div key={src} className="w-24">
-              <img
-                src={src}
-                alt=""
-                className="h-20 w-24 border border-line object-cover"
-              />
-              <label className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
-                <input
-                  type="checkbox"
-                  name="removeGalleryImage"
-                  value={src}
-                  className="accent-accent"
-                />
-                Törlés
-              </label>
-            </div>
-          ))}
-        </div>
-      ) : null}
-      <input
-        type="file"
-        name="galleryFiles"
-        accept="image/jpeg,image/png,image/webp,image/avif"
-        multiple
-        className="block w-full text-sm"
-      />
-    </div>
   );
 }
 

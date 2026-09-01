@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { products } from "@/db/schema";
+import { products, productExtras } from "@/db/schema";
 import { saveUploadedImage } from "@/lib/upload";
 
 const checkbox = z.union([z.literal("on"), z.null()]).transform(Boolean);
@@ -40,59 +40,28 @@ const productSchema = z.object({
   isNew: checkbox,
   isOnSale: checkbox,
   threeDArUrl: z.string().optional(),
-  specs: z.string().optional(),
-  variantOptions: z.string().optional(),
-  extras: z.string().optional(),
 });
 
-function parseLines(value?: string) {
-  return (value ?? "")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
-}
+const imageOrderSchema = z.array(
+  z.union([
+    z.object({ key: z.string(), type: z.literal("existing"), url: z.string() }),
+    z.object({ key: z.string(), type: z.literal("new"), fileIndex: z.number().int() }),
+  ]),
+);
 
-function parseSpecs(value?: string): Record<string, string> {
-  const specs: Record<string, string> = {};
-  for (const line of parseLines(value)) {
-    const [label, ...rest] = line.split(":");
-    if (label && rest.length) {
-      specs[label.trim()] = rest.join(":").trim();
-    }
-  }
-  return specs;
-}
-
-// "Csoport neve: Választás1, Választás2" per line
-function parseVariantOptions(value?: string) {
-  const groups: { nameHu: string; nameEn: string; choices: string[] }[] = [];
-  for (const line of parseLines(value)) {
-    const [name, rest] = line.split(":");
-    if (!name || !rest) continue;
-    const choices = rest
-      .split(",")
-      .map((c) => c.trim())
-      .filter(Boolean);
-    if (choices.length > 0) {
-      groups.push({ nameHu: name.trim(), nameEn: "", choices });
-    }
-  }
-  return groups;
-}
-
-// "Név: ár" per line
-function parseExtras(value?: string) {
-  const extras: { nameHu: string; nameEn: string; priceHuf: number }[] = [];
-  for (const line of parseLines(value)) {
-    const [name, priceRaw] = line.split(":");
-    if (!name || !priceRaw) continue;
-    const price = Number(priceRaw.replace(/[^\d]/g, ""));
-    if (!Number.isNaN(price)) {
-      extras.push({ nameHu: name.trim(), nameEn: "", priceHuf: price });
-    }
-  }
-  return extras;
-}
+const variantOptionsDataSchema = z.array(
+  z.object({
+    key: z.string(),
+    nameHu: z.string(),
+    choices: z.array(
+      z.object({
+        key: z.string(),
+        nameHu: z.string(),
+        imageUrl: z.string().nullable(),
+      }),
+    ),
+  }),
+);
 
 function readForm(formData: FormData) {
   return productSchema.parse({
@@ -116,53 +85,101 @@ function readForm(formData: FormData) {
     isNew: formData.get("isNew") as "on" | null,
     isOnSale: formData.get("isOnSale") as "on" | null,
     threeDArUrl: formData.get("threeDArUrl") || undefined,
-    specs: formData.get("specs") || undefined,
-    variantOptions: formData.get("variantOptions") || undefined,
-    extras: formData.get("extras") || undefined,
   });
 }
 
-async function resolveMainImage(formData: FormData, existing: string | null) {
-  const clear = formData.get("clearMainImage") === "on";
-  const file = formData.get("mainImageFile") as File | null;
-  if (file && file.size > 0) {
-    return saveUploadedImage(file, "products");
-  }
-  return clear ? null : existing;
+function readSpecs(formData: FormData) {
+  const raw = formData.get("specs");
+  if (typeof raw !== "string" || !raw) return [];
+  const parsed = z
+    .array(z.object({ label: z.string(), value: z.string() }))
+    .safeParse(JSON.parse(raw));
+  return parsed.success ? parsed.data : [];
 }
 
-async function resolveGalleryImages(formData: FormData, existing: string[]) {
-  const removed = new Set(formData.getAll("removeGalleryImage").map(String));
-  const kept = existing.filter((url) => !removed.has(url));
+async function resolveImages(formData: FormData) {
+  const raw = formData.get("imageOrder");
+  const order = raw && typeof raw === "string" ? imageOrderSchema.parse(JSON.parse(raw)) : [];
+  const mainImageKey = String(formData.get("mainImageKey") ?? "");
+  const newFiles = formData.getAll("galleryFiles") as File[];
 
-  const files = formData.getAll("galleryFiles") as File[];
-  const uploaded = await Promise.all(
-    files
-      .filter((f) => f && f.size > 0)
-      .map((f) => saveUploadedImage(f, "products")),
-  );
+  const uploadedByIndex = new Map<number, string>();
+  for (let i = 0; i < newFiles.length; i++) {
+    if (newFiles[i] && newFiles[i].size > 0) {
+      uploadedByIndex.set(i, await saveUploadedImage(newFiles[i], "products"));
+    }
+  }
 
-  return [...kept, ...uploaded];
+  const resolved = order.map((entry) => ({
+    key: entry.key,
+    url: entry.type === "existing" ? entry.url : (uploadedByIndex.get(entry.fileIndex) ?? null),
+  }));
+  const images = resolved
+    .map((r) => r.url)
+    .filter((url): url is string => Boolean(url));
+
+  const mainImage =
+    resolved.find((r) => r.key === mainImageKey)?.url ?? images[0] ?? null;
+
+  return { images, mainImage };
+}
+
+async function resolveVariantOptions(formData: FormData) {
+  const raw = formData.get("variantOptionsData");
+  if (typeof raw !== "string" || !raw) return [];
+  const groups = variantOptionsDataSchema.parse(JSON.parse(raw));
+
+  const result = [];
+  for (const group of groups) {
+    if (!group.nameHu.trim()) continue;
+    const choices = [];
+    for (const choice of group.choices) {
+      if (!choice.nameHu.trim()) continue;
+      const file = formData.get(`variantFile_${choice.key}`) as File | null;
+      const imageUrl =
+        file && file.size > 0 ? await saveUploadedImage(file, "variants") : choice.imageUrl;
+      choices.push({ nameHu: choice.nameHu.trim(), nameEn: "", imageUrl });
+    }
+    if (choices.length > 0) {
+      result.push({ nameHu: group.nameHu.trim(), nameEn: "", choices });
+    }
+  }
+  return result;
+}
+
+async function syncExtras(productId: number, formData: FormData) {
+  const ids = [
+    ...new Set(formData.getAll("extraIds").map((v) => Number(v)).filter(Number.isFinite)),
+  ];
+  await db.delete(productExtras).where(eq(productExtras.productId, productId));
+  if (ids.length > 0) {
+    await db.insert(productExtras).values(ids.map((extraId) => ({ productId, extraId })));
+  }
 }
 
 export async function createProduct(formData: FormData) {
   const parsed = readForm(formData);
-  const { specs, variantOptions, extras, eurPriceOverride, ...rest } = parsed;
+  const { eurPriceOverride, ...rest } = parsed;
 
-  const mainImage = await resolveMainImage(formData, null);
-  const images = await resolveGalleryImages(formData, []);
+  const [{ images, mainImage }, variantOptions] = await Promise.all([
+    resolveImages(formData),
+    resolveVariantOptions(formData),
+  ]);
 
-  await db.insert(products).values({
-    ...rest,
-    priceHuf: String(rest.priceHuf),
-    eurPriceOverride:
-      eurPriceOverride === null ? null : String(eurPriceOverride),
-    mainImage,
-    images,
-    specs: parseSpecs(specs),
-    variantOptions: parseVariantOptions(variantOptions),
-    extras: parseExtras(extras),
-  });
+  const [product] = await db
+    .insert(products)
+    .values({
+      ...rest,
+      priceHuf: String(rest.priceHuf),
+      eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
+      images,
+      mainImage,
+      specs: readSpecs(formData),
+      variantOptions,
+    })
+    .returning();
+
+  await syncExtras(product.id, formData);
 
   revalidatePath("/admin/products");
   revalidatePath("/", "layout");
@@ -170,30 +187,29 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: number, formData: FormData) {
-  const current = await db.query.products.findFirst({ where: eq(products.id, id) });
-  if (!current) throw new Error("Termék nem található");
-
   const parsed = readForm(formData);
-  const { specs, variantOptions, extras, eurPriceOverride, ...rest } = parsed;
+  const { eurPriceOverride, ...rest } = parsed;
 
-  const mainImage = await resolveMainImage(formData, current.mainImage);
-  const images = await resolveGalleryImages(formData, current.images);
+  const [{ images, mainImage }, variantOptions] = await Promise.all([
+    resolveImages(formData),
+    resolveVariantOptions(formData),
+  ]);
 
   await db
     .update(products)
     .set({
       ...rest,
       priceHuf: String(rest.priceHuf),
-      eurPriceOverride:
-        eurPriceOverride === null ? null : String(eurPriceOverride),
-      mainImage,
+      eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
       images,
-      specs: parseSpecs(specs),
-      variantOptions: parseVariantOptions(variantOptions),
-      extras: parseExtras(extras),
+      mainImage,
+      specs: readSpecs(formData),
+      variantOptions,
       updatedAt: new Date(),
     })
     .where(eq(products.id, id));
+
+  await syncExtras(id, formData);
 
   revalidatePath("/admin/products");
   revalidatePath("/", "layout");

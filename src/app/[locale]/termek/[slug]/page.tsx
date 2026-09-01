@@ -23,7 +23,7 @@ export default async function ProductPage({
 
   const product = await db.query.products.findFirst({
     where: eq(products.slug, slug),
-    with: { category: true, series: true },
+    with: { category: true, series: true, extras: { with: { extra: true } } },
   });
   if (!product) notFound();
 
@@ -49,7 +49,8 @@ export default async function ProductPage({
   );
   const gallery = allImages.length > 0 ? allImages : null;
   const gradient = getProductGradient(product.id);
-  const specs = Object.entries(product.specs);
+  const specs = product.specs;
+  const extras = product.extras.map((pe) => pe.extra);
 
   return (
     <main>
@@ -153,13 +154,13 @@ export default async function ProductPage({
           <div className="w-165 shrink-0 max-lg:w-full">
             <h2 className="mb-5.5 text-2xl font-semibold">Műszaki jellemzők</h2>
             <dl>
-              {specs.map(([label, value]) => (
+              {specs.map((spec) => (
                 <div
-                  key={label}
+                  key={spec.label}
                   className="flex justify-between border-b border-line py-3.5 text-sm"
                 >
-                  <dt className="text-muted">{label}</dt>
-                  <dd className="font-semibold">{value}</dd>
+                  <dt className="text-muted">{spec.label}</dt>
+                  <dd className="font-semibold">{spec.value}</dd>
                 </div>
               ))}
             </dl>
@@ -183,25 +184,31 @@ export default async function ProductPage({
 
       {/* Configuration options / extras — informational for now, no
           interactive picker or price recalculation yet. */}
-      {product.variantOptions.length > 0 ||
-      product.extras.length > 0 ||
-      product.threeDArUrl ? (
+      {product.variantOptions.length > 0 || extras.length > 0 || product.threeDArUrl ? (
         <div className="flex gap-14 px-16 pb-22 max-lg:px-6 max-lg:flex-col">
           {product.variantOptions.length > 0 ? (
             <div className="w-165 shrink-0 max-lg:w-full">
               <h2 className="mb-5.5 text-2xl font-semibold">Konfigurációs opciók</h2>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-5">
                 {product.variantOptions.map((group) => (
                   <div key={group.nameHu}>
-                    <div className="mb-2 text-sm font-semibold">{group.nameHu}</div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="mb-2.5 text-sm font-semibold">{group.nameHu}</div>
+                    <div className="flex flex-wrap gap-3">
                       {group.choices.map((choice) => (
-                        <span
-                          key={choice}
-                          className="border border-line px-3 py-1.5 text-[13px]"
-                        >
-                          {choice}
-                        </span>
+                        <div key={choice.nameHu} className="w-20">
+                          {choice.imageUrl ? (
+                            <img
+                              src={choice.imageUrl}
+                              alt={choice.nameHu}
+                              className="h-16 w-20 border border-line object-cover"
+                            />
+                          ) : (
+                            <div className="h-16 w-20 border border-line bg-paper-muted" />
+                          )}
+                          <div className="mt-1 text-center text-[11px] text-muted">
+                            {choice.nameHu}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -210,13 +217,13 @@ export default async function ProductPage({
             </div>
           ) : null}
           <div className="flex-1">
-            {product.extras.length > 0 ? (
+            {extras.length > 0 ? (
               <>
                 <h2 className="mb-5.5 text-2xl font-semibold">Rendelhető extrák</h2>
                 <dl className="mb-6">
-                  {product.extras.map((extra) => (
+                  {extras.map((extra) => (
                     <div
-                      key={extra.nameHu}
+                      key={extra.id}
                       className="flex justify-between border-b border-line py-3 text-sm"
                     >
                       <dt>{extra.nameHu}</dt>

@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Package,
   FolderTree,
+  Puzzle,
   Truck,
   ClipboardList,
   LogOut,
@@ -14,6 +15,7 @@ const navItems = [
   { href: "/admin", label: "Áttekintés", icon: LayoutDashboard },
   { href: "/admin/products", label: "Termékek", icon: Package },
   { href: "/admin/categories", label: "Kategóriák", icon: FolderTree },
+  { href: "/admin/extras", label: "Extrák", icon: Puzzle },
   { href: "/admin/shipping", label: "Szállítási díjak", icon: Truck },
   { href: "/admin/orders", label: "Rendelések", icon: ClipboardList },
 ];
