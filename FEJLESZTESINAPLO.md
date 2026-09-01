@@ -62,6 +62,18 @@ Elindult a tényleges kódolás. Létrejött az alap Next.js 16 (App Router, Typ
 - **Docker**: `Dockerfile` (multi-stage, Next standalone build) + `docker-compose.yml` (`zw-shop-web` + `zw-shop-db` konténerek, `zw_network` külső hálózat) — a szerveren megfigyelt testvér-projekt mintát követi, hogy a deploy egyszerű és konzisztens legyen.
 - Helyi ellenőrzés: `npm run build` sikeres, HU (`/`) és EN (`/en`) route is 200-at ad, mindkettő statikusan pre-renderelt.
 
+## 2026-09-01 — Terméklista és termékrészletező oldal
+
+- Létrejött egy közös placeholder katalógus (`src/lib/catalog.ts`): kategóriák + termékek egy helyen, ezt használja a főoldal (`CategoryGrid`, `FeaturedProducts`), az új `/[category]` (kategória/terméklista) oldal és az új `/termek/[slug]` (termékrészletező) oldal is — nincs többé duplikált adat komponensenként.
+- **Kategória oldal** (`src/app/[locale]/[category]/page.tsx`): a 2. mockup alapján — törzs, sorozat szerinti szűrő (egyelőre vizuális, nincs bekötve működő szűrésre), termékrács. `generateStaticParams` a 4 ismert kategóriaslugra (jakuzzik, szaunak, grillek, kiegeszitok); ismeretlen slugra `notFound()`.
+- **Termékrészletező oldal** (`src/app/[locale]/termek/[slug]/page.tsx`): galéria (placeholder gradiens blokkok), ár, specifikáció-tábla, hasonló termékek. Az **1.000.000 Ft-os szabály élesben működik**: ha a termék ára a küszöb felett van, a "Kosárba" gomb helyett "Megrendelés leadása" jelenik meg + egy magyarázó szövegdoboz, hogy online fizetés nem elérhető. Külön `customQuote` flag azoknak a termékeknek, amiknek nincs fix listaára (pl. egyedi konfigurációjú Swim Spa) — ott "Egyedi ajánlat" a katalógusban is, a részletezőn is.
+- Az üzleti logika helyben tesztelve (`src/lib/config.ts` — `ORDER_ONLY_THRESHOLD_HUF`, `isOrderOnly()`): 1M Ft alatti termék → "Kosárba", felette → "Megrendelés leadása" + figyelmeztető szöveg, `customQuote` termék → "Egyedi ajánlat". Build zöld, minden route (kategóriák × 2 nyelv, termékek × 2 nyelv) statikusan generálva.
+
+### Következő lépések
+- Admin felület váza (termék/kategória/rendelés/szállítási díj CRUD) — ez váltja majd le a `src/lib/catalog.ts` placeholder adatokat valós DB-re.
+- Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
+- Szerverre telepítés a zw.formagyar.hu staging domainre.
+
 ### Nyitott / következő lépések
 - Kategória-lista és termékrészletező oldal kódolása (a második és harmadik mockup alapján), egyelőre placeholder adatokkal.
 - Drizzle migrációk generálása és lokális Postgres elindítása teszteléshez.
