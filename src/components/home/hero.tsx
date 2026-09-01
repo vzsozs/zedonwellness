@@ -18,8 +18,9 @@ export function Hero() {
         <div className="mb-4 text-xs font-bold tracking-[0.14em] text-accent uppercase">
           {t("eyebrow")}
         </div>
-        <h1 className="text-[56px] leading-[1.08] font-semibold tracking-tight text-ink max-lg:text-4xl">
-          {t("title")}
+        <h1 className="text-[56px] leading-[1.08] font-bold tracking-tight text-ink max-lg:text-4xl">
+          <span className="text-accent">{t("titleHighlight")}</span>{" "}
+          {t("titleRest")}
         </h1>
         <p className="my-6 max-w-md text-lg leading-relaxed text-muted">
           {t("subtitle")}
