@@ -62,21 +62,25 @@ export default async function CategoriesPage() {
         </table>
       </div>
 
-      <div className="max-w-md border border-line bg-white p-6">
+      <div className="border border-line bg-white p-6">
         <h2 className="mb-5 text-base font-semibold">Új kategória</h2>
         <form action={createCategory} className="flex flex-col gap-4">
-          <Field label="Slug (URL, pl. jakuzzik)" name="slug" required />
-          <Field label="Név (HU)" name="nameHu" required />
-          <Field label="Név (EN)" name="nameEn" />
-          <Field
-            label="Leírás (HU) — pl. HC Design, Celtic, OKA — 25+ modell"
-            name="descriptionHu"
-          />
-          <Field label="Leírás (EN)" name="descriptionEn" />
-          <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
+          <div className="grid grid-cols-3 gap-5">
+            <Field label="Slug (URL, pl. jakuzzik)" name="slug" required />
+            <Field label="Név (HU)" name="nameHu" required />
+            <Field label="Név (EN)" name="nameEn" />
+          </div>
+          <div className="grid grid-cols-3 gap-5">
+            <Field
+              label="Leírás (HU) — pl. HC Design, Celtic, OKA — 25+ modell"
+              name="descriptionHu"
+            />
+            <Field label="Leírás (EN)" name="descriptionEn" />
+            <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
+          </div>
           <button
             type="submit"
-            className="mt-1 bg-ink py-2.5 text-sm font-semibold text-white"
+            className="mt-1 w-fit bg-ink px-8 py-2.5 text-sm font-semibold text-white"
           >
             Létrehozás
           </button>

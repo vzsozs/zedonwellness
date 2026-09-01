@@ -26,7 +26,7 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-RUN mkdir -p ./public/uploads && chown -R nextjs:nodejs ./public/uploads
+RUN mkdir -p ./uploads && chown -R nextjs:nodejs ./uploads
 
 RUN mkdir .next
 RUN chown nextjs:nodejs .next

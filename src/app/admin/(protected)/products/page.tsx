@@ -26,6 +26,7 @@ export default async function ProductsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs font-semibold text-muted uppercase">
+              <th className="px-5 py-3"></th>
               <th className="px-5 py-3">Név</th>
               <th className="px-5 py-3">Kategória</th>
               <th className="px-5 py-3">Ár</th>
@@ -36,6 +37,17 @@ export default async function ProductsPage() {
           <tbody>
             {items.map((p) => (
               <tr key={p.id} className="border-b border-line last:border-0">
+                <td className="px-5 py-3">
+                  {p.mainImage ? (
+                    <img
+                      src={p.mainImage}
+                      alt=""
+                      className="h-12 w-14 border border-line object-cover"
+                    />
+                  ) : (
+                    <div className="h-12 w-14 border border-line bg-paper-muted" />
+                  )}
+                </td>
                 <td className="px-5 py-3">{p.nameHu}</td>
                 <td className="px-5 py-3 text-muted">
                   {p.category?.nameHu ?? "—"}
@@ -73,7 +85,7 @@ export default async function ProductsPage() {
             ))}
             {items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-6 text-center text-muted">
+                <td colSpan={6} className="px-5 py-6 text-center text-muted">
                   Még nincs termék.
                 </td>
               </tr>

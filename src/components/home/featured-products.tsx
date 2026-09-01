@@ -11,6 +11,7 @@ export async function FeaturedProducts() {
     where: eq(products.isFeatured, true),
     orderBy: [desc(products.createdAt)],
     limit: 3,
+    with: { series: true },
   });
 
   if (featured.length === 0) return null;

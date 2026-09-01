@@ -25,7 +25,7 @@ services:
     container_name: zw-shop-web
     restart: always
     volumes:
-      - ./uploads:/app/public/uploads
+      - ./uploads:/app/uploads
     networks:
       - zw_network
     depends_on:

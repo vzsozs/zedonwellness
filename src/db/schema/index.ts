@@ -32,20 +32,38 @@ export const categories = pgTable("categories", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const products = pgTable("products", {
+// Product line/series, scoped to a category and managed from the category
+// admin page, e.g. "HC Design", "Celtic Spas" under Jakuzzik — picked from
+// a dropdown on the product form instead of freely typed (avoids typos that
+// would silently split the category filter chips).
+export const productSeries = pgTable("product_series", {
   id: serial("id").primaryKey(),
-  slug: text("slug").notNull().unique(),
   categoryId: integer("category_id")
     .notNull()
     .references(() => categories.id),
+  name: text("name").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  sku: text("sku"),
+  categoryId: integer("category_id")
+    .notNull()
+    .references(() => categories.id),
+  seriesId: integer("series_id").references(() => productSeries.id, {
+    onDelete: "set null",
+  }),
   nameHu: text("name_hu").notNull(),
   nameEn: text("name_en"),
-  // Product line/series shown above the name and used for the category
-  // filter chips, e.g. "HC Design", "Celtic Spas".
-  series: text("series"),
   // Short line shown under the name on cards, e.g. "6 fő · 220×220 cm".
   subtitleHu: text("subtitle_hu"),
   subtitleEn: text("subtitle_en"),
+  // One-line teaser (product list / search results).
+  shortDescriptionHu: text("short_description_hu"),
+  shortDescriptionEn: text("short_description_en"),
+  // Full body copy on the product page.
   descriptionHu: text("description_hu"),
   descriptionEn: text("description_en"),
   // Gross price in HUF. EUR price is derived at render time from the
@@ -55,8 +73,24 @@ export const products = pgTable("products", {
   // Products above ORDER_ONLY_THRESHOLD_HUF are order-only (no online
   // payment) — this flag lets it be forced on for a specific product too.
   orderOnly: boolean("order_only").notNull().default(false),
+  // Local file path (served from /uploads/...) of the hero/gallery-first image.
+  mainImage: text("main_image"),
+  // Additional gallery images, same local-path convention as mainImage.
   images: jsonb("images").$type<string[]>().notNull().default([]),
   specs: jsonb("specs").$type<Record<string, string>>().notNull().default({}),
+  // Optional 3D/AR viewer link (e.g. a Matterport/Sketchfab/AR Quick Look URL).
+  threeDArUrl: text("three_d_ar_url"),
+  // No-extra-cost configuration choices, e.g. Keret színe / Héj színe —
+  // each entry is a named group of choice labels.
+  variantOptions: jsonb("variant_options")
+    .$type<{ nameHu: string; nameEn: string; choices: string[] }[]>()
+    .notNull()
+    .default([]),
+  // Orderable add-ons with their own price, e.g. "2.1 Audio rendszer".
+  extras: jsonb("extras")
+    .$type<{ nameHu: string; nameEn: string; priceHuf: number }[]>()
+    .notNull()
+    .default([]),
   inStock: boolean("in_stock").notNull().default(true),
   isFeatured: boolean("is_featured").notNull().default(false),
   isNew: boolean("is_new").notNull().default(false),
@@ -93,6 +127,15 @@ export const orders = pgTable("orders", {
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
+  series: many(productSeries),
+}));
+
+export const productSeriesRelations = relations(productSeries, ({ one, many }) => ({
+  category: one(categories, {
+    fields: [productSeries.categoryId],
+    references: [categories.id],
+  }),
+  products: many(products),
 }));
 
 export const productsRelations = relations(products, ({ one }) => ({
@@ -100,9 +143,14 @@ export const productsRelations = relations(products, ({ one }) => ({
     fields: [products.categoryId],
     references: [categories.id],
   }),
+  series: one(productSeries, {
+    fields: [products.seriesId],
+    references: [productSeries.id],
+  }),
 }));
 
 export type Category = typeof categories.$inferSelect;
+export type ProductSeries = typeof productSeries.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type ShippingRate = typeof shippingRates.$inferSelect;
 export type Order = typeof orders.$inferSelect;

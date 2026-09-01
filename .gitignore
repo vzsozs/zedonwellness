@@ -26,8 +26,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# uploads (local dev, mounted as volume in prod)
-/public/uploads
+# uploads (local dev, mounted as volume in prod) — served dynamically via
+# src/app/uploads/[...path]/route.ts, kept outside public/ on purpose
+/uploads
 
 # generated design canvas payload (regenerate from the .dc.html sources with seed-canvas.mjs)
 design-mockups/**/*-mockups.html

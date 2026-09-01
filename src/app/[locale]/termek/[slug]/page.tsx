@@ -23,7 +23,7 @@ export default async function ProductPage({
 
   const product = await db.query.products.findFirst({
     where: eq(products.slug, slug),
-    with: { category: true },
+    with: { category: true, series: true },
   });
   if (!product) notFound();
 
@@ -34,6 +34,7 @@ export default async function ProductPage({
     ),
     orderBy: [desc(products.createdAt)],
     limit: 4,
+    with: { series: true },
   });
 
   const name = localized(locale, product.nameHu, product.nameEn);
@@ -43,7 +44,10 @@ export default async function ProductPage({
     : null;
   const orderOnly = isOrderOnly(Number(product.priceHuf), product.orderOnly);
   const badge = product.isNew ? "ÚJDONSÁG" : product.isOnSale ? "AKCIÓ" : null;
-  const gallery = product.images.length > 0 ? product.images : null;
+  const allImages = [product.mainImage, ...product.images].filter(
+    (src): src is string => Boolean(src),
+  );
+  const gallery = allImages.length > 0 ? allImages : null;
   const gradient = getProductGradient(product.id);
   const specs = Object.entries(product.specs);
 
@@ -62,7 +66,7 @@ export default async function ProductPage({
             /{" "}
           </>
         ) : null}
-        {product.series ? <>{product.series} / </> : null}
+        {product.series ? <>{product.series.name} / </> : null}
         <span className="font-semibold text-ink">{name}</span>
       </div>
 
@@ -103,7 +107,7 @@ export default async function ProductPage({
         <div className="flex-1 pt-1.5">
           {product.series ? (
             <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
-              {product.series} sorozat
+              {product.series.name} sorozat
             </div>
           ) : null}
           <h1 className="mt-3 text-[34px] leading-tight font-bold">{name}</h1>
@@ -176,6 +180,65 @@ export default async function ProductPage({
           </Link>
         </div>
       </div>
+
+      {/* Configuration options / extras — informational for now, no
+          interactive picker or price recalculation yet. */}
+      {product.variantOptions.length > 0 ||
+      product.extras.length > 0 ||
+      product.threeDArUrl ? (
+        <div className="flex gap-14 px-16 pb-22 max-lg:px-6 max-lg:flex-col">
+          {product.variantOptions.length > 0 ? (
+            <div className="w-165 shrink-0 max-lg:w-full">
+              <h2 className="mb-5.5 text-2xl font-semibold">Konfigurációs opciók</h2>
+              <div className="flex flex-col gap-4">
+                {product.variantOptions.map((group) => (
+                  <div key={group.nameHu}>
+                    <div className="mb-2 text-sm font-semibold">{group.nameHu}</div>
+                    <div className="flex flex-wrap gap-2">
+                      {group.choices.map((choice) => (
+                        <span
+                          key={choice}
+                          className="border border-line px-3 py-1.5 text-[13px]"
+                        >
+                          {choice}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <div className="flex-1">
+            {product.extras.length > 0 ? (
+              <>
+                <h2 className="mb-5.5 text-2xl font-semibold">Rendelhető extrák</h2>
+                <dl className="mb-6">
+                  {product.extras.map((extra) => (
+                    <div
+                      key={extra.nameHu}
+                      className="flex justify-between border-b border-line py-3 text-sm"
+                    >
+                      <dt>{extra.nameHu}</dt>
+                      <dd className="font-semibold">{formatHuf(extra.priceHuf)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
+            ) : null}
+            {product.threeDArUrl ? (
+              <a
+                href={product.threeDArUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+              >
+                3D / AR megtekintés
+              </a>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       {/* Related */}
       {related.length > 0 ? (

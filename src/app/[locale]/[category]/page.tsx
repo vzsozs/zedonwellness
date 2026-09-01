@@ -4,7 +4,7 @@ import { eq, asc } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { db } from "@/db";
-import { categories, products } from "@/db/schema";
+import { categories, products, productSeries } from "@/db/schema";
 import { localized } from "@/lib/localized";
 import { ProductCard } from "@/components/product-card";
 
@@ -23,13 +23,17 @@ export default async function CategoryPage({
   });
   if (!category) notFound();
 
-  const productList = await db.query.products.findMany({
-    where: eq(products.categoryId, category.id),
-    orderBy: [asc(products.nameHu)],
-  });
-  const seriesList = [
-    ...new Set(productList.map((p) => p.series).filter((s): s is string => Boolean(s))),
-  ];
+  const [productList, seriesList] = await Promise.all([
+    db.query.products.findMany({
+      where: eq(products.categoryId, category.id),
+      orderBy: [asc(products.nameHu)],
+      with: { series: true },
+    }),
+    db.query.productSeries.findMany({
+      where: eq(productSeries.categoryId, category.id),
+      orderBy: [asc(productSeries.sortOrder), asc(productSeries.name)],
+    }),
+  ]);
 
   const name = localized(locale, category.nameHu, category.nameEn);
   const description = localized(locale, category.descriptionHu ?? "", category.descriptionEn);
@@ -67,9 +71,9 @@ export default async function CategoryPage({
               </div>
               <div className="flex flex-col gap-3 text-sm text-muted">
                 {seriesList.map((series) => (
-                  <label key={series} className="flex items-center gap-2.5">
+                  <label key={series.id} className="flex items-center gap-2.5">
                     <input type="checkbox" className="accent-accent" />
-                    {series}
+                    {series.name}
                   </label>
                 ))}
               </div>
@@ -83,11 +87,11 @@ export default async function CategoryPage({
             <div className="mb-8 hidden flex-wrap gap-2.5 max-lg:flex">
               {seriesList.map((series) => (
                 <button
-                  key={series}
+                  key={series.id}
                   type="button"
                   className="flex h-10 min-w-35 flex-1 items-center justify-center border border-line px-4.5 text-sm font-semibold whitespace-nowrap text-ink hover:border-ink"
                 >
-                  {series}
+                  {series.name}
                 </button>
               ))}
             </div>

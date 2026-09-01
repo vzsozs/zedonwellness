@@ -1,34 +1,17 @@
-import type { Category } from "@/db/schema";
-
-type ProductFormValues = {
-  slug?: string;
-  categoryId?: number;
-  nameHu?: string;
-  nameEn?: string | null;
-  series?: string | null;
-  subtitleHu?: string | null;
-  subtitleEn?: string | null;
-  descriptionHu?: string | null;
-  descriptionEn?: string | null;
-  priceHuf?: string;
-  eurPriceOverride?: string | null;
-  orderOnly?: boolean;
-  inStock?: boolean;
-  isFeatured?: boolean;
-  isNew?: boolean;
-  isOnSale?: boolean;
-  images?: string[];
-  specs?: Record<string, string>;
-};
+import type { Category, Product, ProductSeries } from "@/db/schema";
+import { NameSlugFields } from "./name-slug-fields";
+import { CategorySeriesFields } from "./category-series-fields";
 
 export function ProductForm({
   categories,
+  seriesList,
   values,
   action,
   submitLabel,
 }: {
   categories: Category[];
-  values?: ProductFormValues;
+  seriesList: ProductSeries[];
+  values?: Product;
   action: (formData: FormData) => void;
   submitLabel: string;
 }) {
@@ -38,43 +21,33 @@ export function ProductForm({
         .join("\n")
     : "";
 
+  const variantOptionsText = values?.variantOptions?.length
+    ? values.variantOptions
+        .map((g) => `${g.nameHu}: ${g.choices.join(", ")}`)
+        .join("\n")
+    : "";
+
+  const extrasText = values?.extras?.length
+    ? values.extras.map((e) => `${e.nameHu}: ${e.priceHuf}`).join("\n")
+    : "";
+
   return (
-    <form action={action} className="flex max-w-2xl flex-col gap-5">
-      <div className="grid grid-cols-2 gap-5">
-        <Field label="Slug (URL)" name="slug" defaultValue={values?.slug} required />
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">
-            Kategória
-          </label>
-          <select
-            name="categoryId"
-            required
-            defaultValue={values?.categoryId ?? ""}
-            className="w-full border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-accent"
-          >
-            <option value="" disabled>
-              Válassz…
-            </option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nameHu}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+    <form action={action} className="flex max-w-4xl flex-col gap-5">
+      <NameSlugFields defaultNameHu={values?.nameHu} defaultSlug={values?.slug} />
 
       <div className="grid grid-cols-2 gap-5">
-        <Field label="Név (HU)" name="nameHu" defaultValue={values?.nameHu} required />
+        <Field label="SKU / cikkszám" name="sku" defaultValue={values?.sku ?? ""} />
         <Field label="Név (EN)" name="nameEn" defaultValue={values?.nameEn ?? ""} />
       </div>
 
-      <div className="grid grid-cols-3 gap-5">
-        <Field
-          label="Sorozat (pl. HC Design)"
-          name="series"
-          defaultValue={values?.series ?? ""}
-        />
+      <CategorySeriesFields
+        categories={categories}
+        seriesList={seriesList}
+        defaultCategoryId={values?.categoryId}
+        defaultSeriesId={values?.seriesId}
+      />
+
+      <div className="grid grid-cols-2 gap-5">
         <Field
           label="Alcím (HU) — pl. 6 fő · 220×220 cm"
           name="subtitleHu"
@@ -89,12 +62,27 @@ export function ProductForm({
 
       <div className="grid grid-cols-2 gap-5">
         <TextArea
-          label="Leírás (HU)"
+          label="Rövid leírás (HU) — kártyákhoz, találati listához"
+          name="shortDescriptionHu"
+          defaultValue={values?.shortDescriptionHu ?? ""}
+          rows={2}
+        />
+        <TextArea
+          label="Rövid leírás (EN)"
+          name="shortDescriptionEn"
+          defaultValue={values?.shortDescriptionEn ?? ""}
+          rows={2}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-5">
+        <TextArea
+          label="Hosszú leírás (HU) — termékoldal"
           name="descriptionHu"
           defaultValue={values?.descriptionHu ?? ""}
         />
         <TextArea
-          label="Leírás (EN)"
+          label="Hosszú leírás (EN)"
           name="descriptionEn"
           defaultValue={values?.descriptionEn ?? ""}
         />
@@ -117,18 +105,34 @@ export function ProductForm({
         />
       </div>
 
-      <TextArea
-        label="Képek (egy URL soronként)"
-        name="images"
-        defaultValue={(values?.images ?? []).join("\n")}
-        rows={3}
-      />
+      <MainImageField currentImage={values?.mainImage ?? null} />
+      <GalleryImagesField currentImages={values?.images ?? []} />
 
       <TextArea
         label="Specifikáció (formátum: Címke: érték, soronként)"
         name="specs"
         defaultValue={specsText}
         rows={4}
+      />
+
+      <TextArea
+        label="Konfigurációs opciók, extra költség nélkül (formátum: Csoport neve: Választás1, Választás2, … — pl. Héj színe: Fehér, Szürke, Fekete)"
+        name="variantOptions"
+        defaultValue={variantOptionsText}
+        rows={3}
+      />
+
+      <TextArea
+        label="Rendelhető extrák, saját árral (formátum: Név: ár, soronként — pl. Lépcső: 59990)"
+        name="extras"
+        defaultValue={extrasText}
+        rows={3}
+      />
+
+      <Field
+        label="3D/AR megtekintő link (opcionális)"
+        name="threeDArUrl"
+        defaultValue={values?.threeDArUrl ?? ""}
       />
 
       <div className="grid grid-cols-2 gap-3">
@@ -165,6 +169,78 @@ export function ProductForm({
   );
 }
 
+function MainImageField({ currentImage }: { currentImage: string | null }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-xs font-semibold text-muted">
+        Főkép
+      </label>
+      <div className="flex items-center gap-4">
+        {currentImage ? (
+          <img
+            src={currentImage}
+            alt=""
+            className="h-20 w-24 border border-line object-cover"
+          />
+        ) : null}
+        <div className="flex-1">
+          <input
+            type="file"
+            name="mainImageFile"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            className="block w-full text-sm"
+          />
+          {currentImage ? (
+            <label className="mt-2 flex items-center gap-2 text-xs text-muted">
+              <input type="checkbox" name="clearMainImage" className="accent-accent" />
+              Meglévő főkép törlése (feltöltés nélkül)
+            </label>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GalleryImagesField({ currentImages }: { currentImages: string[] }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-xs font-semibold text-muted">
+        Egyéb képek (galéria)
+      </label>
+      {currentImages.length > 0 ? (
+        <div className="mb-3 flex flex-wrap gap-3">
+          {currentImages.map((src) => (
+            <div key={src} className="w-24">
+              <img
+                src={src}
+                alt=""
+                className="h-20 w-24 border border-line object-cover"
+              />
+              <label className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+                <input
+                  type="checkbox"
+                  name="removeGalleryImage"
+                  value={src}
+                  className="accent-accent"
+                />
+                Törlés
+              </label>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <input
+        type="file"
+        name="galleryFiles"
+        accept="image/jpeg,image/png,image/webp,image/avif"
+        multiple
+        className="block w-full text-sm"
+      />
+    </div>
+  );
+}
+
 function Field({
   label,
   name,
@@ -178,7 +254,7 @@ function Field({
   type?: string;
   step?: string;
   required?: boolean;
-  defaultValue?: string;
+  defaultValue?: string | number | null;
 }) {
   return (
     <div>
@@ -190,7 +266,7 @@ function Field({
         name={name}
         step={step}
         required={required}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue ?? ""}
         className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
       />
     </div>

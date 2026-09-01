@@ -1,10 +1,12 @@
 import { Link } from "@/i18n/navigation";
 import { formatHuf } from "@/lib/config";
 import { getProductGradient } from "@/lib/visuals";
-import type { Product } from "@/db/schema";
+import type { Product, ProductSeries } from "@/db/schema";
 
-export function ProductCard({ product }: { product: Product }) {
-  const image = product.images[0];
+type ProductWithSeries = Product & { series?: ProductSeries | null };
+
+export function ProductCard({ product }: { product: ProductWithSeries }) {
+  const image = product.mainImage ?? product.images[0];
   const badge = product.isNew
     ? { label: "ÚJDONSÁG", tone: "ink" as const }
     : product.isOnSale
@@ -34,7 +36,7 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="py-4">
         {product.series ? (
           <div className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">
-            {product.series}
+            {product.series.name}
           </div>
         ) : null}
         <h3 className="mt-1.5 text-lg font-bold group-hover:text-accent">
