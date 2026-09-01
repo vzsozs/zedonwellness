@@ -20,16 +20,12 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">
           {product.series}
         </div>
-        <h3 className="mt-1.5 text-base font-semibold group-hover:text-accent">
+        <h3 className="mt-1.5 text-base font-bold group-hover:text-accent">
           {product.nameHu}
         </h3>
         <div className="mt-1 text-[12.5px] text-muted">{product.capacityHu}</div>
-        <div className="mt-3 text-[16.5px] font-bold">
-          {product.customQuote ? (
-            <span className="text-accent-dark">Egyedi ajánlat</span>
-          ) : (
-            formatHuf(product.priceHuf)
-          )}
+        <div className="mt-3 text-[16.5px] font-bold text-accent">
+          {product.customQuote ? "Egyedi ajánlat" : formatHuf(product.priceHuf)}
         </div>
       </div>
     </Link>

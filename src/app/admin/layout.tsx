@@ -21,6 +21,10 @@ export const metadata: Metadata = {
     template: "%s | Zedonwellness Admin",
   },
   robots: { index: false, follow: false },
+  icons: {
+    icon: "/favico.png",
+    apple: "/webclip.png",
+  },
 };
 
 export default function AdminLayout({

@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   robots: isStaging
     ? { index: false, follow: false }
     : { index: true, follow: true },
+  icons: {
+    icon: "/favico.png",
+    apple: "/webclip.png",
+  },
 };
 
 export function generateStaticParams() {

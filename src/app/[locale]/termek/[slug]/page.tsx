@@ -75,7 +75,7 @@ export default async function ProductPage({
           <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {product.series} sorozat
           </div>
-          <h1 className="mt-3 text-[34px] leading-tight font-semibold">
+          <h1 className="mt-3 text-[34px] leading-tight font-bold">
             {product.nameHu}
           </h1>
 
@@ -83,7 +83,7 @@ export default async function ProductPage({
             {product.descriptionHu}
           </p>
 
-          <div className="mt-7 text-[32px] font-bold">
+          <div className="mt-7 text-[32px] font-bold text-accent">
             {product.customQuote ? "Egyedi ajánlat" : formatHuf(product.priceHuf)}
           </div>
 
@@ -96,7 +96,10 @@ export default async function ProductPage({
           ) : null}
 
           <div className="mt-6.5 flex gap-3.5 max-sm:flex-col">
-            <button className="flex-1 bg-ink py-4.5 text-[15px] font-semibold text-white">
+            <button
+              className="flex-1 bg-coprBlue bg-[length:auto_140%] bg-left-bottom bg-no-repeat py-4.5 text-[15px] font-semibold text-white"
+              style={{ backgroundImage: "url(/brand/button-wave.svg)" }}
+            >
               {product.customQuote || orderOnly
                 ? "Megrendelés leadása"
                 : "Kosárba"}

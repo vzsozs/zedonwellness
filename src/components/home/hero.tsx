@@ -45,7 +45,7 @@ export function Hero() {
       <img
         src="/tuv_certified.webp"
         alt="TÜV Rheinland Certified"
-        className="absolute right-10 bottom-8 h-24 w-auto drop-shadow-md max-lg:right-5 max-lg:bottom-5 max-lg:h-18"
+        className="absolute right-10 bottom-8 h-24 w-auto drop-shadow-md max-lg:top-4 max-lg:right-auto max-lg:bottom-auto max-lg:left-4 max-lg:h-12"
       />
     </section>
   );

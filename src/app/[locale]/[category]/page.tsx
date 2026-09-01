@@ -49,37 +49,33 @@ export default async function CategoryPage({
         </div>
       </div>
 
-      <div className="flex gap-10 px-16 pt-9 pb-25 max-lg:px-6 max-lg:flex-col">
+      <div className="px-16 pt-9 pb-25 max-lg:px-6">
         {/* Filters — visual only for now; wired up once the catalog is backed by real data. */}
-        <aside className="w-59 shrink-0 max-lg:w-full">
-          <div className="mb-5.5 border-b border-line pb-5.5">
-            <div className="mb-4 text-[13px] font-bold tracking-wide text-ink uppercase">
-              Sorozat
-            </div>
-            <div className="flex flex-col gap-3 text-sm text-muted">
-              {[...new Set(productList.map((p) => p.series))].map((series) => (
-                <label key={series} className="flex items-center gap-2.5">
-                  <input type="checkbox" className="accent-accent" />
-                  {series}
-                </label>
-              ))}
-            </div>
+        {[...new Set(productList.map((p) => p.series))].length > 0 ? (
+          <div className="mb-8 flex flex-wrap gap-2.5">
+            {[...new Set(productList.map((p) => p.series))].map((series) => (
+              <button
+                key={series}
+                type="button"
+                className="flex h-10 items-center justify-center border border-line px-4.5 text-sm font-semibold whitespace-nowrap text-ink hover:border-ink"
+              >
+                {series}
+              </button>
+            ))}
           </div>
-        </aside>
+        ) : null}
 
-        <div className="flex-1">
-          {productList.length === 0 ? (
-            <p className="text-sm text-muted">
-              Ebben a kategóriában hamarosan elérhetők lesznek termékek.
-            </p>
-          ) : (
-            <div className="grid grid-cols-3 gap-x-6 gap-y-6.5 max-lg:grid-cols-2 max-sm:grid-cols-1">
-              {productList.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
-            </div>
-          )}
-        </div>
+        {productList.length === 0 ? (
+          <p className="text-sm text-muted">
+            Ebben a kategóriában hamarosan elérhetők lesznek termékek.
+          </p>
+        ) : (
+          <div className="grid grid-cols-3 gap-x-6 gap-y-6.5 max-lg:grid-cols-2 max-sm:grid-cols-1">
+            {productList.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
