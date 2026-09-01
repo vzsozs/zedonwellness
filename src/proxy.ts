@@ -4,5 +4,6 @@ import { routing } from "./i18n/routing";
 export default createMiddleware(routing);
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  // /admin is a separate, non-localized section (its own auth-gated layout).
+  matcher: ["/((?!api|admin|_next|_vercel|.*\\..*).*)"],
 };

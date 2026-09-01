@@ -8,6 +8,15 @@ import {
   timestamp,
   jsonb,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
@@ -71,3 +80,19 @@ export const orders = pgTable("orders", {
   stripePaymentIntentId: text("stripe_payment_intent_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  products: many(products),
+}));
+
+export const productsRelations = relations(products, ({ one }) => ({
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export type Category = typeof categories.$inferSelect;
+export type Product = typeof products.$inferSelect;
+export type ShippingRate = typeof shippingRates.$inferSelect;
+export type Order = typeof orders.$inferSelect;

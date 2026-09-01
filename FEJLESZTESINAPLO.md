@@ -76,8 +76,10 @@ Elindult a tényleges kódolás. Létrejött az alap Next.js 16 (App Router, Typ
 - **Háttérszín**: `--color-paper` `#fafaf8` → **`#ebf6ff`** (kékebb árnyalat) — ez az oldal globális alap-háttérszíne.
 - Módszertani megjegyzés: mostantól a saját tesztfuttatásaimhoz külön `git worktree`-t használok (`/tmp/zw-preview`), hogy ne ütközzön a felhasználó saját, párhuzamosan futó dev szerverével (korábban egy `rm -rf .next` véletlenül megzavarta az ő szerverét, mert ugyanazt a `.next` mappát használtuk).
 
+- **Finomhangolás**: TÜV-jelvény natív alfa-csatornával (a korábbi fehér doboz eltávolítva) és megnövelt méretben; a fejléc menüsora fehér hátterű; új "A cég" menüpont a Blog és a Kapcsolat között (`/a-ceg`, az oldal még nincs megépítve).
+
 ### Következő lépések
-- Admin felület váza (termék/kategória/rendelés/szállítási díj CRUD) — ez váltja majd le a `src/lib/catalog.ts` placeholder adatokat valós DB-re.
+- **Admin felület** (soron következő) — termék/kategória/rendelés/szállítási díj CRUD, ez váltja majd le a `src/lib/catalog.ts` placeholder adatokat valós DB-re.
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
 - Drizzle migrációk generálása és lokális Postgres elindítása teszteléshez.
 - Szerverre telepítés: `zw_network` docker hálózat létrehozása, Nginx Proxy Manager proxy host beállítása a `zw.formagyar.hu` domainre, `.env` production változók beállítása a szerveren (staging noindex = true).
