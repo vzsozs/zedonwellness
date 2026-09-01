@@ -69,13 +69,15 @@ Elindult a tényleges kódolás. Létrejött az alap Next.js 16 (App Router, Typ
 - **Termékrészletező oldal** (`src/app/[locale]/termek/[slug]/page.tsx`): galéria (placeholder gradiens blokkok), ár, specifikáció-tábla, hasonló termékek. Az **1.000.000 Ft-os szabály élesben működik**: ha a termék ára a küszöb felett van, a "Kosárba" gomb helyett "Megrendelés leadása" jelenik meg + egy magyarázó szövegdoboz, hogy online fizetés nem elérhető. Külön `customQuote` flag azoknak a termékeknek, amiknek nincs fix listaára (pl. egyedi konfigurációjú Swim Spa) — ott "Egyedi ajánlat" a katalógusban is, a részletezőn is.
 - Az üzleti logika helyben tesztelve (`src/lib/config.ts` — `ORDER_ONLY_THRESHOLD_HUF`, `isOrderOnly()`): 1M Ft alatti termék → "Kosárba", felette → "Megrendelés leadása" + figyelmeztető szöveg, `customQuote` termék → "Egyedi ajánlat". Build zöld, minden route (kategóriák × 2 nyelv, termékek × 2 nyelv) statikusan generálva.
 
+## 2026-09-01 — Design finomhangolás (font, hero-kép, háttérszín)
+
+- **Display betűtípus**: Bricolage Grotesque → **Inter** (a body betűtípus, Manrope, változatlan maradt). Frissítve a `globals.css`-ben és a `[locale]/layout.tsx`-ben.
+- **Hero valós képpel**: a mockupban használt gradiens-placeholder helyett most a `public/Jacuzzi-bg.webp` valódi termékfotó a Hero háttere, bal oldalon szövegolvashatóságot biztosító elmosódással (mivel a szöveg is ott van). Jobb alsó sarokban megjelenik a `public/tuv_certified.webp` TÜV Rheinland tanúsítvány-jelvény.
+- **Háttérszín**: `--color-paper` `#fafaf8` → **`#ebf6ff`** (kékebb árnyalat) — ez az oldal globális alap-háttérszíne.
+- Módszertani megjegyzés: mostantól a saját tesztfuttatásaimhoz külön `git worktree`-t használok (`/tmp/zw-preview`), hogy ne ütközzön a felhasználó saját, párhuzamosan futó dev szerverével (korábban egy `rm -rf .next` véletlenül megzavarta az ő szerverét, mert ugyanazt a `.next` mappát használtuk).
+
 ### Következő lépések
 - Admin felület váza (termék/kategória/rendelés/szállítási díj CRUD) — ez váltja majd le a `src/lib/catalog.ts` placeholder adatokat valós DB-re.
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
-- Szerverre telepítés a zw.formagyar.hu staging domainre.
-
-### Nyitott / következő lépések
-- Kategória-lista és termékrészletező oldal kódolása (a második és harmadik mockup alapján), egyelőre placeholder adatokkal.
 - Drizzle migrációk generálása és lokális Postgres elindítása teszteléshez.
-- Admin felület vázának megtervezése (termék/kategória/rendelés/szállítási díj CRUD).
 - Szerverre telepítés: `zw_network` docker hálózat létrehozása, Nginx Proxy Manager proxy host beállítása a `zw.formagyar.hu` domainre, `.env` production változók beállítása a szerveren (staging noindex = true).
