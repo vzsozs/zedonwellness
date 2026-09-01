@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { extras } from "@/db/schema";
 import { asc } from "drizzle-orm";
+import { ImagePlus } from "lucide-react";
 import { createExtra, updateExtra, deleteExtra } from "./actions";
 
 export default async function ExtrasPage() {
@@ -14,102 +15,121 @@ export default async function ExtrasPage() {
       <p className="mb-8 max-w-2xl text-sm text-muted">
         Ez a rendelhető extrák globális katalógusa (pl. Lépcső, WiFi, Audio
         rendszer) — a termék szerkesztésénél innen lehet kiválasztani, mely
-        extrák érhetők el az adott terméknél.
+        extrák érhetők el az adott terméknél. Kártyaként jelennek meg a
+        főoldalon is.
       </p>
 
-      <div className="mb-10 border border-line bg-white">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-line text-left text-xs font-semibold text-muted uppercase">
-              <th className="px-5 py-3">Név (HU)</th>
-              <th className="px-5 py-3">Név (EN)</th>
-              <th className="px-5 py-3">Ár (Ft)</th>
-              <th className="px-5 py-3">Sorrend</th>
-              <th className="px-5 py-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((e) => {
-              const updateWithId = updateExtra.bind(null, e.id);
-              const formId = `extra-${e.id}`;
-              return (
-                <tr key={e.id} className="border-b border-line last:border-0">
-                  <td className="p-0">
+      <div className="mb-12 grid grid-cols-4 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-2">
+        {items.map((e) => {
+          const updateWithId = updateExtra.bind(null, e.id);
+          const formId = `extra-${e.id}`;
+          return (
+            <div key={e.id} className="border border-line bg-white">
+              <form id={formId} action={updateWithId} />
+              <label className="relative block h-32 w-full cursor-pointer border-b border-line bg-paper-muted">
+                {e.imageUrl ? (
+                  <img src={e.imageUrl} alt="" className="h-32 w-full object-cover" />
+                ) : (
+                  <div className="flex h-32 w-full items-center justify-center text-muted">
+                    <ImagePlus className="size-6" strokeWidth={1.6} />
+                  </div>
+                )}
+                <input
+                  form={formId}
+                  type="file"
+                  name="imageFile"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  className="hidden"
+                />
+              </label>
+              <div className="flex flex-col gap-2.5 p-4">
+                <input
+                  form={formId}
+                  name="nameHu"
+                  defaultValue={e.nameHu}
+                  required
+                  placeholder="Név (HU)"
+                  className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+                />
+                <input
+                  form={formId}
+                  name="nameEn"
+                  defaultValue={e.nameEn ?? ""}
+                  placeholder="Név (EN)"
+                  className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+                />
+                <div className="flex gap-2.5">
+                  <input
+                    form={formId}
+                    type="number"
+                    name="priceHuf"
+                    defaultValue={e.priceHuf}
+                    required
+                    placeholder="Ár (Ft)"
+                    className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                  <input
+                    form={formId}
+                    type="number"
+                    name="sortOrder"
+                    defaultValue={e.sortOrder}
+                    placeholder="Sorrend"
+                    className="w-20 shrink-0 border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                </div>
+                {e.imageUrl ? (
+                  <label className="flex items-center gap-2 text-[11px] text-muted">
                     <input
                       form={formId}
-                      name="nameHu"
-                      defaultValue={e.nameHu}
-                      required
-                      className="w-full px-5 py-3 text-sm outline-none focus:bg-paper-muted"
+                      type="checkbox"
+                      name="clearImage"
+                      className="accent-accent"
                     />
-                  </td>
-                  <td className="p-0">
-                    <input
-                      form={formId}
-                      name="nameEn"
-                      defaultValue={e.nameEn ?? ""}
-                      className="w-full px-5 py-3 text-sm outline-none focus:bg-paper-muted"
-                    />
-                  </td>
-                  <td className="p-0">
-                    <input
-                      form={formId}
-                      type="number"
-                      name="priceHuf"
-                      defaultValue={e.priceHuf}
-                      required
-                      className="w-full px-5 py-3 text-sm outline-none focus:bg-paper-muted"
-                    />
-                  </td>
-                  <td className="p-0">
-                    <input
-                      form={formId}
-                      type="number"
-                      name="sortOrder"
-                      defaultValue={e.sortOrder}
-                      className="w-full px-5 py-3 text-sm outline-none focus:bg-paper-muted"
-                    />
-                  </td>
-                  <td className="px-5 py-3 text-right whitespace-nowrap">
-                    <form id={formId} action={updateWithId} className="inline">
-                      <button type="submit" className="mr-4 text-accent hover:text-accent-dark">
-                        Mentés
-                      </button>
-                    </form>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await deleteExtra(e.id);
-                      }}
-                      className="inline"
-                    >
-                      <button type="submit" className="text-red-600 hover:text-red-800">
-                        Törlés
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              );
-            })}
-            {items.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-5 py-6 text-center text-muted">
-                  Még nincs extra felvéve.
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
+                    Kép törlése
+                  </label>
+                ) : null}
+                <div className="mt-1 flex items-center justify-between">
+                  <button
+                    form={formId}
+                    type="submit"
+                    className="text-sm font-semibold text-accent hover:text-accent-dark"
+                  >
+                    Mentés
+                  </button>
+                  <form
+                    action={async () => {
+                      "use server";
+                      await deleteExtra(e.id);
+                    }}
+                  >
+                    <button type="submit" className="text-sm text-red-600 hover:text-red-800">
+                      Törlés
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="max-w-2xl border border-line bg-white p-6">
+      <div className="max-w-md border border-line bg-white p-6">
         <h2 className="mb-5 text-base font-semibold">Új extra</h2>
         <form action={createExtra} className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-5">
-            <Field label="Név (HU)" name="nameHu" required />
-            <Field label="Név (EN)" name="nameEn" />
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold text-muted">
+              Kép
+            </label>
+            <input
+              type="file"
+              name="imageFile"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              className="block w-full text-sm"
+            />
           </div>
-          <div className="grid grid-cols-2 gap-5">
+          <Field label="Név (HU)" name="nameHu" required />
+          <Field label="Név (EN)" name="nameEn" />
+          <div className="grid grid-cols-2 gap-4">
             <Field label="Ár (Ft)" name="priceHuf" type="number" required />
             <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
           </div>

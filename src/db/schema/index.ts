@@ -54,6 +54,8 @@ export const extras = pgTable("extras", {
   nameHu: text("name_hu").notNull(),
   nameEn: text("name_en"),
   priceHuf: numeric("price_huf", { precision: 12, scale: 0 }).notNull(),
+  // Shown as a card image on the homepage extras section.
+  imageUrl: text("image_url"),
   sortOrder: integer("sort_order").notNull().default(0),
 });
 

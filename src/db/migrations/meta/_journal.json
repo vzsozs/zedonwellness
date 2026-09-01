@@ -43,6 +43,13 @@
       "when": 1788249765655,
       "tag": "0005_greedy_wasp",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788251120976,
+      "tag": "0006_mixed_iron_monger",
+      "breakpoints": true
     }
   ]
 }

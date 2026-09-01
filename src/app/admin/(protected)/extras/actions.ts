@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { extras } from "@/db/schema";
+import { saveUploadedImage } from "@/lib/upload";
 
 const extraSchema = z.object({
   nameHu: z.string().min(1, "Kötelező"),
@@ -22,21 +23,33 @@ function readForm(formData: FormData) {
   });
 }
 
+async function resolveImage(formData: FormData, existing: string | null) {
+  const clear = formData.get("clearImage") === "on";
+  const file = formData.get("imageFile") as File | null;
+  if (file && file.size > 0) return saveUploadedImage(file, "extras");
+  return clear ? null : existing;
+}
+
 export async function createExtra(formData: FormData) {
   const parsed = readForm(formData);
-  await db.insert(extras).values({ ...parsed, priceHuf: String(parsed.priceHuf) });
+  const imageUrl = await resolveImage(formData, null);
+  await db.insert(extras).values({ ...parsed, priceHuf: String(parsed.priceHuf), imageUrl });
   revalidatePath("/admin/extras");
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
 }
 
 export async function updateExtra(id: number, formData: FormData) {
+  const current = await db.query.extras.findFirst({ where: eq(extras.id, id) });
   const parsed = readForm(formData);
+  const imageUrl = await resolveImage(formData, current?.imageUrl ?? null);
   await db
     .update(extras)
-    .set({ ...parsed, priceHuf: String(parsed.priceHuf) })
+    .set({ ...parsed, priceHuf: String(parsed.priceHuf), imageUrl })
     .where(eq(extras.id, id));
   revalidatePath("/admin/extras");
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
 }
 
 export async function deleteExtra(id: number) {

@@ -4,6 +4,7 @@ import { Hero } from "@/components/home/hero";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { CategoryGrid } from "@/components/home/category-grid";
 import { FeaturedProducts } from "@/components/home/featured-products";
+import { ExtrasSection } from "@/components/home/extras-section";
 
 export const revalidate = 60;
 
@@ -21,6 +22,7 @@ export default async function HomePage({
       <TrustStrip />
       <CategoryGrid />
       <FeaturedProducts />
+      <ExtrasSection />
     </main>
   );
 }
