@@ -6,18 +6,13 @@ export function Hero() {
   const t = useTranslations("home");
 
   return (
-    <section className="relative overflow-hidden bg-[radial-gradient(1100px_640px_at_78%_30%,#CFEFF0_0%,#E4F3EE_42%,#FAFAF8_78%)]">
-      <svg
-        width="620"
-        height="620"
-        viewBox="0 0 620 620"
-        className="pointer-events-none absolute -right-16 -top-10 max-lg:hidden"
-      >
-        <circle cx="470" cy="150" r="150" fill="#0E8C9A" opacity="0.14" />
-        <circle cx="300" cy="420" r="220" fill="#0E8C9A" opacity="0.1" />
-        <circle cx="540" cy="440" r="60" fill="#0E8C9A" opacity="0.22" />
-        <circle cx="140" cy="120" r="26" fill="#0E8C9A" opacity="0.25" />
-      </svg>
+    <section className="relative overflow-hidden">
+      <img
+        src="/Jacuzzi-bg.webp"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-paper)_0%,var(--color-paper)_28%,rgba(235,246,255,0.55)_52%,rgba(235,246,255,0)_72%)]" />
 
       <div className="relative max-w-xl px-16 py-32 max-lg:px-6 max-lg:py-20">
         <div className="mb-4 text-xs font-bold tracking-[0.14em] text-accent uppercase">
@@ -44,6 +39,14 @@ export function Hero() {
             {t("ctaSecondary")}
           </Link>
         </div>
+      </div>
+
+      <div className="absolute right-10 bottom-8 flex items-center gap-3 bg-white/95 px-4 py-3 shadow-sm max-lg:right-5 max-lg:bottom-5 max-lg:px-3 max-lg:py-2.5">
+        <img
+          src="/tuv_certified.webp"
+          alt="TÜV Rheinland Certified"
+          className="h-11 w-auto max-lg:h-9"
+        />
       </div>
     </section>
   );

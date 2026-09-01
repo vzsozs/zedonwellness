@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Manrope } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import "../globals.css";
 
-const bricolage = Bricolage_Grotesque({
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
   variable: "--font-display",
   display: "swap",
@@ -56,7 +56,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${bricolage.variable} ${manrope.variable} antialiased`}>
+      <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
           <SiteHeader />
           {children}
