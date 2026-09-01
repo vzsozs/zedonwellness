@@ -23,7 +23,7 @@ export function ExtraCard({ extra }: { extra: Extra }) {
         onClose={() => setModalOpen(false)}
       />
       <form action={formAction}>
-        <label className="relative flex h-32 w-full cursor-pointer items-center justify-center overflow-hidden border-b border-line bg-paper-muted p-5">
+        <label className="relative flex h-32 w-full cursor-pointer items-center justify-center overflow-hidden border-b border-line p-5">
           {extra.imageUrl ? (
             <img src={extra.imageUrl} alt="" className="h-full w-full object-contain" />
           ) : (

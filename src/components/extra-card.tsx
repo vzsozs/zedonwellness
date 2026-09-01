@@ -3,8 +3,8 @@ import { formatHuf } from "@/lib/config";
 
 export function ExtraCard({ name, extra }: { name: string; extra: Extra }) {
   return (
-    <div className="overflow-hidden border border-line">
-      <div className="flex h-32 w-full items-center justify-center overflow-hidden bg-paper-muted p-6">
+    <div className="overflow-hidden border-2 border-coprBlue">
+      <div className="flex h-32 w-full items-center justify-center overflow-hidden p-6">
         {extra.imageUrl ? (
           <img
             src={extra.imageUrl}
@@ -13,7 +13,7 @@ export function ExtraCard({ name, extra }: { name: string; extra: Extra }) {
           />
         ) : null}
       </div>
-      <div className="p-5">
+      <div className="p-5 text-center">
         <h3 className="text-base font-bold">{name}</h3>
         <div className="mt-2 text-lg font-extrabold text-accent">
           {formatHuf(extra.priceHuf)}

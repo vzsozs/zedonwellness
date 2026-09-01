@@ -12,6 +12,7 @@ import { getProductGradient } from "@/lib/visuals";
 import { ProductCard } from "@/components/product-card";
 import { ProductGallery } from "@/components/product-gallery";
 import { ExtraCard } from "@/components/extra-card";
+import { VariantOptionGroup } from "@/components/variant-option-group";
 
 export const revalidate = 60;
 
@@ -51,9 +52,11 @@ export default async function ProductPage({
     : null;
   const orderOnly = isOrderOnly(Number(product.priceHuf), product.orderOnly);
   const badge = product.isNew ? "ÚJDONSÁG" : product.isOnSale ? "AKCIÓ" : null;
-  const allImages = [product.mainImage, ...product.images].filter(
-    (src): src is string => Boolean(src),
-  );
+  const allImages = [...new Set(
+    [product.mainImage, ...product.images].filter(
+      (src): src is string => Boolean(src),
+    ),
+  )];
   const gradient = getProductGradient(product.id);
   const specs = product.specs;
   const extras = product.extras.map((pe) => pe.extra);
@@ -77,9 +80,9 @@ export default async function ProductPage({
         <span className="font-semibold text-ink">{name}</span>
       </div>
 
-      <div className="flex flex-row-reverse gap-14 px-16 pt-7.5 max-lg:px-6 max-lg:flex-col">
+      <div className="grid grid-cols-2 gap-14 px-16 pt-7.5 max-lg:grid-cols-1 max-lg:px-6">
         {/* Visuals: gallery, 3D/AR, variant options, extras — stacked */}
-        <div className="flex min-w-0 flex-1 flex-col gap-10">
+        <div className="order-2 flex min-w-0 flex-col gap-10 max-lg:order-1">
           <ProductGallery
             images={allImages}
             badge={badge}
@@ -104,31 +107,7 @@ export default async function ProductPage({
           ) : null}
 
           {product.variantOptions.map((group) => (
-            <div key={group.nameHu}>
-              <h2 className="mb-3 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
-                {group.nameHu}
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {group.choices.map((choice) => (
-                  <div key={choice.nameHu} className="w-22">
-                    {choice.imageUrl ? (
-                      <div className="h-20 w-22 overflow-hidden border border-line">
-                        <img
-                          src={choice.imageUrl}
-                          alt={choice.nameHu}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-20 w-22 border border-line bg-paper-muted" />
-                    )}
-                    <div className="mt-1 text-center text-[11px] text-muted">
-                      {choice.nameHu}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <VariantOptionGroup key={group.nameHu} group={group} />
           ))}
 
           {extras.length > 0 ? (
@@ -151,13 +130,15 @@ export default async function ProductPage({
         </div>
 
         {/* Info */}
-        <div className="w-105 shrink-0 max-lg:w-full">
+        <div className="order-1 min-w-0 max-lg:order-2">
           {product.series ? (
             <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
               {product.series.name} sorozat
             </div>
           ) : null}
-          <h1 className="mt-3 text-[34px] leading-tight font-bold">{name}</h1>
+          <h1 className="mt-3 text-[40px] leading-tight font-extrabold text-coprBlue">
+            {name}
+          </h1>
 
           {shortDescription ? (
             <p className="mt-5.5 text-[15px] leading-relaxed whitespace-pre-line text-muted">
