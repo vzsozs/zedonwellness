@@ -10,6 +10,8 @@ import { formatHuf, isOrderOnly } from "@/lib/config";
 import { localized } from "@/lib/localized";
 import { getProductGradient } from "@/lib/visuals";
 import { ProductCard } from "@/components/product-card";
+import { ProductGallery } from "@/components/product-gallery";
+import { ExtraCard } from "@/components/extra-card";
 
 export const revalidate = 60;
 
@@ -47,7 +49,6 @@ export default async function ProductPage({
   const allImages = [product.mainImage, ...product.images].filter(
     (src): src is string => Boolean(src),
   );
-  const gallery = allImages.length > 0 ? allImages : null;
   const gradient = getProductGradient(product.id);
   const specs = product.specs;
   const extras = product.extras.map((pe) => pe.extra);
@@ -72,37 +73,11 @@ export default async function ProductPage({
       </div>
 
       <div className="flex gap-14 px-16 pt-7.5 max-lg:px-6 max-lg:flex-col">
-        {/* Gallery */}
-        <div className="w-165 shrink-0 max-lg:w-full">
-          <div
-            className={
-              gallery
-                ? "relative flex h-130 items-center justify-center bg-cover bg-center max-lg:h-80"
-                : `relative flex h-130 items-center justify-center bg-gradient-to-br ${gradient} max-lg:h-80`
-            }
-            style={gallery ? { backgroundImage: `url(${gallery[0]})` } : undefined}
-          >
-            {badge ? (
-              <span className="absolute top-4 left-4 bg-ink px-2.5 py-1.5 text-[11px] font-bold tracking-wide text-white">
-                {badge}
-              </span>
-            ) : null}
-          </div>
-          {gallery && gallery.length > 1 ? (
-            <div className="mt-3.5 flex gap-3">
-              {gallery.map((src, i) => (
-                <div
-                  key={src}
-                  className="h-20 w-25 bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${src})`,
-                    ...(i === 0 ? { outline: "2px solid #0E8C9A" } : { opacity: 0.7 }),
-                  }}
-                />
-              ))}
-            </div>
-          ) : null}
-        </div>
+        <ProductGallery
+          images={allImages}
+          badge={badge}
+          fallbackGradient={gradient}
+        />
 
         {/* Info */}
         <div className="flex-1 pt-1.5">
@@ -182,12 +157,12 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {/* Configuration options / extras — informational for now, no
-          interactive picker or price recalculation yet. */}
-      {product.variantOptions.length > 0 || extras.length > 0 || product.threeDArUrl ? (
-        <div className="flex gap-14 px-16 pb-22 max-lg:px-6 max-lg:flex-col">
+      {/* Configuration options — informational for now, no interactive
+          picker or price recalculation yet. */}
+      {product.variantOptions.length > 0 || product.threeDArUrl ? (
+        <div className="px-16 pb-16 max-lg:px-6">
           {product.variantOptions.length > 0 ? (
-            <div className="w-165 shrink-0 max-lg:w-full">
+            <div className="mb-8">
               <h2 className="mb-5.5 text-2xl font-semibold">Konfigurációs opciók</h2>
               <div className="flex flex-col gap-5">
                 {product.variantOptions.map((group) => (
@@ -197,11 +172,13 @@ export default async function ProductPage({
                       {group.choices.map((choice) => (
                         <div key={choice.nameHu} className="w-20">
                           {choice.imageUrl ? (
-                            <img
-                              src={choice.imageUrl}
-                              alt={choice.nameHu}
-                              className="h-16 w-20 border border-line object-cover"
-                            />
+                            <div className="h-16 w-20 overflow-hidden border border-line">
+                              <img
+                                src={choice.imageUrl}
+                                alt={choice.nameHu}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
                           ) : (
                             <div className="h-16 w-20 border border-line bg-paper-muted" />
                           )}
@@ -216,33 +193,31 @@ export default async function ProductPage({
               </div>
             </div>
           ) : null}
-          <div className="flex-1">
-            {extras.length > 0 ? (
-              <>
-                <h2 className="mb-5.5 text-2xl font-semibold">Rendelhető extrák</h2>
-                <dl className="mb-6">
-                  {extras.map((extra) => (
-                    <div
-                      key={extra.id}
-                      className="flex justify-between border-b border-line py-3 text-sm"
-                    >
-                      <dt>{extra.nameHu}</dt>
-                      <dd className="font-semibold">{formatHuf(extra.priceHuf)}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </>
-            ) : null}
-            {product.threeDArUrl ? (
-              <a
-                href={product.threeDArUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
-              >
-                3D / AR megtekintés
-              </a>
-            ) : null}
+          {product.threeDArUrl ? (
+            <a
+              href={product.threeDArUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+            >
+              3D / AR megtekintés
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+
+      {/* Extras — same card layout as the homepage section */}
+      {extras.length > 0 ? (
+        <div className="bg-white px-16 py-22 max-lg:px-6">
+          <h2 className="mb-7.5 text-2xl font-semibold">Rendelhető extrák</h2>
+          <div className="grid grid-cols-4 gap-6 max-lg:grid-cols-2">
+            {extras.map((extra) => (
+              <ExtraCard
+                key={extra.id}
+                extra={extra}
+                name={localized(locale, extra.nameHu, extra.nameEn)}
+              />
+            ))}
           </div>
         </div>
       ) : null}

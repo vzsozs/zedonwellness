@@ -131,7 +131,7 @@ export function VariantOptionsEditor({
             <div className="flex flex-wrap gap-3">
               {group.choices.map((choice) => (
                 <div key={choice.key} className="w-28">
-                  <label className="relative block h-20 w-28 cursor-pointer border border-line">
+                  <label className="relative block h-20 w-28 cursor-pointer overflow-hidden border border-line">
                     {choice.previewUrl || choice.imageUrl ? (
                       <img
                         src={choice.previewUrl ?? choice.imageUrl ?? ""}

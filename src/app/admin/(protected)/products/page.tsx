@@ -39,11 +39,9 @@ export default async function ProductsPage() {
               <tr key={p.id} className="border-b border-line last:border-0">
                 <td className="px-5 py-3">
                   {p.mainImage ? (
-                    <img
-                      src={p.mainImage}
-                      alt=""
-                      className="h-12 w-14 border border-line object-cover"
-                    />
+                    <div className="h-12 w-14 overflow-hidden border border-line">
+                      <img src={p.mainImage} alt="" className="h-full w-full object-cover" />
+                    </div>
                   ) : (
                     <div className="h-12 w-14 border border-line bg-paper-muted" />
                   )}

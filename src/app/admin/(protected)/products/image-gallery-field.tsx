@@ -45,19 +45,19 @@ export function ImageGalleryField({
 
   function addFiles(fileList: FileList) {
     const added = Array.from(fileList);
-    setNewFiles((prev) => {
-      const startIndex = prev.length;
-      setSlots((s) => [
-        ...s,
-        ...added.map((f, i) => ({
-          key: nextKey(),
-          type: "new" as const,
-          fileIndex: startIndex + i,
-          previewUrl: URL.createObjectURL(f),
-        })),
-      ]);
-      return [...prev, ...added];
-    });
+    // Compute both updates from the current (pre-call) state up front —
+    // nesting a setState call inside another setState's updater is impure
+    // and React (in Strict Mode, which Next's dev server enables) can
+    // invoke that updater twice, silently duplicating the nested call.
+    const startIndex = newFiles.length;
+    const newSlots: Slot[] = added.map((f, i) => ({
+      key: nextKey(),
+      type: "new",
+      fileIndex: startIndex + i,
+      previewUrl: URL.createObjectURL(f),
+    }));
+    setNewFiles((prev) => [...prev, ...added]);
+    setSlots((s) => [...s, ...newSlots]);
   }
 
   function removeSlot(key: string) {
@@ -120,7 +120,7 @@ export function ImageGalleryField({
             const isMain = slot.key === effectiveMainKey;
             return (
               <div key={slot.key} className="w-28">
-                <div className="relative">
+                <div className="relative h-24 w-28 overflow-hidden">
                   <img
                     src={src}
                     alt=""
