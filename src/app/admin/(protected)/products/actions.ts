@@ -7,6 +7,11 @@ import { z } from "zod";
 import { db } from "@/db";
 import { products, productExtras } from "@/db/schema";
 import { saveUploadedImage } from "@/lib/upload";
+import {
+  type ActionState,
+  isRedirectError,
+  toActionError,
+} from "@/lib/action-state";
 
 const checkbox = z.union([z.literal("on"), z.null()]).transform(Boolean);
 
@@ -157,62 +162,79 @@ async function syncExtras(productId: number, formData: FormData) {
   }
 }
 
-export async function createProduct(formData: FormData) {
-  const parsed = readForm(formData);
-  const { eurPriceOverride, ...rest } = parsed;
+export async function createProduct(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    const parsed = readForm(formData);
+    const { eurPriceOverride, ...rest } = parsed;
 
-  const [{ images, mainImage }, variantOptions] = await Promise.all([
-    resolveImages(formData),
-    resolveVariantOptions(formData),
-  ]);
+    const [{ images, mainImage }, variantOptions] = await Promise.all([
+      resolveImages(formData),
+      resolveVariantOptions(formData),
+    ]);
 
-  const [product] = await db
-    .insert(products)
-    .values({
-      ...rest,
-      priceHuf: String(rest.priceHuf),
-      eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
-      images,
-      mainImage,
-      specs: readSpecs(formData),
-      variantOptions,
-    })
-    .returning();
+    const [product] = await db
+      .insert(products)
+      .values({
+        ...rest,
+        priceHuf: String(rest.priceHuf),
+        eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
+        images,
+        mainImage,
+        specs: readSpecs(formData),
+        variantOptions,
+      })
+      .returning();
 
-  await syncExtras(product.id, formData);
+    await syncExtras(product.id, formData);
 
-  revalidatePath("/admin/products");
-  revalidatePath("/", "layout");
+    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    return toActionError(err);
+  }
   redirect("/admin/products");
 }
 
-export async function updateProduct(id: number, formData: FormData) {
-  const parsed = readForm(formData);
-  const { eurPriceOverride, ...rest } = parsed;
+export async function updateProduct(
+  id: number,
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    const parsed = readForm(formData);
+    const { eurPriceOverride, ...rest } = parsed;
 
-  const [{ images, mainImage }, variantOptions] = await Promise.all([
-    resolveImages(formData),
-    resolveVariantOptions(formData),
-  ]);
+    const [{ images, mainImage }, variantOptions] = await Promise.all([
+      resolveImages(formData),
+      resolveVariantOptions(formData),
+    ]);
 
-  await db
-    .update(products)
-    .set({
-      ...rest,
-      priceHuf: String(rest.priceHuf),
-      eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
-      images,
-      mainImage,
-      specs: readSpecs(formData),
-      variantOptions,
-      updatedAt: new Date(),
-    })
-    .where(eq(products.id, id));
+    await db
+      .update(products)
+      .set({
+        ...rest,
+        priceHuf: String(rest.priceHuf),
+        eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
+        images,
+        mainImage,
+        specs: readSpecs(formData),
+        variantOptions,
+        updatedAt: new Date(),
+      })
+      .where(eq(products.id, id));
 
-  await syncExtras(id, formData);
+    await syncExtras(id, formData);
 
-  revalidatePath("/admin/products");
-  revalidatePath("/", "layout");
+    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    return toActionError(err);
+  }
   redirect("/admin/products");
 }
 

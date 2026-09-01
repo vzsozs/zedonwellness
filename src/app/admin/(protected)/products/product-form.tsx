@@ -1,4 +1,10 @@
+"use client";
+
+import { useActionState, useEffect, useState } from "react";
 import type { Category, Extra, Product, ProductSeries } from "@/db/schema";
+import type { ActionState } from "@/lib/action-state";
+import { initialActionState } from "@/lib/action-state";
+import { ErrorModal } from "@/components/admin/error-modal";
 import { NameSlugFields } from "./name-slug-fields";
 import { CategorySeriesFields } from "./category-series-fields";
 import { ImageGalleryField } from "./image-gallery-field";
@@ -20,11 +26,22 @@ export function ProductForm({
   allExtras: Extra[];
   selectedExtraIds: number[];
   values?: Product;
-  action: (formData: FormData) => void;
+  action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
   submitLabel: string;
 }) {
+  const [state, formAction, pending] = useActionState(action, initialActionState);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (state.error) setModalOpen(true);
+  }, [state]);
+
   return (
-    <form action={action} className="flex max-w-4xl flex-col gap-6">
+    <form action={formAction} className="flex max-w-4xl flex-col gap-6">
+      <ErrorModal
+        message={modalOpen ? state.error : null}
+        onClose={() => setModalOpen(false)}
+      />
       <NameSlugFields defaultNameHu={values?.nameHu} defaultSlug={values?.slug} />
 
       <div className="grid grid-cols-2 gap-5">
@@ -140,9 +157,10 @@ export function ProductForm({
 
       <button
         type="submit"
-        className="mt-2 w-fit bg-ink px-8 py-3 text-sm font-semibold text-white"
+        disabled={pending}
+        className="mt-2 w-fit bg-ink px-8 py-3 text-sm font-semibold text-white disabled:opacity-50"
       >
-        {submitLabel}
+        {pending ? "Mentés…" : submitLabel}
       </button>
     </form>
   );

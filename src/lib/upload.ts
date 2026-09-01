@@ -10,7 +10,19 @@ import path from "path";
 // request. Mounted as a persistent Docker volume in production.
 export const UPLOADS_ROOT = path.join(process.cwd(), "uploads");
 
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+// SVGs are only ever referenced via <img src="..."> throughout this app
+// (gallery previews, variant swatches, extras cards) — browsers don't
+// execute embedded <script> tags in SVGs loaded that way (unlike via
+// <iframe>/<object> or direct navigation), so this stays safe as long as
+// that stays true. Don't link to an uploaded SVG directly or embed it
+// another way without revisiting this.
+const ALLOWED_TYPES: Record<string, string> = {
+  "image/jpeg": "jpeg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/avif": "avif",
+  "image/svg+xml": "svg",
+};
 const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
 
 /**
@@ -18,14 +30,14 @@ const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
  * URL path (served via the /uploads/[...path] route handler).
  */
 export async function saveUploadedImage(file: File, subdir: string): Promise<string> {
-  if (!ALLOWED_TYPES.has(file.type)) {
-    throw new Error("Csak JPG, PNG, WEBP vagy AVIF kép tölthető fel.");
+  const ext = ALLOWED_TYPES[file.type];
+  if (!ext) {
+    throw new Error("Csak JPG, PNG, WEBP, AVIF vagy SVG kép tölthető fel.");
   }
   if (file.size > MAX_SIZE_BYTES) {
     throw new Error("A kép mérete legfeljebb 8 MB lehet.");
   }
 
-  const ext = file.type.split("/")[1];
   const filename = `${randomUUID()}.${ext}`;
   const dir = path.join(UPLOADS_ROOT, subdir);
   await mkdir(dir, { recursive: true });

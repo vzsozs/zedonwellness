@@ -146,7 +146,7 @@ export function VariantOptionsEditor({
                     <input
                       type="file"
                       name={`variantFile_${choice.key}`}
-                      accept="image/jpeg,image/png,image/webp,image/avif"
+                      accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];

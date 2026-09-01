@@ -8,6 +8,7 @@ const MIME_TYPES: Record<string, string> = {
   ".png": "image/png",
   ".webp": "image/webp",
   ".avif": "image/avif",
+  ".svg": "image/svg+xml",
 };
 
 export async function GET(
@@ -37,6 +38,11 @@ export async function GET(
     headers: {
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=31536000, immutable",
+      // Defense in depth for uploaded SVGs: never sniff as HTML, never run
+      // a script even if one somehow got embedded and this got loaded in a
+      // context browsers do execute scripts in.
+      "X-Content-Type-Options": "nosniff",
+      "Content-Security-Policy": "script-src 'none'",
     },
   });
 }

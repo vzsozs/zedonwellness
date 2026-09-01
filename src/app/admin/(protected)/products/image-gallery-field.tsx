@@ -185,7 +185,7 @@ export function ImageGalleryField({
           ref={fileInputRef}
           type="file"
           name="galleryFiles"
-          accept="image/jpeg,image/png,image/webp,image/avif"
+          accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml"
           multiple
           className="hidden"
           onChange={(e) => {
