@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { Heart } from "lucide-react";
+import { Heart, Box } from "lucide-react";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -41,6 +41,11 @@ export default async function ProductPage({
 
   const name = localized(locale, product.nameHu, product.nameEn);
   const description = localized(locale, product.descriptionHu ?? "", product.descriptionEn);
+  const shortDescription = localized(
+    locale,
+    product.shortDescriptionHu ?? "",
+    product.shortDescriptionEn,
+  );
   const categoryName = product.category
     ? localized(locale, product.category.nameHu, product.category.nameEn)
     : null;
@@ -72,15 +77,80 @@ export default async function ProductPage({
         <span className="font-semibold text-ink">{name}</span>
       </div>
 
-      <div className="flex gap-14 px-16 pt-7.5 max-lg:px-6 max-lg:flex-col">
-        <ProductGallery
-          images={allImages}
-          badge={badge}
-          fallbackGradient={gradient}
-        />
+      <div className="flex flex-row-reverse gap-14 px-16 pt-7.5 max-lg:px-6 max-lg:flex-col">
+        {/* Visuals: gallery, 3D/AR, variant options, extras — stacked */}
+        <div className="flex min-w-0 flex-1 flex-col gap-10">
+          <ProductGallery
+            images={allImages}
+            badge={badge}
+            fallbackGradient={gradient}
+          />
+
+          {product.threeDArUrl ? (
+            <div>
+              <h2 className="mb-3 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+                3D / AR (kiterjesztett valóság)
+              </h2>
+              <a
+                href={product.threeDArUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 border border-line bg-paper-muted px-5 py-4 text-sm font-semibold hover:border-ink"
+              >
+                <Box className="size-5 text-coprBlue" strokeWidth={1.8} />
+                Megtekintés kiterjesztett valóságban
+              </a>
+            </div>
+          ) : null}
+
+          {product.variantOptions.map((group) => (
+            <div key={group.nameHu}>
+              <h2 className="mb-3 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+                {group.nameHu}
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {group.choices.map((choice) => (
+                  <div key={choice.nameHu} className="w-22">
+                    {choice.imageUrl ? (
+                      <div className="h-20 w-22 overflow-hidden border border-line">
+                        <img
+                          src={choice.imageUrl}
+                          alt={choice.nameHu}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-20 w-22 border border-line bg-paper-muted" />
+                    )}
+                    <div className="mt-1 text-center text-[11px] text-muted">
+                      {choice.nameHu}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {extras.length > 0 ? (
+            <div>
+              <h2 className="mb-3 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+                Rendelhető extrák
+              </h2>
+              <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+                {extras.map((extra) => (
+                  <ExtraCard
+                    key={extra.id}
+                    extra={extra}
+                    name={localized(locale, extra.nameHu, extra.nameEn)}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
 
         {/* Info */}
-        <div className="flex-1 pt-1.5">
+        <div className="w-105 shrink-0 max-lg:w-full">
           {product.series ? (
             <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
               {product.series.name} sorozat
@@ -88,18 +158,29 @@ export default async function ProductPage({
           ) : null}
           <h1 className="mt-3 text-[34px] leading-tight font-bold">{name}</h1>
 
+          {shortDescription ? (
+            <p className="mt-5.5 text-[15px] leading-relaxed whitespace-pre-line text-muted">
+              {shortDescription}
+            </p>
+          ) : null}
           {description ? (
-            <p className="mt-5.5 max-w-lg text-[15px] leading-relaxed whitespace-pre-line text-muted">
+            <p className="mt-4 text-[15px] leading-relaxed whitespace-pre-line text-muted">
               {description}
             </p>
           ) : null}
 
-          <div className="mt-7 text-[32px] font-extrabold text-accent">
+          <img
+            src="/tuv_certified.webp"
+            alt="TÜV Rheinland Certified"
+            className="mt-6 h-14 w-auto"
+          />
+
+          <div className="mt-6 text-[32px] font-extrabold text-accent">
             {formatHuf(product.priceHuf)}
           </div>
 
           {orderOnly ? (
-            <div className="mt-5.5 max-w-md border-l-[3px] border-accent bg-paper-muted px-4.5 py-3.5 text-[13.5px] text-muted">
+            <div className="mt-5.5 border-l-[3px] border-accent bg-paper-muted px-4.5 py-3.5 text-[13.5px] text-muted">
               Ez a termék 1.000.000 Ft feletti értékű, ezért online fizetés nem
               elérhető — a rendelés leadása után kollégáink 1 munkanapon belül
               felveszik veled a kapcsolatot az egyeztetéshez.
@@ -120,30 +201,33 @@ export default async function ProductPage({
               <Heart className="size-5" strokeWidth={1.8} />
             </button>
           </div>
+
+          {specs.length > 0 ? (
+            <div className="mt-10">
+              <h2 className="mb-5 text-xs font-bold tracking-[0.14em] text-muted uppercase">
+                Paraméterek
+              </h2>
+              <dl>
+                {specs.map((spec) => (
+                  <div
+                    key={spec.label}
+                    className="flex justify-between border-b border-line py-3 text-sm"
+                  >
+                    <dt className="text-muted">{spec.label}</dt>
+                    <dd className="font-semibold">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      {/* Specs */}
-      <div className="flex gap-14 px-16 py-22 max-lg:px-6 max-lg:flex-col">
-        {specs.length > 0 ? (
-          <div className="w-165 shrink-0 max-lg:w-full">
-            <h2 className="mb-5.5 text-2xl font-semibold">Műszaki jellemzők</h2>
-            <dl>
-              {specs.map((spec) => (
-                <div
-                  key={spec.label}
-                  className="flex justify-between border-b border-line py-3.5 text-sm"
-                >
-                  <dt className="text-muted">{spec.label}</dt>
-                  <dd className="font-semibold">{spec.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        ) : null}
-        <div className="flex-1">
+      {/* Contact */}
+      <div className="px-16 py-22 max-lg:px-6">
+        <div className="max-w-lg">
           <h2 className="mb-5.5 text-2xl font-semibold">Kapcsolat</h2>
-          <p className="max-w-lg text-sm leading-loose text-muted">
+          <p className="text-sm leading-loose text-muted">
             Kérdésed van a termékkel kapcsolatban? Kollégáink szívesen
             segítenek a választásban, a helyszíni felmérés és a telepítés
             részleteiben.
@@ -156,71 +240,6 @@ export default async function ProductPage({
           </Link>
         </div>
       </div>
-
-      {/* Configuration options — informational for now, no interactive
-          picker or price recalculation yet. */}
-      {product.variantOptions.length > 0 || product.threeDArUrl ? (
-        <div className="px-16 pb-16 max-lg:px-6">
-          {product.variantOptions.length > 0 ? (
-            <div className="mb-8">
-              <h2 className="mb-5.5 text-2xl font-semibold">Konfigurációs opciók</h2>
-              <div className="flex flex-col gap-5">
-                {product.variantOptions.map((group) => (
-                  <div key={group.nameHu}>
-                    <div className="mb-2.5 text-sm font-semibold">{group.nameHu}</div>
-                    <div className="flex flex-wrap gap-3">
-                      {group.choices.map((choice) => (
-                        <div key={choice.nameHu} className="w-20">
-                          {choice.imageUrl ? (
-                            <div className="h-16 w-20 overflow-hidden border border-line">
-                              <img
-                                src={choice.imageUrl}
-                                alt={choice.nameHu}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="h-16 w-20 border border-line bg-paper-muted" />
-                          )}
-                          <div className="mt-1 text-center text-[11px] text-muted">
-                            {choice.nameHu}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          {product.threeDArUrl ? (
-            <a
-              href={product.threeDArUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
-            >
-              3D / AR megtekintés
-            </a>
-          ) : null}
-        </div>
-      ) : null}
-
-      {/* Extras — same card layout as the homepage section */}
-      {extras.length > 0 ? (
-        <div className="bg-white px-16 py-22 max-lg:px-6">
-          <h2 className="mb-7.5 text-2xl font-semibold">Rendelhető extrák</h2>
-          <div className="grid grid-cols-4 gap-6 max-lg:grid-cols-2">
-            {extras.map((extra) => (
-              <ExtraCard
-                key={extra.id}
-                extra={extra}
-                name={localized(locale, extra.nameHu, extra.nameEn)}
-              />
-            ))}
-          </div>
-        </div>
-      ) : null}
 
       {/* Related */}
       {related.length > 0 ? (

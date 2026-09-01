@@ -33,7 +33,7 @@ export function ProductGallery({
   }, [lightboxOpen, images.length]);
 
   return (
-    <div className="w-165 shrink-0 max-lg:w-full">
+    <div className="w-full">
       <button
         type="button"
         onClick={() => hasImages && setLightboxOpen(true)}
