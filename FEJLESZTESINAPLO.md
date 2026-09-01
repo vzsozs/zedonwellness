@@ -128,7 +128,28 @@ Eddig az admin a valós DB-be írt, de a nyilvános oldal (főoldal, terméklist
 - Végig tesztelve egy elkülönített worktree-ben: production build DB-kapcsolat nélkül lefut, majd valós kategória+termék rekord a dev DB-be seedelve, és ellenőrizve, hogy a főoldal, terméklista és termékrészletező helyesen jeleníti meg (1M Ft-os szabály, badge, specifikáció, sorozat-szűrő) — utána a teszt adatok törölve.
 
 ### Következő lépések
-- Néhány valós termék felvitele az adminon keresztül (a felhasználó viszi fel, minta-adatokat a fejlesztő ad).
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
-- Termékkép-feltöltés az adminban (jelenleg URL-listaként kezelhető az `images` mező — külső képhosztingra mutató linkeket kell megadni, amíg nincs saját feltöltés).
 - Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy.
+
+## 2026-09-01 — 3 minta termék felvitele
+
+A user kérésére a fejlesztő közvetlenül (script útján) felvitte a 3 korábban javasolt minta terméket + a hozzájuk tartozó 3 kategóriát a valós DB-be (jakuzzik/HC Design 5, szaunak/Hanscraft hordószauna, grillek/BULL grill), az élő Webflow-oldal saját CDN-jéről származó valós termékfotókkal. Ellenőrizve mind a fejlesztői worktree-ben, mind a user saját dev szerverén — mindkettő megjeleníti.
+
+## 2026-09-01 — Admin felület nagy bővítése (feltöltés, sorozat-kezelés, konfigurációs opciók)
+
+A user átnézte a jelenleg is élő `zedonwellness.com/termekek/hc-1` terméket, és ez alapján bővítettük az admint — a Webflow-oldal hamarosan megszűnik, ezért **onnantól semmilyen külső (Webflow CDN) linket nem szabad használni**, mindennek saját feltöltésből kell jönnie.
+
+- **Valódi képfeltöltés** (URL-lista helyett): főkép + galéria (egyéb képek), fájlválasztóval. **Fontos technikai buktató, amit menet közben találtunk és javítottunk**: a Next.js `standalone` szerver a `public/` mappa tartalmát csak **indításkor** olvassa be — egy futás közben odaírt fájl 404-et adott volna egészen a konténer újraindításáig. Megoldás: a feltöltött fájlok mostantól a `public/`-on **kívül**, egy `uploads/` mappában tárolódnak (Docker volume, gitignore-olva), és egy dedikált route handler (`src/app/uploads/[...path]/route.ts`) szolgálja ki őket — ez minden kérésnél frissen olvas a lemezről, tehát azonnal működik újraindítás nélkül is. Ezt éles `standalone` szerverrel (nem `next start`-tal, ami nem támogatott ezzel a configgal) le is teszteltem: a hiba reprodukálva, majd a javítás igazoltan működik.
+- **Sorozatok (Series) valós táblává alakítva** (`product_series`, kategóriánként): a termék felviteli formon mostantól legördülő menü, ami a választott kategóriától függően szűri a listát — nem lehet elgépelni. A sorozatokat az **admin/kategóriák** oldalon (a kategória szerkesztésekor) lehet felvenni/törölni, ahogy kérted. A meglévő szöveges `series` mezők adatai átmigrálva az új táblába, a régi oszlop törölve.
+- **Slug mező alapból zárolva** (lakat ikon oldja fel), és **automatikusan generálódik a HU névből** gépelés közben — véletlen felülírás ellen.
+- **Új mezők**: `sku` (cikkszám), rövid leírás (HU/EN, kártyákhoz) a meglévő hosszú leírás mellett, `threeDArUrl` (3D/AR link), **konfigurációs opciók** (ingyenes választási csoportok, pl. "Héj színe: Fehér, Szürke, Fekete" — a `hc-1` oldalon látott Keret/Sarok/Héj/Tető színválasztók mintájára) és **rendelhető extrák** (saját árral, pl. "Lépcső: 59990" — a `hc-1` oldal árazott kiegészítő listája alapján). Mindkettő egyelőre strukturált szöveges mezőként (ugyanaz a minta, mint a már bevált `specs` mezőnél) — **a vásárlói oldali kiválasztó felület (ár-újraszámolással) még nincs megépítve, ez explicit később jön, amikor odaérünk.** A termékoldal egyelőre csak megjeleníti ezeket (nem interaktív).
+- **Admin elrendezés szélesítve**: a kategória/termék form korábban `max-w-md`/`max-w-2xl`-re volt korlátozva, ami üres helyet hagyott az oldalsáv mellett — most kitölti a rendelkezésre álló szélességet (pl. a kategória szerkesztő 2 hasábos: form + sorozat-kezelő egymás mellett).
+- **Fontos infra-felfedezés**: a next-auth `AUTH_TRUST_HOST=true` env változó nélkül **"UntrustedHost" hibával elutasítja a bejelentkezést**, amint nem a legalapértelmezettebb host/port konfiguráción fut (reverse proxy, egyedi port) — ez éles környezetben (Nginx Proxy Manager mögött) mindenképp kellett volna, jó, hogy most derült ki. Hozzáadva a `.env.example`-hez és a helyi `.env.local`-hoz is.
+- Migráció: a `series` szöveges mező → `seriesId` FK átállás két lépcsőben történt (előbb csak hozzáadás, majd a régi oszlop külön migrációban törölve), mert a `drizzle-kit generate` az átnevezés-detektáláshoz interaktív terminál promptot igényelt volna, ami a nem-interaktív környezetben nem futtatható.
+- Végig tesztelve egy elkülönített worktree-ben, **a tényleges `node .next/standalone/server.js` induló paranccsal** (nem `next start`, mert az nem támogatja a standalone configot) — admin bejelentkezés, sorozat-kezelés, termék szerkesztő form (minden új mező jelen van, slug írásvédett, meglévő kép megjelenik), és a feltöltési route valóban kiszolgál egy indítás után hozzáadott fájlt.
+
+### Következő lépések
+- Néhány valós termék felvitele az adminon keresztül (a user viszi fel a maradék terméket, most már valódi képfeltöltéssel).
+- Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
+- Vásárlói oldali konfigurációs opció-választó (a most bevezetett `variantOptions`/`extras` adatokra épülve, ár-újraszámolással).
+- Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy — ekkor kell majd az `uploads/` mappát is perzisztens volume-ként bekötni (`docker-compose.yml`-ben már megvan).
