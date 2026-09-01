@@ -12,7 +12,7 @@ export function FeaturedProducts() {
     <section className="px-16 py-22 max-lg:px-6">
       <div className="mb-11 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-4">
         <div>
-          <div className="text-xs font-bold tracking-[0.14em] text-accent uppercase">
+          <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {t("featuredEyebrow")}
           </div>
           <h2 className="mt-3.5 text-3xl font-semibold">{t("featuredTitle")}</h2>

@@ -9,7 +9,7 @@ export function CategoryGrid() {
   return (
     <section className="px-16 pt-24 pb-10 max-lg:px-6">
       <div className="mb-14 text-center">
-        <div className="text-xs font-bold tracking-[0.14em] text-accent uppercase">
+        <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("categoriesEyebrow")}
         </div>
         <h2 className="mt-3.5 text-4xl font-semibold max-lg:text-3xl">

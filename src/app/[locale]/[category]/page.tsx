@@ -43,7 +43,7 @@ export default async function CategoryPage({
               {category.subtitleHu}
             </p>
           </div>
-          <div className="text-xs font-bold tracking-[0.14em] text-accent uppercase">
+          <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {productList.length} termék
           </div>
         </div>

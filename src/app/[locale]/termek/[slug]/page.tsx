@@ -72,7 +72,7 @@ export default async function ProductPage({
 
         {/* Info */}
         <div className="flex-1 pt-1.5">
-          <div className="text-xs font-bold tracking-[0.14em] text-accent uppercase">
+          <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {product.series} sorozat
           </div>
           <h1 className="mt-3 text-[34px] leading-tight font-semibold">
