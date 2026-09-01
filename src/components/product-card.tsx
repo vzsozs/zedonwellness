@@ -20,11 +20,11 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">
           {product.series}
         </div>
-        <h3 className="mt-1.5 text-base font-bold group-hover:text-accent">
+        <h3 className="mt-1.5 text-lg font-bold group-hover:text-accent">
           {product.nameHu}
         </h3>
         <div className="mt-1 text-[12.5px] text-muted">{product.capacityHu}</div>
-        <div className="mt-3 text-[16.5px] font-bold text-accent">
+        <div className="mt-3 text-xl font-extrabold text-accent">
           {product.customQuote ? "Egyedi ajánlat" : formatHuf(product.priceHuf)}
         </div>
       </div>

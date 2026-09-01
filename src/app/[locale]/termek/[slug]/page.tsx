@@ -83,7 +83,7 @@ export default async function ProductPage({
             {product.descriptionHu}
           </p>
 
-          <div className="mt-7 text-[32px] font-bold text-accent">
+          <div className="mt-7 text-[32px] font-extrabold text-accent">
             {product.customQuote ? "Egyedi ajánlat" : formatHuf(product.priceHuf)}
           </div>
 

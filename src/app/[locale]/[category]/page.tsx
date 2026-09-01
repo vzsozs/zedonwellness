@@ -57,7 +57,7 @@ export default async function CategoryPage({
               <button
                 key={series}
                 type="button"
-                className="flex h-10 items-center justify-center border border-line px-4.5 text-sm font-semibold whitespace-nowrap text-ink hover:border-ink"
+                className="flex h-10 min-w-35 flex-1 items-center justify-center border border-line px-4.5 text-sm font-semibold whitespace-nowrap text-ink hover:border-ink"
               >
                 {series}
               </button>

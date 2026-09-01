@@ -42,7 +42,7 @@ export function FeaturedProducts() {
               <h3 className="mt-1.5 text-lg font-bold group-hover:text-accent">
                 {p.nameHu}
               </h3>
-              <div className="mt-2.5 text-lg font-bold text-accent">
+              <div className="mt-2.5 text-lg font-extrabold text-accent">
                 {formatHuf(p.priceHuf)}
               </div>
             </div>
