@@ -97,3 +97,14 @@ Elindult a tényleges kódolás. Létrejött az alap Next.js 16 (App Router, Typ
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág, 1M Ft-os szabály a checkoutban is).
 - Termékkép-feltöltés az adminban (jelenleg csak URL-listaként kezelhető a `images` mező).
 - Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy.
+
+## 2026-09-01 — Mobil finomhangolás + gombstílus az élő oldalról
+
+- **Hamburger menü**: a fejléc (`site-header.tsx`) kliens-komponenssé alakítva, mobilon (`max-lg`) hamburger ikon nyit egy lecsúszó menüpanelt ugyanazokkal a linkekkel.
+- **Hero mobilon**: a TÜV-jelvény bal felülre kerül (desktopon marad jobb alul).
+- **Bizalmi sáv (TrustStrip)**: mobilon 2×2-es grid a korábbi tördelt sor helyett.
+- **Terméklista szűrők**: a függőleges checkbox-lista helyett egységes méretű, vízszintesen tördelődő "chip" gombok (még csak vizuális, nincs bekötve valós szűréshez).
+- **Termék név/ár**: mindenhol (kártyák, kiemelt termékek, részletező oldal) félkövér név + türkiz-zöld (`text-accent`) félkövér ár.
+- **CTA gomb (Kosárba / Megrendelés leadása)**: `coprBlue` háttérszín + az élő oldal eredeti "Button Wave" mintázata — ezt kikerestem az élő Webflow-oldal CSS-éből (`Button Wave.svg`, buborék-motívumhoz illő finom hullámvonalak a gomb bal alsó sarkából), lementve ide: `public/brand/button-wave.svg`. Ugyanaz a márka-eszköz, amit az élő oldal is használ.
+- **Favicon/webclip**: bekötve a Next metaadatokba (`public/favico.png`, `public/webclip.png`), mindkét gyökér-layoutban (`[locale]` és `admin`).
+- Ellenőrzés: production build + fejtelen Chrome screenshotok (mobil 390px, desktop 1440px) egy elkülönített worktree-ben — a `.next` nem keveredett a felhasználó saját dev szerverével.
