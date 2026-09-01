@@ -41,13 +41,11 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute right-10 bottom-8 flex items-center gap-3 bg-white/95 px-4 py-3 shadow-sm max-lg:right-5 max-lg:bottom-5 max-lg:px-3 max-lg:py-2.5">
-        <img
-          src="/tuv_certified.webp"
-          alt="TÜV Rheinland Certified"
-          className="h-11 w-auto max-lg:h-9"
-        />
-      </div>
+      <img
+        src="/tuv_certified.webp"
+        alt="TÜV Rheinland Certified"
+        className="absolute right-10 bottom-8 h-24 w-auto drop-shadow-md max-lg:right-5 max-lg:bottom-5 max-lg:h-18"
+      />
     </section>
   );
 }

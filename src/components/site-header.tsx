@@ -32,7 +32,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b border-line px-16 py-5 max-lg:px-6">
+      <div className="flex items-center justify-between border-b border-line bg-white px-16 py-5 max-lg:px-6">
         <Link href="/" className="shrink-0">
           <img
             src="/brand/zedonwellness-logo.png"
@@ -56,6 +56,9 @@ export function SiteHeader() {
           </Link>
           <Link href="/blog" className="text-ink hover:text-accent">
             {t("blog")}
+          </Link>
+          <Link href="/a-ceg" className="text-ink hover:text-accent">
+            {t("company")}
           </Link>
           <Link href="/kapcsolat" className="text-ink hover:text-accent">
             {t("contact")}
