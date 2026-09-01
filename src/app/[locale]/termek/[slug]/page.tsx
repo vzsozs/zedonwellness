@@ -136,13 +136,14 @@ export default async function ProductPage({
               <h2 className="mb-3 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
                 Rendelhető extrák
               </h2>
-              <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+              <div className="flex flex-wrap gap-4">
                 {extras.map((extra) => (
-                  <ExtraCard
-                    key={extra.id}
-                    extra={extra}
-                    name={localized(locale, extra.nameHu, extra.nameEn)}
-                  />
+                  <div key={extra.id} className="w-52 max-sm:w-full">
+                    <ExtraCard
+                      extra={extra}
+                      name={localized(locale, extra.nameHu, extra.nameEn)}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
