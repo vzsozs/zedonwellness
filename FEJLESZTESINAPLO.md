@@ -13,7 +13,7 @@ Ez a fájl végigvezeti a zedonwellness.com új, kód szintű webshop-fejleszté
 - Sitemap felmérve — alapja lesz a redirect-tervnek élesítéskor.
 
 ### Döntések
-- **Stack:** Next.js (TypeScript) + Prisma/Postgres + Stripe. Monolit app (nem külön frontend/backend repo).
+- **Stack:** Next.js (TypeScript) + Drizzle ORM/Postgres + Stripe + Tailwind/shadcn-ui. Monolit app (nem külön frontend/backend repo). *(2026-09-01 update: a szerveren futó testvér-projektek — hhm-shop, paalmode, mfa-shop stb. — mind ezt a mintát követik: Next.js + Drizzle + shadcn/ui + Docker; ehhez igazodunk Prisma helyett Drizzle-lel az egységes karbantarthatóság miatt.)*
 - **Nyelvek:** HU (alapértelmezett) + EN, jövőben bővíthető architektúrával.
 - **Blog:** marad a Soro (https://trysoro.com/) rendszerben, az új oldal API-n keresztül olvassa ki és jeleníti meg — nem duplikáljuk a szerkesztőfelületet.
 - **Termékadatok:** nincs automata migráció — admin felületen kézzel visszük fel újra, alkalom a leírások/SEO szövegek tisztítására.
@@ -26,7 +26,10 @@ Ez a fájl végigvezeti a zedonwellness.com új, kód szintű webshop-fejleszté
   - A jelenlegi URL-struktúrát ahol logikus, követjük; ahol nem, redirect-térképet készítünk élesítéskor.
   - Cél: a jelenlegi organikus eredmények megtartása + javítása (meta, hreflang, sitemap, structured data).
 - **Admin felület:** saját, a projekten belüli admin (termékek, kategóriák, rendelések, szállítási díjtábla, blog-kapcsolat).
-- **Szerver/hosting:** saját VPS, Linux, több oldal Nginx + PM2 (feltehetően PM2 process manager) alatt. SSH hozzáférést a user adja, a szerver-oldali beállítást (Nginx vhost, PM2, SSL/certbot) Claude végzi, minden lépés egyeztetve/jóváhagyva.
+- **Szerver/hosting:** saját VPS (Ubuntu, `vps` host, 185.208.227.129). SSH hozzáférés tesztelve, működik. Felmérés eredménye:
+  - A gépen **Nginx Proxy Manager** fut Docker-konténerben (nem sima nginx/PM2 a webappoknál) — ez proxyzza a domaineket SSL-lel.
+  - Minden testvér-projekt (hhm-shop-lms, paalmode, mfa-shop, szivunklelkunk, velenceitopart, formagyar, thermoprofessional) saját Docker-konténerben fut, Next.js app port 3000-en, jellemzően saját Postgres-konténerrel, `/root/projects/<projekt-név>/` alatt.
+  - A zedonwellness projekt is ezt a mintát fogja követni: `/root/projects/zw-shop/` alatt, `zw-shop-web` + `zw-shop-db` konténerek, NPM-ben proxyzva a `zw.formagyar.hu` (majd élesben a `zedonwellness.com`) domainre.
 
 ### Nyitott / későbbi kérdések
 - SSH hozzáférés a VPS-hez megadva (kulcsalapú, root). *A konkrét kulcs/IP nincs a naplóban rögzítve — biztonsági megfontolásból nem kerül git-be verzionált fájlba.*
