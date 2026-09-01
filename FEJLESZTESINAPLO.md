@@ -174,3 +174,13 @@ A user visszajelzése szerint az előző admin-bővítés még "fapados" volt (t
 - Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
 - Vásárlói oldali konfigurációs opció-választó (a `variantOptions`/`extras` adatokra épülve, ár-újraszámolással).
 - Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy — ekkor kell majd az `uploads/` mappát is perzisztens volume-ként bekötni (`docker-compose.yml`-ben már megvan).
+
+## 2026-09-01 — Hibajavítás: képfeltöltés összeomlás + extrák kép/kártya
+
+- **Hiba javítva**: a termék-adminban a Héj színe (variáns) opcióhoz kép feltöltésekor a mentés "An unexpected response was received from the server" hibával elszállt. Ok: a Next.js Server Actionök alapértelmezett **1 MB-os** kérésméret-korlátja — egy valódi fotó simán túllépi. Megoldás: `next.config.ts`-ben `experimental.serverActions.bodySizeLimit` felemelve `20mb`-ra (illeszkedik a `src/lib/upload.ts` 8 MB-os fájlonkénti korlátjához, több fájlos submitokra is elég hellyel). **Megjegyzés**: ezt a konkrét javítást nem tudtam böngésző nélkül, HTTP-szinten végigtesztelni — a Next.js `bind()`-olt Server Actionök kérés-kódolását kézzel (curl-lal) nem sikerült megbízhatóan reprodukálni (ismét, ahogy korábban a projektben már tapasztaltuk), úgyhogy ez a dokumentált, tünetre pontosan illő szabványos javítás, de a user böngészőjében kér végső megerősítést.
+- **Extrák**: kép mező hozzáadva (`extras.imageUrl`, migráció `0006`), az admin "Extrák" oldal kártyás elrendezésre váltva (kép + név + ár + sorrend, mentés/törlés soronként).
+- **Extrák a főoldalon**: új szekció (`ExtrasSection`) a Kiemelt termékek alatt, kártyaként jeleníti meg az extrákat (kép, név, ár) — ahogy kérted.
+- Végig tesztelve egy elkülönített worktree-ben (build, majd az extrák kép-feltöltés + főoldali megjelenítés end-to-end ellenőrizve) — a teszt adatok törölve.
+
+### Nyitott kérdés a userhez
+A user felvetett egy nagyobb jövőbeli funkciót: a termékoldalon interaktív konfigurátor (opciók/extrák kattintással kiválaszthatók, validáció, ha valami hiányzik), plusz egy mindig látható, felfelé "kitapadó" ár+kosár sáv mobilon és desktopon is. Ez a `variantOptions`/`extras` adatokra épülne, de a tényleges kosár/checkout rendszer (Stripe) még nincs megépítve — ennek időzítéséről/terjedelméről a fejlesztő visszakérdezett a usernél, mielőtt nekilátna.
