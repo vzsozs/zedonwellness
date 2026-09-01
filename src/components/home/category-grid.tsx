@@ -1,42 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-
-const categories = [
-  {
-    slug: "jakuzzik",
-    key: "jacuzzis",
-    gradient: "from-[#CDEDEF] to-[#9FD9DC]",
-    iconColor: "#0A6B76",
-    subtitle: "HC Design, Celtic, OKA — 25+ modell",
-    icon: (
-      <path d="M4 14c1.5 1.5 2.5 1.5 4 0s2.5-1.5 4 0 2.5 1.5 4 0 2.5-1.5 4 0M4 18c1.5 1.5 2.5 1.5 4 0s2.5-1.5 4 0 2.5 1.5 4 0 2.5-1.5 4 0" />
-    ),
-  },
-  {
-    slug: "szaunak",
-    key: "saunas",
-    gradient: "from-[#E9E2D3] to-[#D3C4A3]",
-    iconColor: "#7A5C2E",
-    subtitle: "Hordó, hagyományos, infra — 15+ modell",
-    icon: <path d="M3 21h18M5 21V9l7-6 7 6v12M9 21v-6h6v6" />,
-  },
-  {
-    slug: "grillek",
-    key: "grills",
-    gradient: "from-[#EFD9C9] to-[#DFAE8B]",
-    iconColor: "#8A4A22",
-    subtitle: "Beépíthető, kocsi, kemence",
-    icon: <path d="M7 10V7a5 5 0 0 1 10 0v3M3 19h18M3 10h18v9H3z" />,
-  },
-  {
-    slug: "kiegeszitok",
-    key: "accessories",
-    gradient: "from-[#D7E4E0] to-[#AFC7C0]",
-    iconColor: "#3E5F55",
-    subtitle: "Vegyszerek, takarók, szűrők",
-    icon: <path d="M12 3a9 9 0 1 0 9 9M12 7v5l4 2" />,
-  },
-] as const;
+import { categories } from "@/lib/catalog";
 
 export function CategoryGrid() {
   const t = useTranslations("home");
@@ -70,12 +34,12 @@ export function CategoryGrid() {
                 stroke={cat.iconColor}
                 strokeWidth={1.3}
               >
-                {cat.icon}
+                <path d={cat.icon} />
               </svg>
             </div>
             <div className="p-6">
-              <h3 className="text-lg font-semibold">{nav(cat.key)}</h3>
-              <p className="mt-2 text-sm text-muted">{cat.subtitle}</p>
+              <h3 className="text-lg font-semibold">{nav(cat.navKey)}</h3>
+              <p className="mt-2 text-sm text-muted">{cat.subtitleHu}</p>
             </div>
           </Link>
         ))}
