@@ -94,6 +94,17 @@ export function SiteHeader() {
               {t(l.key)}
             </Link>
           ))}
+          <div className="relative py-3.5">
+            <Search
+              className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted"
+              strokeWidth={1.8}
+            />
+            <input
+              type="search"
+              placeholder="Keresés…"
+              className="w-full border border-line py-2.5 pr-3.5 pl-9 text-sm outline-none focus:border-accent"
+            />
+          </div>
         </nav>
       ) : null}
     </header>

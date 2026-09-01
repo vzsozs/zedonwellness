@@ -22,6 +22,7 @@ export default async function CategoryPage({
   if (!category) notFound();
 
   const productList = getProductsByCategory(categorySlug);
+  const seriesList = [...new Set(productList.map((p) => p.series))];
   const nav = await getTranslations("nav");
 
   return (
@@ -49,33 +50,54 @@ export default async function CategoryPage({
         </div>
       </div>
 
-      <div className="px-16 pt-9 pb-25 max-lg:px-6">
-        {/* Filters — visual only for now; wired up once the catalog is backed by real data. */}
-        {[...new Set(productList.map((p) => p.series))].length > 0 ? (
-          <div className="mb-8 flex flex-wrap gap-2.5">
-            {[...new Set(productList.map((p) => p.series))].map((series) => (
-              <button
-                key={series}
-                type="button"
-                className="flex h-10 min-w-35 flex-1 items-center justify-center border border-line px-4.5 text-sm font-semibold whitespace-nowrap text-ink hover:border-ink"
-              >
-                {series}
-              </button>
-            ))}
-          </div>
+      <div className="flex gap-10 px-16 pt-9 pb-25 max-lg:px-6 max-lg:flex-col">
+        {/* Desktop filters — visual only for now; wired up once the catalog is backed by real data. */}
+        {seriesList.length > 0 ? (
+          <aside className="w-59 shrink-0 max-lg:hidden">
+            <div className="mb-5.5 border-b border-line pb-5.5">
+              <div className="mb-4 text-[13px] font-bold tracking-wide text-ink uppercase">
+                Sorozat
+              </div>
+              <div className="flex flex-col gap-3 text-sm text-muted">
+                {seriesList.map((series) => (
+                  <label key={series} className="flex items-center gap-2.5">
+                    <input type="checkbox" className="accent-accent" />
+                    {series}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </aside>
         ) : null}
 
-        {productList.length === 0 ? (
-          <p className="text-sm text-muted">
-            Ebben a kategóriában hamarosan elérhetők lesznek termékek.
-          </p>
-        ) : (
-          <div className="grid grid-cols-3 gap-x-6 gap-y-6.5 max-lg:grid-cols-2 max-sm:grid-cols-1">
-            {productList.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        )}
+        <div className="flex-1">
+          {/* Mobile filters — horizontal chips */}
+          {seriesList.length > 0 ? (
+            <div className="mb-8 hidden flex-wrap gap-2.5 max-lg:flex">
+              {seriesList.map((series) => (
+                <button
+                  key={series}
+                  type="button"
+                  className="flex h-10 min-w-35 flex-1 items-center justify-center border border-line px-4.5 text-sm font-semibold whitespace-nowrap text-ink hover:border-ink"
+                >
+                  {series}
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          {productList.length === 0 ? (
+            <p className="text-sm text-muted">
+              Ebben a kategóriában hamarosan elérhetők lesznek termékek.
+            </p>
+          ) : (
+            <div className="grid grid-cols-3 gap-x-6 gap-y-6.5 max-lg:grid-cols-2 max-sm:grid-cols-1">
+              {productList.map((product) => (
+                <ProductCard key={product.slug} product={product} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );
