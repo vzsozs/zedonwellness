@@ -108,3 +108,27 @@ Elindult a tényleges kódolás. Létrejött az alap Next.js 16 (App Router, Typ
 - **CTA gomb (Kosárba / Megrendelés leadása)**: `coprBlue` háttérszín + az élő oldal eredeti "Button Wave" mintázata — ezt kikerestem az élő Webflow-oldal CSS-éből (`Button Wave.svg`, buborék-motívumhoz illő finom hullámvonalak a gomb bal alsó sarkából), lementve ide: `public/brand/button-wave.svg`. Ugyanaz a márka-eszköz, amit az élő oldal is használ.
 - **Favicon/webclip**: bekötve a Next metaadatokba (`public/favico.png`, `public/webclip.png`), mindkét gyökér-layoutban (`[locale]` és `admin`).
 - Ellenőrzés: production build + fejtelen Chrome screenshotok (mobil 390px, desktop 1440px) egy elkülönített worktree-ben — a `.next` nem keveredett a felhasználó saját dev szerverével.
+
+## 2026-09-01 — GitHub repó + szűrő/ár finomítás
+
+- Projekt feltöltve GitHubra: `git@github.com:vzsozs/zedonwellness.git`, `origin/master` követve. Mostantól minden commit után `git push`.
+- **Terméklista szűrők**: desktopon (`lg+`) visszaállt az eredeti bal oldali checkbox-lista; mobilon marad a vízszintes chip-sor, most már teljes szélességben (`flex-1`, `min-w-35`, mobilon tördelődik).
+- **Termékkártyák** (lista nézet): nagyobb név (`text-lg`) és ár (`text-xl`), az ár mindenhol `font-extrabold` (kártyák, kiemelt termékek, részletező).
+- **Mobil hamburger menü**: kereső beviteli mező a menü alján.
+
+## 2026-09-01 — Nyilvános oldal bekötve a valós adatbázisra
+
+Eddig az admin a valós DB-be írt, de a nyilvános oldal (főoldal, terméklista, termékrészletező) még mindig a `src/lib/catalog.ts` statikus placeholder-fájlból olvasott — ez a rés most be lett zárva, **innentől amit az adminban felviszel, az azonnal megjelenik az élő oldalon** (max ~60 mp-es cache miatt, ld. lentebb).
+
+- **Séma-bővítés** (migráció `0001`): `products.series` (sorozat, pl. "HC Design" — ez adja a szűrőchipeket is), `products.subtitleHu`/`subtitleEn` (rövid alcím a kártyákon, pl. "6 fő · 220×220 cm"), `categories.descriptionHu`/`descriptionEn` (a kategória oldal fejlécében megjelenő leírás). Admin formok frissítve ezekkel.
+- **`src/lib/catalog.ts` törölve** — helyette valós Drizzle-lekérdezések a `CategoryGrid`, `FeaturedProducts`, `/[category]` és `/termek/[slug]` oldalakon.
+- **Vizuális fallback-ek** (`src/lib/visuals.ts`): a 4 ismert kategóriaslug (jakuzzik, szaunak, grillek, kiegeszitok) megtartja a mockup-beli egyedi gradienst/ikont; bármilyen új, adminban létrehozott kategória egy alapértelmezett vizuált kap. Termékeknél, ha nincs feltöltött kép, egy determinisztikus (ID alapú) gradiens-placeholder jelenik meg — amint van kép a `images` mezőben, azt mutatja.
+- **Badge-logika**: a "ÚJDONSÁG"/"AKCIÓ" jelölés mostantól az admin `isNew`/`isOnSale` kapcsolóiból származik, nem hardcode-olt adatból.
+- **Build-idejű DB-függőség megszüntetve**: a `generateStaticParams` eltávolítva a locale layoutból és a kategória/termék oldalakról — enélkül a `next build` (és így a Docker image build is) nem igényel élő DB-kapcsolatot, ami fontos, mert a Docker build fázisban a `db` konténer még nem feltétlenül érhető el. Az oldalak helyette kérésre renderelődnek, `revalidate = 60` (ISR-szerű cache) — ezért van a fenti ~60 mp-es késleltetés az admin-módosítások megjelenésében.
+- Végig tesztelve egy elkülönített worktree-ben: production build DB-kapcsolat nélkül lefut, majd valós kategória+termék rekord a dev DB-be seedelve, és ellenőrizve, hogy a főoldal, terméklista és termékrészletező helyesen jeleníti meg (1M Ft-os szabály, badge, specifikáció, sorozat-szűrő) — utána a teszt adatok törölve.
+
+### Következő lépések
+- Néhány valós termék felvitele az adminon keresztül (a felhasználó viszi fel, minta-adatokat a fejlesztő ad).
+- Kosár és checkout folyamat (Stripe EUR/HUF + megrendelés-only ág).
+- Termékkép-feltöltés az adminban (jelenleg URL-listaként kezelhető az `images` mező — külső képhosztingra mutató linkeket kell megadni, amíg nincs saját feltöltés).
+- Szerverre telepítés: Nginx Proxy Manager proxy host a `zw.formagyar.hu`-ra, teljes app konténer build+deploy.
