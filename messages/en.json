@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "jacuzzis": "Jacuzzis",
+    "saunas": "Saunas",
+    "grills": "Grills",
+    "accessories": "Accessories",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "topbar": {
+    "phone": "Free consultation: +36 1 234 5678",
+    "shipping": "Nationwide delivery"
+  },
+  "home": {
+    "eyebrow": "Wellness in your own backyard",
+    "title": "Premium jacuzzis and saunas, tailored for your home",
+    "subtitle": "For over 15 years we've been designing and delivering quality wellness equipment — with expert consultation, on-site assessment and full-service support.",
+    "ctaPrimary": "Explore products",
+    "ctaSecondary": "Request a quote",
+    "trust": {
+      "warranty": "5-year warranty",
+      "shipping": "Nationwide home delivery",
+      "service": "In-house service team",
+      "consulting": "On-site expert consultation"
+    },
+    "categoriesEyebrow": "Product categories",
+    "categoriesTitle": "Explore our range",
+    "featuredEyebrow": "Featured products",
+    "featuredTitle": "Our most popular models",
+    "viewAll": "All products"
+  },
+  "footer": {
+    "tagline": "Premium wellness equipment, from manufacturer to your garden.",
+    "products": "Products",
+    "company": "Company",
+    "about": "About us",
+    "factory": "The factory",
+    "service": "Service",
+    "contactSection": "Contact",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use"
+  }
+}

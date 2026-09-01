@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Manrope', system-ui, sans-serif; background: #FAFAF8; color: #17201E; }
+    h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Manrope', sans-serif; margin: 0; }
+    a { color: #0E8C9A; text-decoration: none; }
+    a:hover { color: #0A6B76; }
+    .btn-primary { background: #0E8C9A; color: #FFFFFF; border: none; border-radius: 2px; padding: 16px 32px; font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; }
+    .btn-secondary { background: transparent; color: #17201E; border: 1.5px solid #17201E; border-radius: 2px; padding: 15px 30px; font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; }
+    .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #0E8C9A; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; background: #FAFAF8;">
+
+  <!-- Top utility bar -->
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 64px; background:#17201E; color:#D8DEDD; font-size:12.5px; letter-spacing:0.03em;">
+    <div style="display:flex; gap:28px;">
+      <span>Ingyenes szaktanácsadás: +36 1 234 5678</span>
+      <span>Országos kiszállítás</span>
+    </div>
+    <div style="display:flex; gap:18px; align-items:center;">
+      <a href="#" style="color:#FFFFFF; font-weight:700;">HU</a>
+      <span style="color:#4A5654;">EN</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 22px 64px; border-bottom: 1px solid #E7E5DF; background:#FAFAF8;">
+    <img src="zedonwellness-logo.png" alt="Zedonwellness" style="height:34px; width:auto;">
+    <div style="display:flex; gap:40px; font-size:14.5px; font-weight:600;">
+      <a href="#" style="color:#17201E;">Jakuzzik</a>
+      <a href="#" style="color:#17201E;">Szaunák</a>
+      <a href="#" style="color:#17201E;">Grillek</a>
+      <a href="#" style="color:#17201E;">Kiegészítők</a>
+      <a href="#" style="color:#17201E;">Blog</a>
+      <a href="#" style="color:#17201E;">Kapcsolat</a>
+    </div>
+    <div style="display:flex; gap:22px; align-items:center;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17201E" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#17201E" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div style="position:relative; height:640px; display:flex; align-items:center; overflow:hidden; background: radial-gradient(1100px 640px at 78% 30%, #CFEFF0 0%, #E4F3EE 42%, #FAFAF8 78%);">
+    <svg width="620" height="620" viewBox="0 0 620 620" style="position:absolute; right:-60px; top:-40px; opacity:0.9;">
+      <circle cx="470" cy="150" r="150" fill="#0E8C9A" opacity="0.14"/>
+      <circle cx="300" cy="420" r="220" fill="#0E8C9A" opacity="0.10"/>
+      <circle cx="540" cy="440" r="60" fill="#0E8C9A" opacity="0.22"/>
+      <circle cx="140" cy="120" r="26" fill="#0E8C9A" opacity="0.25"/>
+    </svg>
+    <div style="position:relative; padding: 0 64px; max-width:640px;">
+      <div class="eyebrow" style="margin-bottom:18px;">Wellness a saját kertedben</div>
+      <h1 style="font-size:56px; font-weight:600; line-height:1.08; color:#17201E; letter-spacing:-0.01em;">Prémium jakuzzik és<br>szaunák, otthonra szabva</h1>
+      <p style="font-size:17px; line-height:1.6; color:#41504D; margin:24px 0 34px; max-width:480px;">Több mint 15 éve tervezünk és szállítunk minőségi wellness-berendezéseket — szakmai tanácsadással, helyszíni felméréssel és teljes körű szervizzel.</p>
+      <div style="display:flex; gap:16px;">
+        <button class="btn-primary">Termékek felfedezése
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-secondary">Kérj ajánlatot</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust strip -->
+  <div style="display:flex; justify-content:space-between; padding: 34px 64px; border-bottom:1px solid #E7E5DF; background:#FFFFFF;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E8C9A" stroke-width="1.8"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/></svg>
+      <span style="font-size:14px; font-weight:600;">5 év garancia</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E8C9A" stroke-width="1.8"><rect x="1" y="7" width="15" height="11" rx="1"/><path d="M16 10h3l3 3v4h-6"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>
+      <span style="font-size:14px; font-weight:600;">Országos házhozszállítás</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E8C9A" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span style="font-size:14px; font-weight:600;">Saját szerviz háttér</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E8C9A" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span style="font-size:14px; font-weight:600;">Helyszíni szaktanácsadás</span>
+    </div>
+  </div>
+
+  <!-- Category grid -->
+  <div style="padding: 96px 64px 40px;">
+    <div style="text-align:center; margin-bottom:56px;">
+      <div class="eyebrow">Termékkategóriák</div>
+      <h2 style="font-size:36px; font-weight:600; margin-top:14px;">Fedezd fel a kínálatot</h2>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:24px;">
+
+      <div style="border-radius:2px; overflow:hidden; background:#FFFFFF; border:1px solid #E7E5DF;">
+        <div style="height:220px; background: linear-gradient(155deg, #CDEDEF 0%, #9FD9DC 100%); display:flex; align-items:center; justify-content:center;">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#0A6B76" stroke-width="1.3"><path d="M4 14c1.5 1.5 2.5 1.5 4 0s2.5-1.5 4 0 2.5 1.5 4 0 2.5-1.5 4 0"/><path d="M4 18c1.5 1.5 2.5 1.5 4 0s2.5-1.5 4 0 2.5 1.5 4 0 2.5-1.5 4 0"/><path d="M7 10V6a1 1 0 0 1 1-1h1M17 10V6a1 1 0 0 1-1-1h-1"/><circle cx="9" cy="4" r="1"/><circle cx="15" cy="4" r="1"/></svg>
+        </div>
+        <div style="padding:22px 22px 26px;">
+          <h3 style="font-size:19px; font-weight:600;">Jakuzzik</h3>
+          <p style="font-size:13.5px; color:#63706D; margin:8px 0 0;">HC Design, Celtic, OKA — 25+ modell</p>
+        </div>
+      </div>
+
+      <div style="border-radius:2px; overflow:hidden; background:#FFFFFF; border:1px solid #E7E5DF;">
+        <div style="height:220px; background: linear-gradient(155deg, #E9E2D3 0%, #D3C4A3 100%); display:flex; align-items:center; justify-content:center;">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#7A5C2E" stroke-width="1.3"><path d="M3 21h18M5 21V9l7-6 7 6v12M9 21v-6h6v6"/></svg>
+        </div>
+        <div style="padding:22px 22px 26px;">
+          <h3 style="font-size:19px; font-weight:600;">Szaunák</h3>
+          <p style="font-size:13.5px; color:#63706D; margin:8px 0 0;">Hordó, hagyományos, infra — 15+ modell</p>
+        </div>
+      </div>
+
+      <div style="border-radius:2px; overflow:hidden; background:#FFFFFF; border:1px solid #E7E5DF;">
+        <div style="height:220px; background: linear-gradient(155deg, #EFD9C9 0%, #DFAE8B 100%); display:flex; align-items:center; justify-content:center;">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#8A4A22" stroke-width="1.3"><rect x="3" y="10" width="18" height="9" rx="1"/><path d="M7 10V7a5 5 0 0 1 10 0v3M3 19h18"/></svg>
+        </div>
+        <div style="padding:22px 22px 26px;">
+          <h3 style="font-size:19px; font-weight:600;">Grillek</h3>
+          <p style="font-size:13.5px; color:#63706D; margin:8px 0 0;">Beépíthető, kocsi, kemence</p>
+        </div>
+      </div>
+
+      <div style="border-radius:2px; overflow:hidden; background:#FFFFFF; border:1px solid #E7E5DF;">
+        <div style="height:220px; background: linear-gradient(155deg, #D7E4E0 0%, #AFC7C0 100%); display:flex; align-items:center; justify-content:center;">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3E5F55" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>
+        </div>
+        <div style="padding:22px 22px 26px;">
+          <h3 style="font-size:19px; font-weight:600;">Kiegészítők</h3>
+          <p style="font-size:13.5px; color:#63706D; margin:8px 0 0;">Vegyszerek, takarók, szűrők</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Featured products -->
+  <div style="padding: 88px 64px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:44px;">
+      <div>
+        <div class="eyebrow">Kiemelt termékek</div>
+        <h2 style="font-size:32px; font-weight:600; margin-top:14px;">Legnépszerűbb modelljeink</h2>
+      </div>
+      <a href="#" style="font-size:14px; font-weight:700;">Összes termék →</a>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:28px;">
+
+      <div>
+        <div style="height:280px; background: linear-gradient(160deg, #CFEFF0 0%, #9FD9DC 100%); position:relative;">
+          <span style="position:absolute; top:14px; left:14px; background:#17201E; color:#fff; font-size:11px; font-weight:700; padding:5px 10px; letter-spacing:0.04em;">ÚJDONSÁG</span>
+        </div>
+        <div style="padding:18px 2px;">
+          <div style="font-size:12px; color:#63706D; font-weight:600; letter-spacing:0.03em; text-transform:uppercase;">HC Design sorozat</div>
+          <h3 style="font-size:18px; font-weight:600; margin-top:6px;">HC Design 5 — 6 személyes jakuzzi</h3>
+          <div style="margin-top:10px; font-size:18px; font-weight:700; color:#17201E;">1 890 000 Ft</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="height:280px; background: linear-gradient(160deg, #E9E2D3 0%, #D3C4A3 100%); position:relative;"></div>
+        <div style="padding:18px 2px;">
+          <div style="font-size:12px; color:#63706D; font-weight:600; letter-spacing:0.03em; text-transform:uppercase;">Hanscraft</div>
+          <h3 style="font-size:18px; font-weight:600; margin-top:6px;">Hanscraft S2 hordószauna, 300 cm</h3>
+          <div style="margin-top:10px; font-size:18px; font-weight:700; color:#17201E;">1 240 000 Ft</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="height:280px; background: linear-gradient(160deg, #EFD9C9 0%, #DFAE8B 100%); position:relative;">
+          <span style="position:absolute; top:14px; left:14px; background:#0E8C9A; color:#fff; font-size:11px; font-weight:700; padding:5px 10px; letter-spacing:0.04em;">AKCIÓ</span>
+        </div>
+        <div style="padding:18px 2px;">
+          <div style="font-size:12px; color:#63706D; font-weight:600; letter-spacing:0.03em; text-transform:uppercase;">Beépíthető grillek</div>
+          <h3 style="font-size:18px; font-weight:600; margin-top:6px;">4 égős rozsdamentes gázgrill</h3>
+          <div style="margin-top:10px; font-size:18px; font-weight:700; color:#17201E;">420 000 Ft</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Testimonial / brand statement -->
+  <div style="background:#17201E; color:#FAFAF8; padding:100px 64px; text-align:center;">
+    <svg width="34" height="26" viewBox="0 0 34 26" fill="#0E8C9A" style="margin:0 auto 24px;"><path d="M0 26V15.6C0 6.4 5.4 1 14.5 0l1 4.3C9 5.6 6 9 6 14h8v12H0Zm18.5 0V15.6C18.5 6.4 24 1 33 0l1 4.3c-6.5 1.3-9.5 4.7-9.5 9.7h8v12h-14Z"/></svg>
+    <p style="font-family:'Bricolage Grotesque', sans-serif; font-size:28px; font-weight:500; line-height:1.5; max-width:800px; margin:0 auto;">„A felméréstől a telepítésig minden lépésben velünk voltak — a jakuzzink pontosan olyan lett, amilyennek elképzeltük.”</p>
+    <div style="margin-top:28px; font-size:14px; color:#9FB0AC;">Kovács Family, Budapest</div>
+  </div>
+
+  <!-- Footer -->
+  <div style="padding:64px 64px 40px; background:#FAFAF8;">
+    <div style="display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:48px; border-bottom:1px solid #E7E5DF;">
+      <div>
+        <img src="zedonwellness-logo.png" alt="Zedonwellness" style="height:28px; width:auto; margin-bottom:16px;">
+        <p style="font-size:13.5px; color:#63706D; line-height:1.6; max-width:260px;">Prémium wellness-berendezések gyártótól a kertedig.</p>
+      </div>
+      <div>
+        <div style="font-size:12.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:16px; color:#17201E;">Termékek</div>
+        <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:#63706D;">
+          <a href="#" style="color:#63706D;">Jakuzzik</a>
+          <a href="#" style="color:#63706D;">Szaunák</a>
+          <a href="#" style="color:#63706D;">Grillek</a>
+          <a href="#" style="color:#63706D;">Kiegészítők</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:16px; color:#17201E;">Cég</div>
+        <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:#63706D;">
+          <a href="#" style="color:#63706D;">Rólunk</a>
+          <a href="#" style="color:#63706D;">A gyár</a>
+          <a href="#" style="color:#63706D;">Szerviz</a>
+          <a href="#" style="color:#63706D;">Blog</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:16px; color:#17201E;">Kapcsolat</div>
+        <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:#63706D;">
+          <span>+36 1 234 5678</span>
+          <span>info@zedonwellness.com</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding-top:24px; font-size:12.5px; color:#8B958F;">
+      <span>© 2026 Zedonwellness. Minden jog fenntartva.</span>
+      <div style="display:flex; gap:24px;">
+        <a href="#" style="color:#8B958F;">Adatvédelmi nyilatkozat</a>
+        <a href="#" style="color:#8B958F;">Felhasználási feltételek</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

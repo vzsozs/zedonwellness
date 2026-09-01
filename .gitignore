@@ -1,0 +1,33 @@
+# deps
+/node_modules
+
+# next
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files (never commit secrets)
+.env
+.env*.local
+.env.production
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# uploads (local dev, mounted as volume in prod)
+/public/uploads
+
+# generated design canvas payload (regenerate from the .dc.html sources with seed-canvas.mjs)
+design-mockups/**/*-mockups.html

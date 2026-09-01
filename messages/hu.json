@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "jacuzzis": "Jakuzzik",
+    "saunas": "Szaunák",
+    "grills": "Grillek",
+    "accessories": "Kiegészítők",
+    "blog": "Blog",
+    "contact": "Kapcsolat"
+  },
+  "topbar": {
+    "phone": "Ingyenes szaktanácsadás: +36 1 234 5678",
+    "shipping": "Országos kiszállítás"
+  },
+  "home": {
+    "eyebrow": "Wellness a saját kertedben",
+    "title": "Prémium jakuzzik és szaunák, otthonra szabva",
+    "subtitle": "Több mint 15 éve tervezünk és szállítunk minőségi wellness-berendezéseket — szakmai tanácsadással, helyszíni felméréssel és teljes körű szervizzel.",
+    "ctaPrimary": "Termékek felfedezése",
+    "ctaSecondary": "Kérj ajánlatot",
+    "trust": {
+      "warranty": "5 év garancia",
+      "shipping": "Országos házhozszállítás",
+      "service": "Saját szerviz háttér",
+      "consulting": "Helyszíni szaktanácsadás"
+    },
+    "categoriesEyebrow": "Termékkategóriák",
+    "categoriesTitle": "Fedezd fel a kínálatot",
+    "featuredEyebrow": "Kiemelt termékek",
+    "featuredTitle": "Legnépszerűbb modelljeink",
+    "viewAll": "Összes termék"
+  },
+  "footer": {
+    "tagline": "Prémium wellness-berendezések gyártótól a kertedig.",
+    "products": "Termékek",
+    "company": "Cég",
+    "about": "Rólunk",
+    "factory": "A gyár",
+    "service": "Szerviz",
+    "contactSection": "Kapcsolat",
+    "rights": "Minden jog fenntartva.",
+    "privacy": "Adatvédelmi nyilatkozat",
+    "terms": "Felhasználási feltételek"
+  }
+}
