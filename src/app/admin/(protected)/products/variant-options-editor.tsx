@@ -6,10 +6,11 @@ import { Plus, X, ImagePlus } from "lucide-react";
 type Choice = {
   key: string;
   nameHu: string;
+  nameEn: string;
   imageUrl: string | null;
   previewUrl?: string;
 };
-type Group = { key: string; nameHu: string; choices: Choice[] };
+type Group = { key: string; nameHu: string; nameEn: string; choices: Choice[] };
 
 let keySeq = 0;
 const nextKey = (prefix: string) => `${prefix}-${++keySeq}`;
@@ -27,24 +28,29 @@ export function VariantOptionsEditor({
     defaultGroups.map((g) => ({
       key: nextKey("group"),
       nameHu: g.nameHu,
+      nameEn: g.nameEn,
       choices: g.choices.map((c) => ({
         key: nextKey("choice"),
         nameHu: c.nameHu,
+        nameEn: c.nameEn,
         imageUrl: c.imageUrl,
       })),
     })),
   );
 
   function addGroup() {
-    setGroups((gs) => [...gs, { key: nextKey("group"), nameHu: "", choices: [] }]);
+    setGroups((gs) => [
+      ...gs,
+      { key: nextKey("group"), nameHu: "", nameEn: "", choices: [] },
+    ]);
   }
 
   function removeGroup(groupKey: string) {
     setGroups((gs) => gs.filter((g) => g.key !== groupKey));
   }
 
-  function renameGroup(groupKey: string, nameHu: string) {
-    setGroups((gs) => gs.map((g) => (g.key === groupKey ? { ...g, nameHu } : g)));
+  function updateGroup(groupKey: string, patch: Partial<Group>) {
+    setGroups((gs) => gs.map((g) => (g.key === groupKey ? { ...g, ...patch } : g)));
   }
 
   function addChoice(groupKey: string) {
@@ -55,7 +61,7 @@ export function VariantOptionsEditor({
               ...g,
               choices: [
                 ...g.choices,
-                { key: nextKey("choice"), nameHu: "", imageUrl: null },
+                { key: nextKey("choice"), nameHu: "", nameEn: "", imageUrl: null },
               ],
             }
           : g,
@@ -92,9 +98,11 @@ export function VariantOptionsEditor({
     groups.map((g) => ({
       key: g.key,
       nameHu: g.nameHu,
+      nameEn: g.nameEn,
       choices: g.choices.map((c) => ({
         key: c.key,
         nameHu: c.nameHu,
+        nameEn: c.nameEn,
         imageUrl: c.imageUrl,
       })),
     })),
@@ -114,8 +122,14 @@ export function VariantOptionsEditor({
             <div className="mb-3 flex items-center gap-2.5">
               <input
                 value={group.nameHu}
-                onChange={(e) => renameGroup(group.key, e.target.value)}
-                placeholder="Csoport neve — pl. Héj színe"
+                onChange={(e) => updateGroup(group.key, { nameHu: e.target.value })}
+                placeholder="Csoport neve (HU) — pl. Héj színe"
+                className="flex-1 border border-line px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-accent"
+              />
+              <input
+                value={group.nameEn}
+                onChange={(e) => updateGroup(group.key, { nameEn: e.target.value })}
+                placeholder="Csoport neve (EN)"
                 className="flex-1 border border-line px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-accent"
               />
               <button
@@ -163,8 +177,16 @@ export function VariantOptionsEditor({
                     onChange={(e) =>
                       updateChoice(group.key, choice.key, { nameHu: e.target.value })
                     }
-                    placeholder="Név — pl. Fehér"
+                    placeholder="Név (HU) — pl. Fehér"
                     className="mt-1.5 w-full border border-line px-2 py-1.5 text-xs outline-none focus:border-accent"
+                  />
+                  <input
+                    value={choice.nameEn}
+                    onChange={(e) =>
+                      updateChoice(group.key, choice.key, { nameEn: e.target.value })
+                    }
+                    placeholder="Név (EN)"
+                    className="mt-1 w-full border border-line px-2 py-1.5 text-xs outline-none focus:border-accent"
                   />
                   <button
                     type="button"

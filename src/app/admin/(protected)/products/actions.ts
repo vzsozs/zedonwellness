@@ -5,8 +5,11 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { products, productExtras } from "@/db/schema";
+import { products, productExtras, productVariants } from "@/db/schema";
 import { saveUploadedImage } from "@/lib/upload";
+import { sanitizeDescription } from "@/lib/sanitize-description";
+import { getEurHufRate } from "@/lib/settings";
+import { eurToHuf } from "@/lib/currency";
 import {
   type ActionState,
   isRedirectError,
@@ -32,11 +35,20 @@ const productSchema = z.object({
   subtitleEn: z.string().optional(),
   shortDescriptionHu: z.string().optional(),
   shortDescriptionEn: z.string().optional(),
-  descriptionHu: z.string().optional(),
-  descriptionEn: z.string().optional(),
+  descriptionHu: z.string().optional().transform((v) => (v ? sanitizeDescription(v) : v)),
+  descriptionEn: z.string().optional().transform((v) => (v ? sanitizeDescription(v) : v)),
+  priceEur: z
+    .union([z.literal(""), z.coerce.number().nonnegative()])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
   priceHuf: z.coerce.number().int().nonnegative(),
-  eurPriceOverride: z
-    .union([z.coerce.number().nonnegative(), z.literal("")])
+  priceHufManual: checkbox,
+  capacity: z
+    .union([z.coerce.number().int().positive(), z.literal("")])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  weightKg: z
+    .union([z.coerce.number().positive(), z.literal("")])
     .optional()
     .transform((v) => (v === "" || v === undefined ? null : v)),
   orderOnly: checkbox,
@@ -58,13 +70,29 @@ const variantOptionsDataSchema = z.array(
   z.object({
     key: z.string(),
     nameHu: z.string(),
+    nameEn: z.string(),
     choices: z.array(
       z.object({
         key: z.string(),
         nameHu: z.string(),
+        nameEn: z.string(),
         imageUrl: z.string().nullable(),
       }),
     ),
+  }),
+);
+
+const variantSkusDataSchema = z.array(
+  z.object({
+    key: z.string(),
+    nameHu: z.string(),
+    nameEn: z.string(),
+    sku: z.string(),
+    priceHuf: z.string(),
+    weightKg: z.string(),
+    imageUrl: z.string().nullable(),
+    isDefault: z.boolean(),
+    inStock: z.boolean(),
   }),
 );
 
@@ -82,8 +110,11 @@ function readForm(formData: FormData) {
     shortDescriptionEn: formData.get("shortDescriptionEn") || undefined,
     descriptionHu: formData.get("descriptionHu") || undefined,
     descriptionEn: formData.get("descriptionEn") || undefined,
+    priceEur: formData.get("priceEur") ?? "",
     priceHuf: formData.get("priceHuf"),
-    eurPriceOverride: formData.get("eurPriceOverride") ?? "",
+    priceHufManual: formData.get("priceHufManual") as "on" | null,
+    capacity: formData.get("capacity") ?? "",
+    weightKg: formData.get("weightKg") ?? "",
     orderOnly: formData.get("orderOnly") as "on" | null,
     inStock: formData.get("inStock") as "on" | null,
     isFeatured: formData.get("isFeatured") as "on" | null,
@@ -106,6 +137,7 @@ async function resolveImages(formData: FormData) {
   const raw = formData.get("imageOrder");
   const order = raw && typeof raw === "string" ? imageOrderSchema.parse(JSON.parse(raw)) : [];
   const mainImageKey = String(formData.get("mainImageKey") ?? "");
+  const cardImageKey = String(formData.get("cardImageKey") ?? "");
   const newFiles = formData.getAll("galleryFiles") as File[];
 
   const uploadedByIndex = new Map<number, string>();
@@ -125,8 +157,9 @@ async function resolveImages(formData: FormData) {
 
   const mainImage =
     resolved.find((r) => r.key === mainImageKey)?.url ?? images[0] ?? null;
+  const cardImage = resolved.find((r) => r.key === cardImageKey)?.url ?? null;
 
-  return { images, mainImage };
+  return { images, mainImage, cardImage };
 }
 
 async function resolveVariantOptions(formData: FormData) {
@@ -143,13 +176,68 @@ async function resolveVariantOptions(formData: FormData) {
       const file = formData.get(`variantFile_${choice.key}`) as File | null;
       const imageUrl =
         file && file.size > 0 ? await saveUploadedImage(file, "variants") : choice.imageUrl;
-      choices.push({ nameHu: choice.nameHu.trim(), nameEn: "", imageUrl });
+      choices.push({
+        nameHu: choice.nameHu.trim(),
+        nameEn: choice.nameEn.trim(),
+        imageUrl,
+      });
     }
     if (choices.length > 0) {
-      result.push({ nameHu: group.nameHu.trim(), nameEn: "", choices });
+      result.push({ nameHu: group.nameHu.trim(), nameEn: group.nameEn.trim(), choices });
     }
   }
   return result;
+}
+
+async function resolveProductVariants(formData: FormData) {
+  const raw = formData.get("variantSkusData");
+  if (typeof raw !== "string" || !raw) return [];
+  const skus = variantSkusDataSchema.parse(JSON.parse(raw));
+
+  const result = [];
+  let hasDefault = false;
+  for (const s of skus) {
+    if (!s.nameHu.trim()) continue;
+    const file = formData.get(`variantSkuFile_${s.key}`) as File | null;
+    const imageUrl =
+      file && file.size > 0 ? await saveUploadedImage(file, "variants") : s.imageUrl;
+    const isDefault = s.isDefault && !hasDefault;
+    if (isDefault) hasDefault = true;
+    result.push({
+      nameHu: s.nameHu.trim(),
+      nameEn: s.nameEn.trim() || null,
+      sku: s.sku.trim() || null,
+      priceHuf: s.priceHuf.trim() ? String(Number(s.priceHuf)) : null,
+      weightKg: s.weightKg.trim() ? String(Number(s.weightKg)) : null,
+      imageUrl,
+      isDefault,
+      inStock: s.inStock,
+      sortOrder: result.length,
+    });
+  }
+  // Guarantee exactly one default when there's at least one variant.
+  if (result.length > 0 && !hasDefault) result[0].isDefault = true;
+  return result;
+}
+
+async function syncProductVariants(productId: number, formData: FormData) {
+  const variants = await resolveProductVariants(formData);
+  await db.delete(productVariants).where(eq(productVariants.productId, productId));
+  if (variants.length > 0) {
+    await db.insert(productVariants).values(variants.map((v) => ({ ...v, productId })));
+  }
+}
+
+async function resolvePrice(priceEur: number | null, submittedHuf: number, manual: boolean) {
+  // Locked (not manual) needs a EUR value to compute from — never trust the
+  // client-side computed HUF preview, always recompute from the current
+  // rate server-side. If there's no EUR value at all, fall back to
+  // whatever HUF was submitted (legacy/EUR-less product).
+  if (manual || priceEur === null) {
+    return { priceHuf: submittedHuf, priceHufManual: manual };
+  }
+  const rate = await getEurHufRate();
+  return { priceHuf: eurToHuf(priceEur, rate), priceHufManual: false };
 }
 
 async function syncExtras(productId: number, formData: FormData) {
@@ -168,27 +256,32 @@ export async function createProduct(
 ): Promise<ActionState> {
   try {
     const parsed = readForm(formData);
-    const { eurPriceOverride, ...rest } = parsed;
+    const { priceEur, priceHuf: submittedHuf, priceHufManual, weightKg, ...rest } = parsed;
 
-    const [{ images, mainImage }, variantOptions] = await Promise.all([
+    const [{ images, mainImage, cardImage }, variantOptions, price] = await Promise.all([
       resolveImages(formData),
       resolveVariantOptions(formData),
+      resolvePrice(priceEur, submittedHuf, priceHufManual),
     ]);
 
     const [product] = await db
       .insert(products)
       .values({
         ...rest,
-        priceHuf: String(rest.priceHuf),
-        eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
+        priceEur: priceEur === null ? null : String(priceEur),
+        priceHuf: String(price.priceHuf),
+        priceHufManual: price.priceHufManual,
+        weightKg: weightKg === null ? null : String(weightKg),
         images,
         mainImage,
+        cardImage,
         specs: readSpecs(formData),
         variantOptions,
       })
       .returning();
 
     await syncExtras(product.id, formData);
+    await syncProductVariants(product.id, formData);
 
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -206,21 +299,25 @@ export async function updateProduct(
 ): Promise<ActionState> {
   try {
     const parsed = readForm(formData);
-    const { eurPriceOverride, ...rest } = parsed;
+    const { priceEur, priceHuf: submittedHuf, priceHufManual, weightKg, ...rest } = parsed;
 
-    const [{ images, mainImage }, variantOptions] = await Promise.all([
+    const [{ images, mainImage, cardImage }, variantOptions, price] = await Promise.all([
       resolveImages(formData),
       resolveVariantOptions(formData),
+      resolvePrice(priceEur, submittedHuf, priceHufManual),
     ]);
 
     await db
       .update(products)
       .set({
         ...rest,
-        priceHuf: String(rest.priceHuf),
-        eurPriceOverride: eurPriceOverride === null ? null : String(eurPriceOverride),
+        priceEur: priceEur === null ? null : String(priceEur),
+        priceHuf: String(price.priceHuf),
+        priceHufManual: price.priceHufManual,
+        weightKg: weightKg === null ? null : String(weightKg),
         images,
         mainImage,
+        cardImage,
         specs: readSpecs(formData),
         variantOptions,
         updatedAt: new Date(),
@@ -228,6 +325,7 @@ export async function updateProduct(
       .where(eq(products.id, id));
 
     await syncExtras(id, formData);
+    await syncProductVariants(id, formData);
 
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");

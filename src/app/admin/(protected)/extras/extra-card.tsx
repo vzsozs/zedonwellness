@@ -7,10 +7,11 @@ import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
 import { updateExtra, deleteExtra } from "./actions";
 
-export function ExtraCard({ extra }: { extra: Extra }) {
+export function ExtraCard({ extra, eurHufRate }: { extra: Extra; eurHufRate: number }) {
   const updateWithId = updateExtra.bind(null, extra.id);
   const [state, formAction, pending] = useActionState(updateWithId, initialActionState);
   const [modalOpen, setModalOpen] = useState(false);
+  const [priceEur, setPriceEur] = useState(extra.priceEur ?? "");
 
   useEffect(() => {
     if (state.error) setModalOpen(true);
@@ -53,20 +54,29 @@ export function ExtraCard({ extra }: { extra: Extra }) {
             className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
           />
           <div className="flex gap-2.5">
-            <input
-              type="number"
-              name="priceHuf"
-              defaultValue={extra.priceHuf}
-              required
-              placeholder="Ár (Ft)"
-              className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
-            />
+            <div className="w-full">
+              <input
+                type="number"
+                name="priceEur"
+                step="0.01"
+                value={priceEur}
+                onChange={(e) => setPriceEur(e.target.value)}
+                required
+                placeholder="Ár (EUR)"
+                className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+              />
+              {priceEur ? (
+                <p className="mt-1 text-[11px] text-muted">
+                  ≈ {Math.round(Number(priceEur) * eurHufRate).toLocaleString("hu-HU")} Ft
+                </p>
+              ) : null}
+            </div>
             <input
               type="number"
               name="sortOrder"
               defaultValue={extra.sortOrder}
               placeholder="Sorrend"
-              className="w-20 shrink-0 border border-line px-3 py-2 text-sm outline-none focus:border-accent"
+              className="h-9 w-20 shrink-0 border border-line px-3 py-2 text-sm outline-none focus:border-accent"
             />
           </div>
           {extra.imageUrl ? (

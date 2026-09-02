@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { eq, asc } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, products, productSeries, extras } from "@/db/schema";
+import { getEurHufRate } from "@/lib/settings";
 import { ProductForm } from "../../product-form";
 import { updateProduct } from "../../actions";
 
@@ -12,14 +13,15 @@ export default async function EditProductPage({
 }) {
   const { id } = await params;
   const productId = Number(id);
-  const [product, categoryList, seriesList, extraList] = await Promise.all([
+  const [product, categoryList, seriesList, extraList, eurHufRate] = await Promise.all([
     db.query.products.findFirst({
       where: eq(products.id, productId),
-      with: { extras: true },
+      with: { extras: true, variants: { orderBy: (v, { asc }) => [asc(v.sortOrder)] } },
     }),
     db.query.categories.findMany({ orderBy: [asc(categories.sortOrder)] }),
     db.query.productSeries.findMany({ orderBy: [asc(productSeries.sortOrder)] }),
     db.query.extras.findMany({ orderBy: [asc(extras.sortOrder)] }),
+    getEurHufRate(),
   ]);
 
   if (!product) notFound();
@@ -38,6 +40,7 @@ export default async function EditProductPage({
         values={product}
         action={updateWithId}
         submitLabel="Mentés"
+        eurHufRate={eurHufRate}
       />
     </div>
   );

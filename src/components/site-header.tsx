@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Search, ShoppingBag, Menu, X } from "lucide-react";
+import { useCart } from "@/lib/cart-context";
 
 const links = [
   { href: "/jakuzzik", key: "jacuzzis" as const },
@@ -20,6 +21,7 @@ export function SiteHeader() {
   const t = useTranslations("nav");
   const tb = useTranslations("topbar");
   const [menuOpen, setMenuOpen] = useState(false);
+  const { itemCount } = useCart();
 
   return (
     <header>
@@ -65,7 +67,14 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-5">
           <Search className="size-5 text-ink max-lg:hidden" strokeWidth={1.8} />
-          <ShoppingBag className="size-5 text-ink" strokeWidth={1.8} />
+          <Link href="/kosar" className="relative" aria-label={t("cart")}>
+            <ShoppingBag className="size-5 text-ink" strokeWidth={1.8} />
+            {itemCount > 0 ? (
+              <span className="absolute -top-2 -right-2 flex size-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white">
+                {itemCount}
+              </span>
+            ) : null}
+          </Link>
           <button
             type="button"
             aria-label={menuOpen ? "Menü bezárása" : "Menü megnyitása"}

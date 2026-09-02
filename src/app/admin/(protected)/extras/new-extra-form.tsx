@@ -5,9 +5,10 @@ import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
 import { createExtra } from "./actions";
 
-export function NewExtraForm() {
+export function NewExtraForm({ eurHufRate }: { eurHufRate: number }) {
   const [state, formAction, pending] = useActionState(createExtra, initialActionState);
   const [modalOpen, setModalOpen] = useState(false);
+  const [priceEur, setPriceEur] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const wasPending = useRef(false);
 
@@ -17,6 +18,7 @@ export function NewExtraForm() {
     // and there's no error to show).
     if (wasPending.current && !pending && !state.error) {
       formRef.current?.reset();
+      setPriceEur("");
     }
     wasPending.current = pending;
   }, [state, pending]);
@@ -43,7 +45,25 @@ export function NewExtraForm() {
         <Field label="Név (HU)" name="nameHu" required />
         <Field label="Név (EN)" name="nameEn" />
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Ár (Ft)" name="priceHuf" type="number" required />
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold text-muted">
+              Ár (EUR)
+            </label>
+            <input
+              type="number"
+              name="priceEur"
+              step="0.01"
+              value={priceEur}
+              onChange={(e) => setPriceEur(e.target.value)}
+              required
+              className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
+            />
+            {priceEur ? (
+              <p className="mt-1 text-xs text-muted">
+                ≈ {Math.round(Number(priceEur) * eurHufRate).toLocaleString("hu-HU")} Ft
+              </p>
+            ) : null}
+          </div>
           <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
         </div>
         <button

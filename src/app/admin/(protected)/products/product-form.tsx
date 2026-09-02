@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import type { Category, Extra, Product, ProductSeries } from "@/db/schema";
+import type { Category, Extra, Product, ProductSeries, ProductVariant } from "@/db/schema";
 import type { ActionState } from "@/lib/action-state";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
@@ -10,7 +10,11 @@ import { CategorySeriesFields } from "./category-series-fields";
 import { ImageGalleryField } from "./image-gallery-field";
 import { SpecsEditor } from "./specs-editor";
 import { VariantOptionsEditor } from "./variant-options-editor";
+import { VariantSkusEditor } from "./variant-skus-editor";
 import { ExtrasPicker } from "./extras-picker";
+import { RichTextField } from "./rich-text-field";
+import { ToggleSwitch } from "./toggle-switch";
+import { PriceField } from "./price-field";
 
 export function ProductForm({
   categories,
@@ -20,14 +24,16 @@ export function ProductForm({
   values,
   action,
   submitLabel,
+  eurHufRate,
 }: {
   categories: Category[];
   seriesList: ProductSeries[];
   allExtras: Extra[];
   selectedExtraIds: number[];
-  values?: Product;
+  values?: Product & { variants?: ProductVariant[] };
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
   submitLabel: string;
+  eurHufRate: number;
 }) {
   const [state, formAction, pending] = useActionState(action, initialActionState);
   const [modalOpen, setModalOpen] = useState(false);
@@ -42,6 +48,12 @@ export function ProductForm({
         message={modalOpen ? state.error : null}
         onClose={() => setModalOpen(false)}
       />
+      <ToggleSwitch
+        label="Készleten"
+        name="inStock"
+        defaultChecked={values?.inStock ?? true}
+      />
+
       <NameSlugFields defaultNameHu={values?.nameHu} defaultSlug={values?.slug} />
 
       <div className="grid grid-cols-2 gap-5">
@@ -70,6 +82,22 @@ export function ProductForm({
       </div>
 
       <div className="grid grid-cols-2 gap-5">
+        <Field
+          label="Férőhely (fő, opcionális) — a kategória oldal szűrőjéhez"
+          name="capacity"
+          type="number"
+          defaultValue={values?.capacity ?? ""}
+        />
+        <Field
+          label="Súly (kg, opcionális) — a GLS szállítási díj számításához"
+          name="weightKg"
+          type="number"
+          step="0.1"
+          defaultValue={values?.weightKg ?? ""}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-5">
         <TextArea
           label="Rövid leírás (HU) — kártyákhoz, találati listához"
           name="shortDescriptionHu"
@@ -85,43 +113,47 @@ export function ProductForm({
       </div>
 
       <div className="grid grid-cols-2 gap-5">
-        <TextArea
+        <RichTextField
           label="Hosszú leírás (HU) — termékoldal"
           name="descriptionHu"
           defaultValue={values?.descriptionHu ?? ""}
         />
-        <TextArea
+        <RichTextField
           label="Hosszú leírás (EN)"
           name="descriptionEn"
           defaultValue={values?.descriptionEn ?? ""}
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
-        <Field
-          label="Ár (HUF, bruttó)"
-          name="priceHuf"
-          type="number"
-          defaultValue={values?.priceHuf}
-          required
-        />
-        <Field
-          label="EUR ár felülírás (opcionális)"
-          name="eurPriceOverride"
-          type="number"
-          step="0.01"
-          defaultValue={values?.eurPriceOverride ?? ""}
-        />
-      </div>
+      <PriceField
+        eurHufRate={eurHufRate}
+        defaultPriceEur={values?.priceEur ?? null}
+        defaultPriceHuf={values?.priceHuf ?? 0}
+        defaultManual={values?.priceHufManual ?? false}
+      />
 
       <ImageGalleryField
         existingImages={values?.images ?? []}
         mainImage={values?.mainImage ?? null}
+        cardImage={values?.cardImage ?? null}
       />
 
       <SpecsEditor defaultSpecs={values?.specs ?? []} />
 
       <VariantOptionsEditor defaultGroups={values?.variantOptions ?? []} />
+
+      <VariantSkusEditor
+        defaultVariants={(values?.variants ?? []).map((v) => ({
+          nameHu: v.nameHu,
+          nameEn: v.nameEn,
+          sku: v.sku,
+          priceHuf: v.priceHuf,
+          weightKg: v.weightKg,
+          imageUrl: v.imageUrl,
+          isDefault: v.isDefault,
+          inStock: v.inStock,
+        }))}
+      />
 
       <ExtrasPicker allExtras={allExtras} selectedIds={selectedExtraIds} />
 
@@ -132,11 +164,6 @@ export function ProductForm({
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <Checkbox
-          label="Készleten"
-          name="inStock"
-          defaultChecked={values?.inStock ?? true}
-        />
         <Checkbox
           label="Csak megrendelhető (nincs online fizetés)"
           name="orderOnly"

@@ -3,21 +3,29 @@ import { shippingRates } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { createShippingRate, deleteShippingRate } from "./actions";
 
+const ZONE_LABEL = { domestic: "Belföld", international: "Külföld" } as const;
+
 export default async function ShippingPage() {
   const items = await db.query.shippingRates.findMany({
-    orderBy: [asc(shippingRates.id)],
+    orderBy: [asc(shippingRates.zone), asc(shippingRates.sortOrder), asc(shippingRates.minKg)],
   });
 
   return (
     <div>
-      <h1 className="mb-8 text-2xl font-semibold">Szállítási díjak</h1>
+      <h1 className="mb-8 text-2xl font-semibold">Szállítási díjak (GLS)</h1>
+      <p className="mb-6 max-w-2xl text-sm text-muted">
+        Csak GLS-sel szállítunk, belföldre és külföldre egyaránt, súly szerinti
+        sávokban. 40 kg felett minden esetben egyedi ajánlatot adunk — ilyen
+        sávnál hagyd üresen a &bdquo;-ig&rdquo; mezőt és jelöld be az egyedi
+        ajánlatot.
+      </p>
 
       <div className="mb-10 border border-line bg-white">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs font-semibold text-muted uppercase">
-              <th className="px-5 py-3">Megnevezés</th>
-              <th className="px-5 py-3">Sáv</th>
+              <th className="px-5 py-3">Zóna</th>
+              <th className="px-5 py-3">Súlysáv</th>
               <th className="px-5 py-3">Díj</th>
               <th className="px-5 py-3"></th>
             </tr>
@@ -25,9 +33,9 @@ export default async function ShippingPage() {
           <tbody>
             {items.map((r) => (
               <tr key={r.id} className="border-b border-line last:border-0">
-                <td className="px-5 py-3">{r.label}</td>
+                <td className="px-5 py-3">{ZONE_LABEL[r.zone]}</td>
                 <td className="px-5 py-3 font-mono text-[13px] text-muted">
-                  {r.band}
+                  {Number(r.minKg)} kg – {r.maxKg ? `${Number(r.maxKg)} kg` : "∞"}
                 </td>
                 <td className="px-5 py-3">
                   {r.requiresQuote
@@ -60,14 +68,30 @@ export default async function ShippingPage() {
       </div>
 
       <div className="max-w-md border border-line bg-white p-6">
-        <h2 className="mb-5 text-base font-semibold">Új díjsáv</h2>
+        <h2 className="mb-5 text-base font-semibold">Új súlysáv</h2>
         <form action={createShippingRate} className="flex flex-col gap-4">
-          <Field label="Megnevezés" name="label" required />
-          <Field
-            label="Sáv azonosító (pl. small, large, custom-quote)"
-            name="band"
-            required
-          />
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold text-muted">
+              Zóna
+            </label>
+            <select
+              name="zone"
+              required
+              className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
+            >
+              <option value="domestic">Belföld</option>
+              <option value="international">Külföld</option>
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Súly -tól (kg)" name="minKg" type="number" step="0.1" required />
+            <Field
+              label="Súly -ig (kg, üres = nyitott)"
+              name="maxKg"
+              type="number"
+              step="0.1"
+            />
+          </div>
           <Field label="Díj (Ft)" name="priceHuf" type="number" />
           <label className="flex items-center gap-2.5 text-sm">
             <input type="checkbox" name="requiresQuote" className="accent-accent" />
@@ -89,11 +113,13 @@ function Field({
   label,
   name,
   type = "text",
+  step,
   required,
 }: {
   label: string;
   name: string;
   type?: string;
+  step?: string;
   required?: boolean;
 }) {
   return (
@@ -104,6 +130,7 @@ function Field({
       <input
         type={type}
         name={name}
+        step={step}
         required={required}
         className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
       />

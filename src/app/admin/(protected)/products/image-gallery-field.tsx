@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Star, X, ChevronUp, ChevronDown, ImagePlus } from "lucide-react";
+import { Star, LayoutGrid, X, ChevronUp, ChevronDown, ImagePlus } from "lucide-react";
 
 type Slot =
   | { key: string; type: "existing"; url: string }
@@ -13,23 +13,31 @@ const nextKey = () => `slot-${++keySeq}`;
 export function ImageGalleryField({
   existingImages,
   mainImage,
+  cardImage,
 }: {
   existingImages: string[];
   mainImage: string | null;
+  cardImage: string | null;
 }) {
   const [slots, setSlots] = useState<Slot[]>(() =>
     existingImages.map((url) => ({ key: nextKey(), type: "existing", url })),
   );
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [mainKey, setMainKey] = useState<string | null>(null);
+  const [cardKey, setCardKey] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Resolve initial main key against the initial slots (runs once).
+  // Resolve initial main/card keys against the initial slots (runs once).
   useEffect(() => {
-    if (mainKey !== null) return;
-    const idx = existingImages.findIndex((u) => u === mainImage);
-    if (idx >= 0 && slots[idx]) setMainKey(slots[idx].key);
-    else if (slots.length > 0) setMainKey(slots[0].key);
+    if (mainKey === null) {
+      const idx = existingImages.findIndex((u) => u === mainImage);
+      if (idx >= 0 && slots[idx]) setMainKey(slots[idx].key);
+      else if (slots.length > 0) setMainKey(slots[0].key);
+    }
+    if (cardKey === null) {
+      const idx = existingImages.findIndex((u) => u === cardImage);
+      if (idx >= 0 && slots[idx]) setCardKey(slots[idx].key);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -76,6 +84,7 @@ export function ImageGalleryField({
       return rest;
     });
     setMainKey((mk) => (mk === key ? null : mk));
+    setCardKey((ck) => (ck === key ? null : ck));
   }
 
   function move(key: string, dir: -1 | 1) {
@@ -92,6 +101,9 @@ export function ImageGalleryField({
   // Fall back to the first slot as main if nothing is marked (e.g. after
   // removing the marked one).
   const effectiveMainKey = mainKey ?? slots[0]?.key ?? null;
+  // Card image has no fallback here — leaving it unset means the listing
+  // card falls back to the main image at render time.
+  const effectiveCardKey = cardKey;
 
   const orderPayload = JSON.stringify(
     slots.map((s) =>
@@ -107,17 +119,20 @@ export function ImageGalleryField({
         Képek
       </label>
       <p className="mb-3 text-xs text-muted">
-        A csillaggal jelöld ki a főképet, a nyilakkal állítsd a sorrendet.
+        A csillaggal jelöld ki a főképet, a rács ikonnal a kártyaképet
+        (találati listákon ez jelenik meg), a nyilakkal állítsd a sorrendet.
       </p>
 
       <input type="hidden" name="imageOrder" value={orderPayload} />
       <input type="hidden" name="mainImageKey" value={effectiveMainKey ?? ""} />
+      <input type="hidden" name="cardImageKey" value={effectiveCardKey ?? ""} />
 
       {slots.length > 0 ? (
         <div className="mb-3 flex flex-wrap gap-3">
           {slots.map((slot, i) => {
             const src = slot.type === "existing" ? slot.url : slot.previewUrl;
             const isMain = slot.key === effectiveMainKey;
+            const isCard = slot.key === effectiveCardKey;
             return (
               <div key={slot.key} className="w-28">
                 <div className="relative h-24 w-28 overflow-hidden">
@@ -136,6 +151,16 @@ export function ImageGalleryField({
                   >
                     <Star
                       className={`size-3.5 ${isMain ? "fill-coprBlue text-coprBlue" : "text-muted"}`}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCardKey((ck) => (ck === slot.key ? null : slot.key))}
+                    aria-label="Kijelölés kártyaképnek"
+                    className="absolute bottom-1 left-1 flex size-6 items-center justify-center bg-white/90"
+                  >
+                    <LayoutGrid
+                      className={`size-3.5 ${isCard ? "fill-coprBlue text-coprBlue" : "text-muted"}`}
                     />
                   </button>
                   <button
@@ -167,9 +192,9 @@ export function ImageGalleryField({
                     <ChevronDown className="size-3.5" />
                   </button>
                 </div>
-                {isMain ? (
+                {isMain || isCard ? (
                   <div className="mt-0.5 text-center text-[10px] font-semibold text-coprBlue">
-                    Főkép
+                    {isMain && isCard ? "Fő- és kártyakép" : isMain ? "Főkép" : "Kártyakép"}
                   </div>
                 ) : null}
               </div>

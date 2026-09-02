@@ -26,7 +26,7 @@ export function ProductGallery({
         aria-label={hasImages ? "Kép nagyítása" : undefined}
         className={
           hasImages
-            ? "group relative flex h-130 w-full items-center justify-center overflow-hidden bg-paper-muted max-lg:h-80"
+            ? "group relative flex h-130 w-full items-center justify-center overflow-hidden max-lg:h-80"
             : `relative flex h-130 w-full items-center justify-center overflow-hidden bg-gradient-to-br ${fallbackGradient} max-lg:h-80`
         }
       >

@@ -53,10 +53,21 @@ export const extras = pgTable("extras", {
   id: serial("id").primaryKey(),
   nameHu: text("name_hu").notNull(),
   nameEn: text("name_en"),
+  // Entered in EUR going forward (see `settings` for the conversion rate);
+  // priceHuf is still stored alongside it — computed at save time — so
+  // every existing HUF-only display keeps working unchanged.
+  priceEur: numeric("price_eur", { precision: 10, scale: 2 }),
   priceHuf: numeric("price_huf", { precision: 12, scale: 0 }).notNull(),
   // Shown as a card image on the homepage extras section.
   imageUrl: text("image_url"),
   sortOrder: integer("sort_order").notNull().default(0),
+});
+
+// Small global key/value store for admin-editable site settings (e.g. the
+// EUR/HUF conversion rate) that don't warrant their own dedicated table.
+export const settings = pgTable("settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
 });
 
 export const products = pgTable("products", {
@@ -80,10 +91,19 @@ export const products = pgTable("products", {
   // Full body copy on the product page.
   descriptionHu: text("description_hu"),
   descriptionEn: text("description_en"),
-  // Gross price in HUF. EUR price is derived at render time from the
-  // configured exchange rate, unless eurPriceOverride is set.
+  // Prices are entered in EUR going forward (see `settings` for the
+  // conversion rate) — priceHuf is computed and stored at save time,
+  // rounded to the nearest 10 Ft, unless priceHufManual is set (the admin
+  // unlocked the HUF field and typed a specific value directly).
+  priceEur: numeric("price_eur", { precision: 10, scale: 2 }),
   priceHuf: numeric("price_huf", { precision: 12, scale: 0 }).notNull(),
-  eurPriceOverride: numeric("eur_price_override", { precision: 12, scale: 2 }),
+  priceHufManual: boolean("price_huf_manual").notNull().default(false),
+  // Seat/person count, e.g. for jacuzzis and saunas — kept structured (not
+  // parsed from subtitleHu) so it can drive the category page's filter.
+  capacity: integer("capacity"),
+  // Shipping weight in kg — drives which GLS weight-band rate applies at
+  // checkout. Packaging weight, not just the item itself.
+  weightKg: numeric("weight_kg", { precision: 8, scale: 2 }),
   // Products above ORDER_ONLY_THRESHOLD_HUF are order-only (no online
   // payment) — this flag lets it be forced on for a specific product too.
   orderOnly: boolean("order_only").notNull().default(false),
@@ -91,6 +111,9 @@ export const products = pgTable("products", {
   images: jsonb("images").$type<string[]>().notNull().default([]),
   // Which entry of `images` is the hero/gallery-first shot.
   mainImage: text("main_image"),
+  // Which entry of `images` is shown on product listing cards. Falls back
+  // to mainImage when unset.
+  cardImage: text("card_image"),
   specs: jsonb("specs")
     .$type<{ label: string; value: string }[]>()
     .notNull()
@@ -117,6 +140,29 @@ export const products = pgTable("products", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// True SKU-level variants (e.g. 12 fragrances of the same bottle) — unlike
+// variantOptions above, each one carries its own price/SKU/weight/image and
+// is a separately orderable thing, not just a cosmetic swatch. Shared
+// content (description, specs, category…) stays on the parent product;
+// only the fields that legitimately differ per SKU live here.
+export const productVariants = pgTable("product_variants", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  nameHu: text("name_hu").notNull(),
+  nameEn: text("name_en"),
+  sku: text("sku"),
+  // Null falls back to the parent product's priceHuf/weightKg — most
+  // variants (e.g. same-priced fragrances) don't need an override.
+  priceHuf: numeric("price_huf", { precision: 12, scale: 0 }),
+  weightKg: numeric("weight_kg", { precision: 8, scale: 2 }),
+  imageUrl: text("image_url"),
+  isDefault: boolean("is_default").notNull().default(false),
+  inStock: boolean("in_stock").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
 // Which extras (from the global catalog) a product offers.
 export const productExtras = pgTable(
   "product_extras",
@@ -131,13 +177,17 @@ export const productExtras = pgTable(
   (t) => [primaryKey({ columns: [t.productId, t.extraId] })],
 );
 
+// GLS-only shipping, priced by weight band within one of two zones. A band
+// with maxKg = null is open-ended (e.g. "40 kg felett") — such bands are
+// expected to have requiresQuote = true rather than a fixed priceHuf.
 export const shippingRates = pgTable("shipping_rates", {
   id: serial("id").primaryKey(),
-  label: text("label").notNull(),
-  // Weight/size band this rate applies to, e.g. "small", "large", "custom-quote".
-  band: text("band").notNull(),
+  zone: text("zone", { enum: ["domestic", "international"] }).notNull(),
+  minKg: numeric("min_kg", { precision: 6, scale: 2 }).notNull().default("0"),
+  maxKg: numeric("max_kg", { precision: 6, scale: 2 }),
   priceHuf: numeric("price_huf", { precision: 10, scale: 0 }),
   requiresQuote: boolean("requires_quote").notNull().default(false),
+  sortOrder: integer("sort_order").notNull().default(0),
 });
 
 export const orders = pgTable("orders", {
@@ -146,8 +196,31 @@ export const orders = pgTable("orders", {
   customerName: text("customer_name").notNull(),
   customerEmail: text("customer_email").notNull(),
   customerPhone: text("customer_phone"),
-  shippingAddress: jsonb("shipping_address").notNull(),
-  items: jsonb("items").notNull(),
+  shippingAddress: jsonb("shipping_address")
+    .$type<{
+      zone: "domestic" | "international";
+      country: string;
+      zip: string;
+      city: string;
+      street: string;
+      note: string | null;
+      shippingHuf: number | null;
+      shippingRequiresQuote: boolean;
+    }>()
+    .notNull(),
+  items: jsonb("items")
+    .$type<
+      {
+        productId: number;
+        variantId: number | null;
+        slug: string;
+        nameHu: string;
+        priceHuf: number;
+        quantity: number;
+        weightKg: number | null;
+      }[]
+    >()
+    .notNull(),
   totalHuf: numeric("total_huf", { precision: 12, scale: 0 }).notNull(),
   currency: text("currency").notNull().default("HUF"),
   // "order_only" orders skip online payment entirely (> threshold).
@@ -195,11 +268,21 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [productSeries.id],
   }),
   extras: many(productExtras),
+  variants: many(productVariants),
+}));
+
+export const productVariantsRelations = relations(productVariants, ({ one }) => ({
+  product: one(products, {
+    fields: [productVariants.productId],
+    references: [products.id],
+  }),
 }));
 
 export type Category = typeof categories.$inferSelect;
 export type ProductSeries = typeof productSeries.$inferSelect;
 export type Extra = typeof extras.$inferSelect;
+export type Setting = typeof settings.$inferSelect;
 export type Product = typeof products.$inferSelect;
+export type ProductVariant = typeof productVariants.$inferSelect;
 export type ShippingRate = typeof shippingRates.$inferSelect;
 export type Order = typeof orders.$inferSelect;

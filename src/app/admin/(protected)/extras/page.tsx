@@ -1,13 +1,17 @@
 import { db } from "@/db";
 import { extras } from "@/db/schema";
 import { asc } from "drizzle-orm";
+import { getEurHufRate } from "@/lib/settings";
 import { ExtraCard } from "./extra-card";
 import { NewExtraForm } from "./new-extra-form";
 
 export default async function ExtrasPage() {
-  const items = await db.query.extras.findMany({
-    orderBy: [asc(extras.sortOrder), asc(extras.nameHu)],
-  });
+  const [items, eurHufRate] = await Promise.all([
+    db.query.extras.findMany({
+      orderBy: [asc(extras.sortOrder), asc(extras.nameHu)],
+    }),
+    getEurHufRate(),
+  ]);
 
   return (
     <div>
@@ -16,16 +20,19 @@ export default async function ExtrasPage() {
         Ez a rendelhető extrák globális katalógusa (pl. Lépcső, WiFi, Audio
         rendszer) — a termék szerkesztésénél innen lehet kiválasztani, mely
         extrák érhetők el az adott terméknél. Kártyaként jelennek meg a
-        főoldalon is.
+        főoldalon is. Az árat euróban add meg — az aktuális{" "}
+        <span className="font-semibold text-ink">{eurHufRate} Ft/EUR</span>{" "}
+        árfolyamon (Beállítások) számolt forint érték a rendszer minden más
+        pontján ez alapján jelenik meg.
       </p>
 
       <div className="mb-12 grid grid-cols-4 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-2">
         {items.map((e) => (
-          <ExtraCard key={e.id} extra={e} />
+          <ExtraCard key={e.id} extra={e} eurHufRate={eurHufRate} />
         ))}
       </div>
 
-      <NewExtraForm />
+      <NewExtraForm eurHufRate={eurHufRate} />
     </div>
   );
 }

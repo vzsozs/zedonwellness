@@ -50,6 +50,69 @@
       "when": 1788251120976,
       "tag": "0006_mixed_iron_monger",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788313340235,
+      "tag": "0007_certain_stingray",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788314672031,
+      "tag": "0008_flawless_wolfpack",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788316931982,
+      "tag": "0009_big_the_fallen",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788316954231,
+      "tag": "0010_productive_hercules",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788318336884,
+      "tag": "0011_wide_night_thrasher",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788319791790,
+      "tag": "0012_legal_imperial_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1788322787282,
+      "tag": "0013_nebulous_molecule_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1788324452938,
+      "tag": "0014_huge_joystick",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1788324475742,
+      "tag": "0015_careful_scalphunter",
+      "breakpoints": true
     }
   ]
 }

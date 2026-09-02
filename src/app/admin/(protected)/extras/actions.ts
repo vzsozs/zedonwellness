@@ -6,12 +6,14 @@ import { z } from "zod";
 import { db } from "@/db";
 import { extras } from "@/db/schema";
 import { saveUploadedImage } from "@/lib/upload";
+import { getEurHufRate } from "@/lib/settings";
+import { eurToHuf } from "@/lib/currency";
 import { type ActionState, toActionError } from "@/lib/action-state";
 
 const extraSchema = z.object({
   nameHu: z.string().min(1, "Kötelező"),
   nameEn: z.string().optional(),
-  priceHuf: z.coerce.number().int().nonnegative(),
+  priceEur: z.coerce.number().nonnegative(),
   sortOrder: z.coerce.number().int().default(0),
 });
 
@@ -19,7 +21,7 @@ function readForm(formData: FormData) {
   return extraSchema.parse({
     nameHu: formData.get("nameHu"),
     nameEn: formData.get("nameEn") || undefined,
-    priceHuf: formData.get("priceHuf"),
+    priceEur: formData.get("priceEur"),
     sortOrder: formData.get("sortOrder") || 0,
   });
 }
@@ -38,7 +40,11 @@ export async function createExtra(
   try {
     const parsed = readForm(formData);
     const imageUrl = await resolveImage(formData, null);
-    await db.insert(extras).values({ ...parsed, priceHuf: String(parsed.priceHuf), imageUrl });
+    const rate = await getEurHufRate();
+    const priceHuf = eurToHuf(parsed.priceEur, rate);
+    await db
+      .insert(extras)
+      .values({ ...parsed, priceEur: String(parsed.priceEur), priceHuf: String(priceHuf), imageUrl });
     revalidatePath("/admin/extras");
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -57,9 +63,11 @@ export async function updateExtra(
     const current = await db.query.extras.findFirst({ where: eq(extras.id, id) });
     const parsed = readForm(formData);
     const imageUrl = await resolveImage(formData, current?.imageUrl ?? null);
+    const rate = await getEurHufRate();
+    const priceHuf = eurToHuf(parsed.priceEur, rate);
     await db
       .update(extras)
-      .set({ ...parsed, priceHuf: String(parsed.priceHuf), imageUrl })
+      .set({ ...parsed, priceEur: String(parsed.priceEur), priceHuf: String(priceHuf), imageUrl })
       .where(eq(extras.id, id));
     revalidatePath("/admin/extras");
     revalidatePath("/admin/products");

@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { CartProvider } from "@/lib/cart-context";
 import "../globals.css";
 
 const inter = Inter({
@@ -58,9 +59,11 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <SiteHeader />
-          {children}
-          <SiteFooter />
+          <CartProvider>
+            <SiteHeader />
+            {children}
+            <SiteFooter />
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

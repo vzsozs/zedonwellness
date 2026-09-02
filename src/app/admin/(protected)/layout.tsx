@@ -8,6 +8,7 @@ import {
   Puzzle,
   Truck,
   ClipboardList,
+  Settings,
   LogOut,
 } from "lucide-react";
 
@@ -18,6 +19,7 @@ const navItems = [
   { href: "/admin/extras", label: "Extrák", icon: Puzzle },
   { href: "/admin/shipping", label: "Szállítási díjak", icon: Truck },
   { href: "/admin/orders", label: "Rendelések", icon: ClipboardList },
+  { href: "/admin/settings", label: "Beállítások", icon: Settings },
 ];
 
 export default async function ProtectedAdminLayout({
