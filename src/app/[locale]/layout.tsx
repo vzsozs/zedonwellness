@@ -7,6 +7,8 @@ import { routing, type Locale } from "@/i18n/routing";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CartProvider } from "@/lib/cart-context";
+import { CurrencyProvider } from "@/lib/currency-context";
+import { getEurHufRate } from "@/lib/settings";
 import "../globals.css";
 
 const inter = Inter({
@@ -53,17 +55,19 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale as Locale);
-  const messages = await getMessages();
+  const [messages, eurHufRate] = await Promise.all([getMessages(), getEurHufRate()]);
 
   return (
     <html lang={locale}>
       <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <CartProvider>
-            <SiteHeader />
-            {children}
-            <SiteFooter />
-          </CartProvider>
+          <CurrencyProvider eurHufRate={eurHufRate}>
+            <CartProvider>
+              <SiteHeader />
+              {children}
+              <SiteFooter />
+            </CartProvider>
+          </CurrencyProvider>
         </NextIntlClientProvider>
       </body>
     </html>

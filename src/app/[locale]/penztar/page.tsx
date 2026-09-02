@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/lib/cart-context";
-import { formatHuf } from "@/lib/config";
+import { useCurrency } from "@/lib/currency-context";
 import { initialActionState } from "@/lib/action-state";
 import { COUNTRIES } from "@/lib/countries";
 import { createOrder, getShippingEstimate } from "./actions";
@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const t = useTranslations("checkout");
   const locale = useLocale();
   const { items, subtotalHuf, totalWeightKg } = useCart();
+  const { format } = useCurrency();
   const [countryCode, setCountryCode] = useState("HU");
   const [shipping, setShipping] = useState<{
     zone: ShippingZone;
@@ -135,25 +136,25 @@ export default function CheckoutPage() {
                   {item.variantLabel ? ` (${item.variantLabel})` : ""} × {item.quantity}
                 </span>
                 <span className="font-semibold whitespace-nowrap">
-                  {formatHuf(item.priceHuf * item.quantity)}
+                  {format(item.priceHuf * item.quantity)}
                 </span>
               </div>
             ))}
           </div>
           <div className="mt-4 flex justify-between border-t border-line pt-4 text-sm">
             <span className="text-muted">{t("subtotal")}</span>
-            <span className="font-semibold">{formatHuf(subtotalHuf)}</span>
+            <span className="font-semibold">{format(subtotalHuf)}</span>
           </div>
           <div className="mt-2 flex justify-between text-sm">
             <span className="text-muted">{t("shipping")}</span>
             <span className="font-semibold">
-              {shipping.requiresQuote ? t("customQuote") : formatHuf(shipping.priceHuf ?? 0)}
+              {shipping.requiresQuote ? t("customQuote") : format(shipping.priceHuf ?? 0)}
             </span>
           </div>
           <div className="mt-4 flex justify-between border-t border-line pt-4">
             <span className="font-bold">{t("total")}</span>
             <span className="text-xl font-extrabold text-coprBlue">
-              {formatHuf(totalHuf)}
+              {format(totalHuf)}
               {shipping.requiresQuote ? " +" : ""}
             </span>
           </div>

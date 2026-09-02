@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { formatHuf } from "@/lib/config";
+import { Price } from "@/lib/currency-context";
 import { getProductGradient } from "@/lib/visuals";
 import type { Product, ProductSeries } from "@/db/schema";
 
@@ -46,7 +46,7 @@ export function ProductCard({ product }: { product: ProductWithSeries }) {
       </div>
       <div className="px-5 py-6">
         <div className="text-xl font-extrabold text-coprBlue">
-          {formatHuf(product.priceHuf)}
+          <Price hufAmount={product.priceHuf} />
         </div>
         <h3 className="mt-1.5 text-lg font-bold group-hover:text-accent">
           {product.nameHu}

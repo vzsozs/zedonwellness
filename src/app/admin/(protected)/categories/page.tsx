@@ -12,7 +12,7 @@ export default async function CategoriesPage() {
     <div>
       <h1 className="mb-8 text-2xl font-semibold">Kategóriák</h1>
 
-      <div className="mb-10 border border-line bg-white">
+      <div className="mb-10 overflow-x-auto border border-line bg-white">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs font-semibold text-muted uppercase">

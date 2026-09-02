@@ -43,7 +43,7 @@
     "series": "Sorozat",
     "capacity": "Férőhely",
     "capacityUnit": "{capacity} fő",
-    "price": "Ár (Ft)",
+    "price": "Ár",
     "filterSubmit": "Szűrés",
     "filterClear": "Törlés",
     "noResults": "Nincs a szűrésnek megfelelő termék ebben a kategóriában.",

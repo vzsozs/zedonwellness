@@ -11,7 +11,7 @@ export default async function OrdersPage() {
     <div>
       <h1 className="mb-8 text-2xl font-semibold">Rendelések</h1>
 
-      <div className="border border-line bg-white">
+      <div className="overflow-x-auto border border-line bg-white">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs font-semibold text-muted uppercase">

@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Search, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
+import { useCurrency, currencyForLocale } from "@/lib/currency-context";
 
 const links = [
   { href: "/jakuzzik", key: "jacuzzis" as const },
@@ -22,6 +23,7 @@ export function SiteHeader() {
   const tb = useTranslations("topbar");
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount } = useCart();
+  const { currency, setCurrency } = useCurrency();
 
   return (
     <header>
@@ -31,20 +33,41 @@ export function SiteHeader() {
           <span>{tb("shipping")}</span>
         </div>
         <div className="ml-auto flex items-center gap-4">
-          <Link
-            href="/"
-            locale="hu"
-            className={locale === "hu" ? "font-bold text-white" : "text-line/60"}
-          >
-            HU
-          </Link>
-          <Link
-            href="/"
-            locale="en"
-            className={locale === "en" ? "font-bold text-white" : "text-line/60"}
-          >
-            EN
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              locale="hu"
+              onClick={() => setCurrency(currencyForLocale("hu"))}
+              className={locale === "hu" ? "font-bold text-white" : "text-line/60"}
+            >
+              HU
+            </Link>
+            <Link
+              href="/"
+              locale="en"
+              onClick={() => setCurrency(currencyForLocale("en"))}
+              className={locale === "en" ? "font-bold text-white" : "text-line/60"}
+            >
+              EN
+            </Link>
+          </div>
+          <span className="text-line/30">|</span>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setCurrency("HUF")}
+              className={currency === "HUF" ? "font-bold text-white" : "text-line/60"}
+            >
+              HUF
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrency("EUR")}
+              className={currency === "EUR" ? "font-bold text-white" : "text-line/60"}
+            >
+              EUR
+            </button>
+          </div>
         </div>
       </div>
 

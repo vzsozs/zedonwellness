@@ -6,13 +6,14 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { db } from "@/db";
 import { products } from "@/db/schema";
-import { formatHuf, isOrderOnly, ORDER_ONLY_THRESHOLD_HUF } from "@/lib/config";
+import { isOrderOnly, ORDER_ONLY_THRESHOLD_HUF } from "@/lib/config";
 import { localized } from "@/lib/localized";
 import { looksLikeHtml, plainTextToHtml } from "@/lib/sanitize-description";
 import { getProductGradient } from "@/lib/visuals";
 import { ProductCard } from "@/components/product-card";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductActions } from "@/components/product-actions";
+import { OrderOnlyNote } from "@/components/order-only-note";
 import { ExtraCard } from "@/components/extra-card";
 import { VariantOptionGroup } from "@/components/variant-option-group";
 
@@ -177,11 +178,7 @@ export default async function ProductPage({
             className="mt-6 h-14 w-auto"
           />
 
-          {orderOnly ? (
-            <div className="mt-6 border-l-[3px] border-accent bg-paper-muted px-4.5 py-3.5 text-[13.5px] text-muted">
-              {t("orderOnlyNote", { threshold: formatHuf(ORDER_ONLY_THRESHOLD_HUF) })}
-            </div>
-          ) : null}
+          {orderOnly ? <OrderOnlyNote thresholdHuf={ORDER_ONLY_THRESHOLD_HUF} /> : null}
 
           <ProductActions
             productId={product.id}

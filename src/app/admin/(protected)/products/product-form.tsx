@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, type ReactNode } from "react";
 import type { Category, Extra, Product, ProductSeries, ProductVariant } from "@/db/schema";
 import type { ActionState } from "@/lib/action-state";
 import { initialActionState } from "@/lib/action-state";
@@ -43,153 +43,205 @@ export function ProductForm({
   }, [state]);
 
   return (
-    <form action={formAction} className="flex max-w-4xl flex-col gap-6">
+    <form action={formAction} className="flex flex-col gap-6">
       <ErrorModal
         message={modalOpen ? state.error : null}
         onClose={() => setModalOpen(false)}
       />
-      <ToggleSwitch
-        label="Készleten"
-        name="inStock"
-        defaultChecked={values?.inStock ?? true}
-      />
 
-      <NameSlugFields defaultNameHu={values?.nameHu} defaultSlug={values?.slug} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        {/* Main content */}
+        <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
+          <FormSection title="Alapadatok">
+            <NameSlugFields defaultNameHu={values?.nameHu} defaultSlug={values?.slug} />
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field label="SKU / cikkszám" name="sku" defaultValue={values?.sku ?? ""} />
+              <Field label="Név (EN)" name="nameEn" defaultValue={values?.nameEn ?? ""} />
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field
+                label="Alcím (HU) — pl. 6 fő · 220×220 cm"
+                name="subtitleHu"
+                defaultValue={values?.subtitleHu ?? ""}
+              />
+              <Field
+                label="Alcím (EN)"
+                name="subtitleEn"
+                defaultValue={values?.subtitleEn ?? ""}
+              />
+            </div>
+          </FormSection>
 
-      <div className="grid grid-cols-2 gap-5">
-        <Field label="SKU / cikkszám" name="sku" defaultValue={values?.sku ?? ""} />
-        <Field label="Név (EN)" name="nameEn" defaultValue={values?.nameEn ?? ""} />
+          <FormSection title="Állapot">
+            <div className="flex flex-wrap gap-x-8 gap-y-4">
+              <ToggleSwitch
+                label="Készleten"
+                name="inStock"
+                defaultChecked={values?.inStock ?? true}
+              />
+              <ToggleSwitch
+                label="Csak megrendelhető"
+                name="orderOnly"
+                defaultChecked={values?.orderOnly ?? false}
+              />
+              <ToggleSwitch
+                label="Kiemelt termék"
+                name="isFeatured"
+                defaultChecked={values?.isFeatured ?? false}
+              />
+              <ToggleSwitch label="Újdonság" name="isNew" defaultChecked={values?.isNew ?? false} />
+              <ToggleSwitch
+                label="Akciós"
+                name="isOnSale"
+                defaultChecked={values?.isOnSale ?? false}
+              />
+            </div>
+          </FormSection>
+
+          <FormSection title="Leírások">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <TextArea
+                label="Rövid leírás (HU) — kártyákhoz, találati listához"
+                name="shortDescriptionHu"
+                defaultValue={values?.shortDescriptionHu ?? ""}
+                rows={2}
+              />
+              <TextArea
+                label="Rövid leírás (EN)"
+                name="shortDescriptionEn"
+                defaultValue={values?.shortDescriptionEn ?? ""}
+                rows={2}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <RichTextField
+                label="Hosszú leírás (HU) — termékoldal"
+                name="descriptionHu"
+                defaultValue={values?.descriptionHu ?? ""}
+              />
+              <RichTextField
+                label="Hosszú leírás (EN)"
+                name="descriptionEn"
+                defaultValue={values?.descriptionEn ?? ""}
+              />
+            </div>
+          </FormSection>
+
+          <FormSection title="Egyéb adatok">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field
+                label="Férőhely (fő, opcionális) — a kategória oldal szűrőjéhez"
+                name="capacity"
+                type="number"
+                defaultValue={values?.capacity ?? ""}
+              />
+              <Field
+                label="Súly (kg, opcionális) — a GLS szállítási díj számításához"
+                name="weightKg"
+                type="number"
+                step="0.1"
+                defaultValue={values?.weightKg ?? ""}
+              />
+            </div>
+            <Field
+              label="3D/AR megtekintő link (opcionális)"
+              name="threeDArUrl"
+              defaultValue={values?.threeDArUrl ?? ""}
+            />
+          </FormSection>
+
+          <FormSection title="Extrák">
+            <ExtrasPicker allExtras={allExtras} selectedIds={selectedExtraIds} />
+          </FormSection>
+
+          <FormSection title="Képek">
+            <ImageGalleryField
+              existingImages={values?.images ?? []}
+              mainImage={values?.mainImage ?? null}
+              cardImage={values?.cardImage ?? null}
+            />
+          </FormSection>
+
+          <FormSection title="Specifikáció">
+            <SpecsEditor defaultSpecs={values?.specs ?? []} />
+          </FormSection>
+
+          <FormSection
+            title="Konfigurációs opciók"
+            description="Extra költség nélküli választási lehetőségek, pl. Héj színe, Sarok elem."
+          >
+            <VariantOptionsEditor defaultGroups={values?.variantOptions ?? []} />
+          </FormSection>
+
+          <FormSection
+            title="Termékváltozatok (SKU-k)"
+            description="Saját ár/SKU/súly/kép is lehet változatonként, pl. illatok, ízek."
+          >
+            <VariantSkusEditor
+              defaultVariants={(values?.variants ?? []).map((v) => ({
+                nameHu: v.nameHu,
+                nameEn: v.nameEn,
+                sku: v.sku,
+                priceHuf: v.priceHuf,
+                weightKg: v.weightKg,
+                imageUrl: v.imageUrl,
+                isDefault: v.isDefault,
+                inStock: v.inStock,
+              }))}
+            />
+          </FormSection>
+        </div>
+
+        {/* Sidebar */}
+        <div className="order-1 flex flex-col gap-6 lg:order-2 lg:sticky lg:top-6 lg:self-start">
+          <FormSection title="Mentés">
+            <button
+              type="submit"
+              disabled={pending}
+              className="w-full bg-ink py-3 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {pending ? "Mentés…" : submitLabel}
+            </button>
+          </FormSection>
+
+          <FormSection title="Ár">
+            <PriceField
+              eurHufRate={eurHufRate}
+              defaultPriceEur={values?.priceEur ?? null}
+              defaultPriceHuf={values?.priceHuf ?? 0}
+              defaultManual={values?.priceHufManual ?? false}
+            />
+          </FormSection>
+
+          <FormSection title="Kategorizálás">
+            <CategorySeriesFields
+              categories={categories}
+              seriesList={seriesList}
+              defaultCategoryId={values?.categoryId}
+              defaultSeriesId={values?.seriesId}
+            />
+          </FormSection>
+        </div>
       </div>
-
-      <CategorySeriesFields
-        categories={categories}
-        seriesList={seriesList}
-        defaultCategoryId={values?.categoryId}
-        defaultSeriesId={values?.seriesId}
-      />
-
-      <div className="grid grid-cols-2 gap-5">
-        <Field
-          label="Alcím (HU) — pl. 6 fő · 220×220 cm"
-          name="subtitleHu"
-          defaultValue={values?.subtitleHu ?? ""}
-        />
-        <Field
-          label="Alcím (EN)"
-          name="subtitleEn"
-          defaultValue={values?.subtitleEn ?? ""}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-5">
-        <Field
-          label="Férőhely (fő, opcionális) — a kategória oldal szűrőjéhez"
-          name="capacity"
-          type="number"
-          defaultValue={values?.capacity ?? ""}
-        />
-        <Field
-          label="Súly (kg, opcionális) — a GLS szállítási díj számításához"
-          name="weightKg"
-          type="number"
-          step="0.1"
-          defaultValue={values?.weightKg ?? ""}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-5">
-        <TextArea
-          label="Rövid leírás (HU) — kártyákhoz, találati listához"
-          name="shortDescriptionHu"
-          defaultValue={values?.shortDescriptionHu ?? ""}
-          rows={2}
-        />
-        <TextArea
-          label="Rövid leírás (EN)"
-          name="shortDescriptionEn"
-          defaultValue={values?.shortDescriptionEn ?? ""}
-          rows={2}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-5">
-        <RichTextField
-          label="Hosszú leírás (HU) — termékoldal"
-          name="descriptionHu"
-          defaultValue={values?.descriptionHu ?? ""}
-        />
-        <RichTextField
-          label="Hosszú leírás (EN)"
-          name="descriptionEn"
-          defaultValue={values?.descriptionEn ?? ""}
-        />
-      </div>
-
-      <PriceField
-        eurHufRate={eurHufRate}
-        defaultPriceEur={values?.priceEur ?? null}
-        defaultPriceHuf={values?.priceHuf ?? 0}
-        defaultManual={values?.priceHufManual ?? false}
-      />
-
-      <ImageGalleryField
-        existingImages={values?.images ?? []}
-        mainImage={values?.mainImage ?? null}
-        cardImage={values?.cardImage ?? null}
-      />
-
-      <SpecsEditor defaultSpecs={values?.specs ?? []} />
-
-      <VariantOptionsEditor defaultGroups={values?.variantOptions ?? []} />
-
-      <VariantSkusEditor
-        defaultVariants={(values?.variants ?? []).map((v) => ({
-          nameHu: v.nameHu,
-          nameEn: v.nameEn,
-          sku: v.sku,
-          priceHuf: v.priceHuf,
-          weightKg: v.weightKg,
-          imageUrl: v.imageUrl,
-          isDefault: v.isDefault,
-          inStock: v.inStock,
-        }))}
-      />
-
-      <ExtrasPicker allExtras={allExtras} selectedIds={selectedExtraIds} />
-
-      <Field
-        label="3D/AR megtekintő link (opcionális)"
-        name="threeDArUrl"
-        defaultValue={values?.threeDArUrl ?? ""}
-      />
-
-      <div className="grid grid-cols-2 gap-3">
-        <Checkbox
-          label="Csak megrendelhető (nincs online fizetés)"
-          name="orderOnly"
-          defaultChecked={values?.orderOnly ?? false}
-        />
-        <Checkbox
-          label="Kiemelt termék"
-          name="isFeatured"
-          defaultChecked={values?.isFeatured ?? false}
-        />
-        <Checkbox label="Újdonság" name="isNew" defaultChecked={values?.isNew ?? false} />
-        <Checkbox
-          label="Akciós"
-          name="isOnSale"
-          defaultChecked={values?.isOnSale ?? false}
-        />
-      </div>
-
-      <button
-        type="submit"
-        disabled={pending}
-        className="mt-2 w-fit bg-ink px-8 py-3 text-sm font-semibold text-white disabled:opacity-50"
-      >
-        {pending ? "Mentés…" : submitLabel}
-      </button>
     </form>
+  );
+}
+
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="border border-line bg-white p-5 sm:p-6">
+      <h2 className="text-xs font-bold tracking-wide text-ink uppercase">{title}</h2>
+      {description ? <p className="mt-1 text-xs text-muted">{description}</p> : null}
+      <div className="mt-4 flex flex-col gap-5">{children}</div>
+    </section>
   );
 }
 
@@ -248,27 +300,5 @@ function TextArea({
         className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
       />
     </div>
-  );
-}
-
-function Checkbox({
-  label,
-  name,
-  defaultChecked,
-}: {
-  label: string;
-  name: string;
-  defaultChecked?: boolean;
-}) {
-  return (
-    <label className="flex items-center gap-2.5 text-sm">
-      <input
-        type="checkbox"
-        name={name}
-        defaultChecked={defaultChecked}
-        className="accent-accent"
-      />
-      {label}
-    </label>
   );
 }

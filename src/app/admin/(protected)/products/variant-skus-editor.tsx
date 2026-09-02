@@ -107,32 +107,43 @@ export function VariantSkusEditor({
 
       <div className="flex flex-col gap-3">
         {skus.map((sku) => (
-          <div key={sku.key} className="flex items-start gap-3 border border-line p-3">
-            <label className="relative block size-20 shrink-0 cursor-pointer overflow-hidden border border-line">
-              {sku.previewUrl || sku.imageUrl ? (
-                <img
-                  src={sku.previewUrl ?? sku.imageUrl ?? ""}
-                  alt=""
-                  className="h-full w-full object-cover"
+          <div key={sku.key} className="flex flex-col gap-3 border border-line p-3 sm:flex-row sm:items-start">
+            <div className="flex items-start gap-3 sm:contents">
+              <label className="relative block size-20 shrink-0 cursor-pointer overflow-hidden border border-line">
+                {sku.previewUrl || sku.imageUrl ? (
+                  <img
+                    src={sku.previewUrl ?? sku.imageUrl ?? ""}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-muted">
+                    <ImagePlus className="size-5" strokeWidth={1.6} />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  name={`variantSkuFile_${sku.key}`}
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) update(sku.key, { previewUrl: URL.createObjectURL(file) });
+                  }}
                 />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted">
-                  <ImagePlus className="size-5" strokeWidth={1.6} />
-                </div>
-              )}
-              <input
-                type="file"
-                name={`variantSkuFile_${sku.key}`}
-                accept="image/jpeg,image/png,image/webp,image/avif"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) update(sku.key, { previewUrl: URL.createObjectURL(file) });
-                }}
-              />
-            </label>
+              </label>
 
-            <div className="grid flex-1 grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => removeSku(sku.key)}
+                aria-label="Változat törlése"
+                className="ml-auto flex size-8 shrink-0 items-center justify-center text-muted hover:text-red-600 sm:order-3 sm:ml-0"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <div className="grid flex-1 grid-cols-1 gap-2.5 sm:grid-cols-2">
               <input
                 value={sku.nameHu}
                 onChange={(e) => update(sku.key, { nameHu: e.target.value })}
@@ -186,15 +197,6 @@ export function VariantSkusEditor({
                 Készleten
               </label>
             </div>
-
-            <button
-              type="button"
-              onClick={() => removeSku(sku.key)}
-              aria-label="Változat törlése"
-              className="flex size-8 shrink-0 items-center justify-center text-muted hover:text-red-600"
-            >
-              <X className="size-4" />
-            </button>
           </div>
         ))}
       </div>

@@ -7,3 +7,14 @@ export function roundToTen(value: number): number {
 export function eurToHuf(eur: number, rate: number): number {
   return roundToTen(eur * rate);
 }
+
+export function hufToEur(huf: number, rate: number): number {
+  return huf / rate;
+}
+
+export function formatEur(eur: number): string {
+  return `${eur.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} €`;
+}

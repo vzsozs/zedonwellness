@@ -22,7 +22,7 @@ export function PriceField({
   const computedHuf = priceEur ? roundToTen(Number(priceEur) * eurHufRate) : 0;
 
   return (
-    <div className="grid grid-cols-2 gap-5">
+    <div className="flex flex-col gap-5">
       <div>
         <label className="mb-1.5 block text-xs font-semibold text-muted">
           Ár (EUR)
@@ -38,26 +38,24 @@ export function PriceField({
         />
       </div>
       <div>
-        <label className="mb-1.5 flex items-center justify-between text-xs font-semibold text-muted">
-          <span>Ár (HUF, bruttó)</span>
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <label className="text-xs font-semibold text-muted">Ár (HUF, bruttó)</label>
           <button
             type="button"
             onClick={() => setUnlocked((u) => !u)}
-            className="flex items-center gap-1 text-[11px] font-semibold text-accent hover:text-accent-dark"
+            className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-accent hover:text-accent-dark"
           >
             {unlocked ? (
               <>
-                <LockOpen className="size-3.5" /> Feloldva — kattints a
-                zároláshoz
+                <LockOpen className="size-3.5" /> Feloldva
               </>
             ) : (
               <>
-                <Lock className="size-3.5" /> Automatikus — kattints a
-                felülíráshoz
+                <Lock className="size-3.5" /> Automatikus
               </>
             )}
           </button>
-        </label>
+        </div>
         <input
           type="number"
           name="priceHuf"
@@ -72,11 +70,11 @@ export function PriceField({
           }`}
         />
         {unlocked ? <input type="hidden" name="priceHufManual" value="on" /> : null}
-        {!unlocked ? (
-          <p className="mt-1 text-[11px] text-muted">
-            {eurHufRate} Ft/EUR árfolyamon, legközelebbi 10 Ft-ra kerekítve.
-          </p>
-        ) : null}
+        <p className="mt-1 text-[11px] text-muted">
+          {unlocked
+            ? "Kattints az Automatikusra, hogy visszaálljon az EUR árból számolt értékre."
+            : `${eurHufRate} Ft/EUR árfolyamon, legközelebbi 10 Ft-ra kerekítve. Kattints a Feloldásra a kézi beírásához.`}
+        </p>
       </div>
     </div>
   );

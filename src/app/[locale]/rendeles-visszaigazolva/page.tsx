@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
-import { formatHuf } from "@/lib/config";
+import { Price } from "@/lib/currency-context";
 import { ClearCartOnMount } from "./clear-cart-on-mount";
 
 export default async function OrderConfirmationPage({
@@ -58,7 +58,7 @@ export default async function OrderConfirmationPage({
                 {item.nameHu} × {item.quantity}
               </span>
               <span className="font-semibold whitespace-nowrap">
-                {formatHuf(item.priceHuf * item.quantity)}
+                <Price hufAmount={item.priceHuf * item.quantity} />
               </span>
             </div>
           ))}
@@ -66,15 +66,17 @@ export default async function OrderConfirmationPage({
         <div className="mt-4 flex justify-between border-t border-line pt-4 text-sm">
           <span className="text-muted">{t("shipping")}</span>
           <span className="font-semibold">
-            {order.shippingAddress.shippingRequiresQuote
-              ? t("customQuote")
-              : formatHuf(order.shippingAddress.shippingHuf ?? 0)}
+            {order.shippingAddress.shippingRequiresQuote ? (
+              t("customQuote")
+            ) : (
+              <Price hufAmount={order.shippingAddress.shippingHuf ?? 0} />
+            )}
           </span>
         </div>
         <div className="mt-4 flex justify-between border-t border-line pt-4">
           <span className="font-bold">{t("total")}</span>
           <span className="text-xl font-extrabold text-coprBlue">
-            {formatHuf(order.totalHuf)}
+            <Price hufAmount={order.totalHuf} />
             {order.shippingAddress.shippingRequiresQuote ? " +" : ""}
           </span>
         </div>

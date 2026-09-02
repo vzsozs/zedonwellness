@@ -1,5 +1,5 @@
 import type { Extra } from "@/db/schema";
-import { formatHuf } from "@/lib/config";
+import { Price } from "@/lib/currency-context";
 
 export function ExtraCard({ name, extra }: { name: string; extra: Extra }) {
   return (
@@ -16,7 +16,7 @@ export function ExtraCard({ name, extra }: { name: string; extra: Extra }) {
       <div className="p-5 text-center">
         <h3 className="text-base font-bold">{name}</h3>
         <div className="mt-2 text-lg font-extrabold text-accent">
-          {formatHuf(extra.priceHuf)}
+          <Price hufAmount={extra.priceHuf} />
         </div>
       </div>
     </div>

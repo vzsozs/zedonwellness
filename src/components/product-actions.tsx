@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Heart } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { formatHuf } from "@/lib/config";
+import { Price } from "@/lib/currency-context";
 import { localized } from "@/lib/localized";
 
 export type ProductSkuVariant = {
@@ -73,7 +73,7 @@ export function ProductActions({
   return (
     <div>
       <div className="mt-6 text-[32px] font-extrabold text-accent">
-        {formatHuf(effectivePrice)}
+        <Price hufAmount={effectivePrice} />
       </div>
 
       {variants.length > 0 ? (

@@ -119,27 +119,29 @@ export function VariantOptionsEditor({
       <div className="flex flex-col gap-5">
         {groups.map((group) => (
           <div key={group.key} className="border border-line p-4">
-            <div className="mb-3 flex items-center gap-2.5">
-              <input
-                value={group.nameHu}
-                onChange={(e) => updateGroup(group.key, { nameHu: e.target.value })}
-                placeholder="Csoport neve (HU) — pl. Héj színe"
-                className="flex-1 border border-line px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-accent"
-              />
+            <div className="mb-3 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+              <div className="flex gap-2.5 sm:contents">
+                <input
+                  value={group.nameHu}
+                  onChange={(e) => updateGroup(group.key, { nameHu: e.target.value })}
+                  placeholder="Csoport neve (HU) — pl. Héj színe"
+                  className="flex-1 border border-line px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-accent"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeGroup(group.key)}
+                  aria-label="Csoport törlése"
+                  className="flex size-9 shrink-0 items-center justify-center border border-line text-muted hover:text-red-600 sm:order-3"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
               <input
                 value={group.nameEn}
                 onChange={(e) => updateGroup(group.key, { nameEn: e.target.value })}
                 placeholder="Csoport neve (EN)"
                 className="flex-1 border border-line px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-accent"
               />
-              <button
-                type="button"
-                onClick={() => removeGroup(group.key)}
-                aria-label="Csoport törlése"
-                className="flex size-9 shrink-0 items-center justify-center border border-line text-muted hover:text-red-600"
-              >
-                <X className="size-4" />
-              </button>
             </div>
 
             <div className="flex flex-wrap gap-3">

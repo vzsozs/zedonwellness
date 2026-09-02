@@ -20,7 +20,7 @@ export function CategorySeriesFields({
   );
 
   return (
-    <div className="grid grid-cols-2 gap-5">
+    <div className="flex flex-col gap-5">
       <div>
         <label className="mb-1.5 block text-xs font-semibold text-muted">
           Kategória

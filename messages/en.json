@@ -43,7 +43,7 @@
     "series": "Series",
     "capacity": "Capacity",
     "capacityUnit": "{capacity} people",
-    "price": "Price (HUF)",
+    "price": "Price",
     "filterSubmit": "Filter",
     "filterClear": "Clear",
     "noResults": "No products match the filter in this category.",

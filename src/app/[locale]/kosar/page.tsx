@@ -4,12 +4,13 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Trash2, Minus, Plus } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { formatHuf } from "@/lib/config";
+import { useCurrency } from "@/lib/currency-context";
 import { getProductGradient } from "@/lib/visuals";
 
 export default function CartPage() {
   const t = useTranslations("cart");
   const { items, removeItem, setQuantity, subtotalHuf } = useCart();
+  const { format } = useCurrency();
 
   return (
     <main className="mx-auto max-w-4xl px-16 pt-10 pb-25 max-lg:px-6">
@@ -51,7 +52,7 @@ export default function CartPage() {
                   {item.variantLabel ? (
                     <div className="text-sm text-muted">{item.variantLabel}</div>
                   ) : null}
-                  <div className="mt-1 text-sm text-muted">{formatHuf(item.priceHuf)}</div>
+                  <div className="mt-1 text-sm text-muted">{format(item.priceHuf)}</div>
                   {item.orderOnly ? (
                     <div className="mt-1 text-xs text-accent">{t("orderOnlyNote")}</div>
                   ) : null}
@@ -83,7 +84,7 @@ export default function CartPage() {
                 </div>
 
                 <div className="w-32 text-right font-extrabold text-coprBlue">
-                  {formatHuf(item.priceHuf * item.quantity)}
+                  {format(item.priceHuf * item.quantity)}
                 </div>
 
                 <button
@@ -105,7 +106,7 @@ export default function CartPage() {
                 {t("subtotal")}
               </div>
               <div className="text-2xl font-extrabold text-coprBlue">
-                {formatHuf(subtotalHuf)}
+                {format(subtotalHuf)}
               </div>
             </div>
           </div>

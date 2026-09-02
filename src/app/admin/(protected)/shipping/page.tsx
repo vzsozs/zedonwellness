@@ -20,7 +20,7 @@ export default async function ShippingPage() {
         ajánlatot.
       </p>
 
-      <div className="mb-10 border border-line bg-white">
+      <div className="mb-10 overflow-x-auto border border-line bg-white">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs font-semibold text-muted uppercase">
@@ -83,7 +83,7 @@ export default async function ShippingPage() {
               <option value="international">Külföld</option>
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Súly -tól (kg)" name="minKg" type="number" step="0.1" required />
             <Field
               label="Súly -ig (kg, üres = nyitott)"

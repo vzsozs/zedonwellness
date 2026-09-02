@@ -32,7 +32,7 @@ export function ExtrasPicker({
           .
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-2 border border-line p-3.5">
+        <div className="flex flex-col gap-2.5 border border-line p-3.5">
           {allExtras.map((extra) => (
             <label key={extra.id} className="flex items-center gap-2.5 text-sm">
               <input
@@ -42,8 +42,8 @@ export function ExtrasPicker({
                 defaultChecked={selectedIds.includes(extra.id)}
                 className="accent-accent"
               />
-              {extra.nameHu}
-              <span className="text-muted">{formatHuf(extra.priceHuf)}</span>
+              <span className="min-w-0 flex-1 truncate">{extra.nameHu}</span>
+              <span className="shrink-0 text-muted">{formatHuf(extra.priceHuf)}</span>
             </label>
           ))}
         </div>
