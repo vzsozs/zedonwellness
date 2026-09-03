@@ -13,7 +13,12 @@ import { type ActionState, toActionError } from "@/lib/action-state";
 const extraSchema = z.object({
   nameHu: z.string().min(1, "Kötelező"),
   nameEn: z.string().optional(),
-  priceEur: z.coerce.number().nonnegative(),
+  // Optional — many extras are included by default and have no separate
+  // price; a blank field means "included", not "0 Ft".
+  priceEur: z
+    .union([z.literal(""), z.coerce.number().nonnegative()])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
   sortOrder: z.coerce.number().int().default(0),
 });
 
@@ -21,7 +26,7 @@ function readForm(formData: FormData) {
   return extraSchema.parse({
     nameHu: formData.get("nameHu"),
     nameEn: formData.get("nameEn") || undefined,
-    priceEur: formData.get("priceEur"),
+    priceEur: formData.get("priceEur") ?? "",
     sortOrder: formData.get("sortOrder") || 0,
   });
 }
@@ -41,10 +46,13 @@ export async function createExtra(
     const parsed = readForm(formData);
     const imageUrl = await resolveImage(formData, null);
     const rate = await getEurHufRate();
-    const priceHuf = eurToHuf(parsed.priceEur, rate);
-    await db
-      .insert(extras)
-      .values({ ...parsed, priceEur: String(parsed.priceEur), priceHuf: String(priceHuf), imageUrl });
+    const priceHuf = parsed.priceEur === null ? 0 : eurToHuf(parsed.priceEur, rate);
+    await db.insert(extras).values({
+      ...parsed,
+      priceEur: parsed.priceEur === null ? null : String(parsed.priceEur),
+      priceHuf: String(priceHuf),
+      imageUrl,
+    });
     revalidatePath("/admin/extras");
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -64,10 +72,15 @@ export async function updateExtra(
     const parsed = readForm(formData);
     const imageUrl = await resolveImage(formData, current?.imageUrl ?? null);
     const rate = await getEurHufRate();
-    const priceHuf = eurToHuf(parsed.priceEur, rate);
+    const priceHuf = parsed.priceEur === null ? 0 : eurToHuf(parsed.priceEur, rate);
     await db
       .update(extras)
-      .set({ ...parsed, priceEur: String(parsed.priceEur), priceHuf: String(priceHuf), imageUrl })
+      .set({
+        ...parsed,
+        priceEur: parsed.priceEur === null ? null : String(parsed.priceEur),
+        priceHuf: String(priceHuf),
+        imageUrl,
+      })
       .where(eq(extras.id, id));
     revalidatePath("/admin/extras");
     revalidatePath("/admin/products");

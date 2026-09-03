@@ -11,7 +11,15 @@
   },
   "common": {
     "home": "Főoldal",
-    "products": "Termékek"
+    "products": "Termékek",
+    "search": "Keresés",
+    "searchPlaceholder": "Keresés…"
+  },
+  "search": {
+    "heading": "Keresés",
+    "prompt": "Írj be egy keresőszót a fejlécben.",
+    "resultCount": "{count, plural, =0 {Nincs találat erre: \"{query}\"} other {# találat erre: \"{query}\"}}",
+    "noResults": "Nincs találat — próbálj más kulcsszót."
   },
   "topbar": {
     "phone": "Ingyenes szaktanácsadás: +36 1 234 5678",
@@ -23,7 +31,7 @@
     "titleRest": "magának és szeretteinek",
     "subtitle": "Több mint 15 éve tervezünk és szállítunk minőségi wellness-berendezéseket — szakmai tanácsadással, helyszíni felméréssel és teljes körű szervizzel.",
     "ctaPrimary": "Termékek felfedezése",
-    "ctaSecondary": "Kérj ajánlatot",
+    "ctaSecondary": "Kapcsolat",
     "trust": {
       "warranty": "5 év garancia",
       "shipping": "Országos házhozszállítás",
@@ -36,7 +44,9 @@
     "featuredTitle": "Legnépszerűbb modelljeink",
     "viewAll": "Összes termék",
     "extrasEyebrow": "Extrák",
-    "extrasTitle": "Tedd teljessé az élményt"
+    "extrasTitle": "Tedd teljessé az élményt",
+    "blogEyebrow": "Blog",
+    "blogTitle": "Legfrissebb cikkeink"
   },
   "category": {
     "productCount": "{count, plural, other {# termék}}",
@@ -46,6 +56,14 @@
     "price": "Ár",
     "filterSubmit": "Szűrés",
     "filterClear": "Törlés",
+    "sortLabel": "Rendezés",
+    "sortNameAsc": "Név szerint (A-Z)",
+    "sortPriceAsc": "Ár szerint (növekvő)",
+    "sortPriceDesc": "Ár szerint (csökkenő)",
+    "saunaBannerTitle": "Egyedi gyártású szaunák",
+    "saunaBannerText": "Vállaljuk egyedi szaunák építését kültérre és beltérre egyaránt. Infra, finn és kombinált szaunák egyaránt megvalósíthatóak, minőségi alapanyagokból, több évtizedes szakértelemmel. Árajánlatot helyszíni egyeztetés és felmérés alapján tudunk adni.",
+    "saunaBannerGallery": "Galéria",
+    "saunaBannerContact": "Kapcsolat",
     "noResults": "Nincs a szűrésnek megfelelő termék ebben a kategóriában.",
     "comingSoon": "Ebben a kategóriában hamarosan elérhetők lesznek termékek."
   },
@@ -55,17 +73,23 @@
     "viewInAr": "Megtekintés kiterjesztett valóságban",
     "extrasHeading": "Rendelhető extrák",
     "orderOnlyNote": "Ez a termék {threshold} feletti értékű, ezért online fizetés nem elérhető — a rendelés leadása után kollégáink 1 munkanapon belül felveszik veled a kapcsolatot az egyeztetéshez.",
-    "specsHeading": "Paraméterek",
+    "specsHeading": "Specifikációk",
+    "includedByDefault": "Alapból benne",
+    "includedLabel": "TARTALMAZZA",
     "contactHeading": "Kapcsolat",
     "contactText": "Kérdésed van a termékkel kapcsolatban? Kollégáink szívesen segítenek a választásban, a helyszíni felmérés és a telepítés részleteiben.",
     "contactCta": "Kapcsolatfelvétel",
     "relatedHeading": "Hasonló termékek",
-    "chooseVariant": "Válassz változatot",
+    "chooseVariant": "Opciók",
     "outOfStockSuffix": " (elfogyott)",
     "productOutOfStock": "Ez a termék jelenleg nem rendelhető.",
     "variantOutOfStock": "A kiválasztott változat jelenleg nem rendelhető.",
     "addedToCart": "Kosárba téve ✓",
     "orderNow": "Megrendelés leadása",
+    "priceOnRequestLabel": "Hamarosan",
+    "priceOnRequestNote": "Ennél a terméknél még nincs online ár feltüntetve — kollégáink szívesen tájékoztatnak az árról és az elérhetőségről.",
+    "documentsHeading": "Letölthető dokumentumok",
+    "featuresHeading": "Kiegészítők",
     "addToCart": "Kosárba",
     "favoriteAria": "Kedvencekhez adás",
     "badgeNew": "ÚJDONSÁG",

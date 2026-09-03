@@ -26,6 +26,19 @@ const ALLOWED_TYPES: Record<string, string> = {
 const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
 
 /**
+ * Low-level writer shared by saveUploadedImage/saveUploadedDocument, and
+ * reusable directly by one-off migration/import scripts that already have a
+ * Buffer (e.g. downloaded from an external URL) rather than a browser File.
+ */
+export async function writeUpload(buffer: Buffer, ext: string, subdir: string): Promise<string> {
+  const filename = `${randomUUID()}.${ext}`;
+  const dir = path.join(UPLOADS_ROOT, subdir);
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, filename), buffer);
+  return `/uploads/${subdir}/${filename}`;
+}
+
+/**
  * Saves an uploaded image file to uploads/<subdir>/ and returns its public
  * URL path (served via the /uploads/[...path] route handler).
  */
@@ -38,12 +51,24 @@ export async function saveUploadedImage(file: File, subdir: string): Promise<str
     throw new Error("A kép mérete legfeljebb 8 MB lehet.");
   }
 
-  const filename = `${randomUUID()}.${ext}`;
-  const dir = path.join(UPLOADS_ROOT, subdir);
-  await mkdir(dir, { recursive: true });
+  const buffer = Buffer.from(await file.arrayBuffer());
+  return writeUpload(buffer, ext, subdir);
+}
+
+const MAX_DOCUMENT_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB
+
+/**
+ * Saves an uploaded PDF document (spec sheet, assembly guide, ...) to
+ * uploads/<subdir>/ and returns its public URL path.
+ */
+export async function saveUploadedDocument(file: File, subdir: string): Promise<string> {
+  if (file.type !== "application/pdf") {
+    throw new Error("Csak PDF fájl tölthető fel.");
+  }
+  if (file.size > MAX_DOCUMENT_SIZE_BYTES) {
+    throw new Error("A fájl mérete legfeljebb 20 MB lehet.");
+  }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(dir, filename), buffer);
-
-  return `/uploads/${subdir}/${filename}`;
+  return writeUpload(buffer, "pdf", subdir);
 }

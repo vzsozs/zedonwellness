@@ -9,6 +9,7 @@ const MIME_TYPES: Record<string, string> = {
   ".webp": "image/webp",
   ".avif": "image/avif",
   ".svg": "image/svg+xml",
+  ".pdf": "application/pdf",
 };
 
 export async function GET(

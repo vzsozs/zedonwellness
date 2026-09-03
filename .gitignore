@@ -30,5 +30,9 @@ next-env.d.ts
 # src/app/uploads/[...path]/route.ts, kept outside public/ on purpose
 /uploads
 
+# raw Webflow export dump used as a one-off migration source
+# (see scripts/migrate-webflow/) — not meant to be committed
+/Ideiglenes
+
 # generated design canvas payload (regenerate from the .dc.html sources with seed-canvas.mjs)
 design-mockups/**/*-mockups.html

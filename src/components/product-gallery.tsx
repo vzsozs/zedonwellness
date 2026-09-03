@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ZoomIn } from "lucide-react";
 import { ImageLightbox } from "./image-lightbox";
+import { useProductMedia } from "@/lib/product-media-context";
 
 export function ProductGallery({
   images,
@@ -14,9 +15,12 @@ export function ProductGallery({
   fallbackGradient: string;
 }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const { variantImage } = useProductMedia();
 
-  const hasImages = images.length > 0;
-  const mainImage = images[0];
+  // A selected SKU variant's own photo (if it has one) takes over the hero
+  // shot; the thumbnail strip/lightbox still show the product's full gallery.
+  const hasImages = images.length > 0 || Boolean(variantImage);
+  const mainImage = variantImage ?? images[0];
 
   return (
     <div className="w-full">
@@ -42,7 +46,7 @@ export function ProductGallery({
               alt=""
               className="h-full w-full object-contain"
             />
-            <span className="absolute right-4 bottom-4 flex size-9 items-center justify-center bg-white/90 text-ink opacity-0 transition-opacity group-hover:opacity-100">
+            <span className="ar-zoom-btn absolute right-4 bottom-4 flex size-9 items-center justify-center bg-white/90 text-ink opacity-0 transition-opacity group-hover:opacity-100">
               <ZoomIn className="size-4.5" strokeWidth={1.8} />
             </span>
           </>
@@ -57,9 +61,10 @@ export function ProductGallery({
               type="button"
               onClick={() => setLightboxIndex(i)}
               aria-label={`${i + 1}. kép nagyítása`}
-              className="h-20 w-25 shrink-0 overflow-hidden bg-cover bg-center opacity-80 hover:opacity-100"
-              style={{ backgroundImage: `url(${src})` }}
-            />
+              className="h-20 w-25 shrink-0 overflow-hidden bg-white p-1 opacity-80 hover:opacity-100"
+            >
+              <img src={src} alt="" className="h-full w-full object-contain" />
+            </button>
           ))}
         </div>
       ) : null}

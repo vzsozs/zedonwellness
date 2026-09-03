@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { eq, asc } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, products, productSeries, extras } from "@/db/schema";
+import { categories, products, productSeries, extras, productFeatureGroups, productFeatures } from "@/db/schema";
 import { getEurHufRate } from "@/lib/settings";
 import { ProductForm } from "../../product-form";
 import { updateProduct } from "../../actions";
@@ -13,14 +13,22 @@ export default async function EditProductPage({
 }) {
   const { id } = await params;
   const productId = Number(id);
-  const [product, categoryList, seriesList, extraList, eurHufRate] = await Promise.all([
+  const [product, categoryList, seriesList, extraList, featureGroups, eurHufRate] = await Promise.all([
     db.query.products.findFirst({
       where: eq(products.id, productId),
-      with: { extras: true, variants: { orderBy: (v, { asc }) => [asc(v.sortOrder)] } },
+      with: {
+        extras: true,
+        features: true,
+        variants: { orderBy: (v, { asc }) => [asc(v.sortOrder)] },
+      },
     }),
     db.query.categories.findMany({ orderBy: [asc(categories.sortOrder)] }),
     db.query.productSeries.findMany({ orderBy: [asc(productSeries.sortOrder)] }),
     db.query.extras.findMany({ orderBy: [asc(extras.sortOrder)] }),
+    db.query.productFeatureGroups.findMany({
+      orderBy: [asc(productFeatureGroups.sortOrder)],
+      with: { features: { orderBy: [asc(productFeatures.sortOrder)] } },
+    }),
     getEurHufRate(),
   ]);
 
@@ -28,6 +36,7 @@ export default async function EditProductPage({
 
   const updateWithId = updateProduct.bind(null, product.id);
   const selectedExtraIds = product.extras.map((e) => e.extraId);
+  const selectedFeatureIds = product.features.map((f) => f.featureId);
 
   return (
     <div>
@@ -37,6 +46,8 @@ export default async function EditProductPage({
         seriesList={seriesList}
         allExtras={extraList}
         selectedExtraIds={selectedExtraIds}
+        featureGroups={featureGroups}
+        selectedFeatureIds={selectedFeatureIds}
         values={product}
         action={updateWithId}
         submitLabel="Mentés"

@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { products, productExtras, productVariants } from "@/db/schema";
-import { saveUploadedImage } from "@/lib/upload";
+import { products, productExtras, productVariants, productFeatureLinks } from "@/db/schema";
+import { saveUploadedImage, saveUploadedDocument } from "@/lib/upload";
 import { sanitizeDescription } from "@/lib/sanitize-description";
 import { getEurHufRate } from "@/lib/settings";
 import { eurToHuf } from "@/lib/currency";
@@ -56,6 +56,8 @@ const productSchema = z.object({
   isFeatured: checkbox,
   isNew: checkbox,
   isOnSale: checkbox,
+  priceOnRequest: checkbox,
+  specsPosition: z.enum(["auto", "left", "right"]).default("auto"),
   threeDArUrl: z.string().optional(),
 });
 
@@ -120,15 +122,43 @@ function readForm(formData: FormData) {
     isFeatured: formData.get("isFeatured") as "on" | null,
     isNew: formData.get("isNew") as "on" | null,
     isOnSale: formData.get("isOnSale") as "on" | null,
+    priceOnRequest: formData.get("priceOnRequest") as "on" | null,
+    specsPosition: formData.get("specsPosition") || "auto",
     threeDArUrl: formData.get("threeDArUrl") || undefined,
   });
+}
+
+const documentsDataSchema = z.array(
+  z.object({ key: z.string(), label: z.string(), url: z.string().nullable() }),
+);
+
+async function resolveDocuments(formData: FormData) {
+  const raw = formData.get("documentsData");
+  if (typeof raw !== "string" || !raw) return [];
+  const docs = documentsDataSchema.parse(JSON.parse(raw));
+
+  const result = [];
+  for (const d of docs) {
+    if (!d.label.trim()) continue;
+    const file = formData.get(`documentFile_${d.key}`) as File | null;
+    const url = file && file.size > 0 ? await saveUploadedDocument(file, "documents") : d.url;
+    if (!url) continue;
+    result.push({ label: d.label.trim(), url });
+  }
+  return result;
 }
 
 function readSpecs(formData: FormData) {
   const raw = formData.get("specs");
   if (typeof raw !== "string" || !raw) return [];
   const parsed = z
-    .array(z.object({ label: z.string(), value: z.string() }))
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+        type: z.enum(["text", "boolean"]).optional(),
+      }),
+    )
     .safeParse(JSON.parse(raw));
   return parsed.success ? parsed.data : [];
 }
@@ -228,7 +258,7 @@ async function syncProductVariants(productId: number, formData: FormData) {
   }
 }
 
-async function resolvePrice(priceEur: number | null, submittedHuf: number, manual: boolean) {
+export async function resolvePrice(priceEur: number | null, submittedHuf: number, manual: boolean) {
   // Locked (not manual) needs a EUR value to compute from — never trust the
   // client-side computed HUF preview, always recompute from the current
   // rate server-side. If there's no EUR value at all, fall back to
@@ -250,6 +280,18 @@ async function syncExtras(productId: number, formData: FormData) {
   }
 }
 
+async function syncFeatures(productId: number, formData: FormData) {
+  const ids = [
+    ...new Set(formData.getAll("featureIds").map((v) => Number(v)).filter(Number.isFinite)),
+  ];
+  await db.delete(productFeatureLinks).where(eq(productFeatureLinks.productId, productId));
+  if (ids.length > 0) {
+    await db
+      .insert(productFeatureLinks)
+      .values(ids.map((featureId) => ({ productId, featureId })));
+  }
+}
+
 export async function createProduct(
   _prevState: ActionState,
   formData: FormData,
@@ -258,10 +300,11 @@ export async function createProduct(
     const parsed = readForm(formData);
     const { priceEur, priceHuf: submittedHuf, priceHufManual, weightKg, ...rest } = parsed;
 
-    const [{ images, mainImage, cardImage }, variantOptions, price] = await Promise.all([
+    const [{ images, mainImage, cardImage }, variantOptions, price, documents] = await Promise.all([
       resolveImages(formData),
       resolveVariantOptions(formData),
       resolvePrice(priceEur, submittedHuf, priceHufManual),
+      resolveDocuments(formData),
     ]);
 
     const [product] = await db
@@ -277,10 +320,12 @@ export async function createProduct(
         cardImage,
         specs: readSpecs(formData),
         variantOptions,
+        documents,
       })
       .returning();
 
     await syncExtras(product.id, formData);
+    await syncFeatures(product.id, formData);
     await syncProductVariants(product.id, formData);
 
     revalidatePath("/admin/products");
@@ -301,10 +346,11 @@ export async function updateProduct(
     const parsed = readForm(formData);
     const { priceEur, priceHuf: submittedHuf, priceHufManual, weightKg, ...rest } = parsed;
 
-    const [{ images, mainImage, cardImage }, variantOptions, price] = await Promise.all([
+    const [{ images, mainImage, cardImage }, variantOptions, price, documents] = await Promise.all([
       resolveImages(formData),
       resolveVariantOptions(formData),
       resolvePrice(priceEur, submittedHuf, priceHufManual),
+      resolveDocuments(formData),
     ]);
 
     await db
@@ -320,11 +366,13 @@ export async function updateProduct(
         cardImage,
         specs: readSpecs(formData),
         variantOptions,
+        documents,
         updatedAt: new Date(),
       })
       .where(eq(products.id, id));
 
     await syncExtras(id, formData);
+    await syncFeatures(id, formData);
     await syncProductVariants(id, formData);
 
     revalidatePath("/admin/products");

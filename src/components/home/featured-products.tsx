@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and, notInArray } from "drizzle-orm";
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import { Link } from "@/i18n/navigation";
@@ -7,12 +7,30 @@ import { ProductCard } from "@/components/product-card";
 
 export async function FeaturedProducts() {
   const t = await getTranslations("home");
-  const featured = await db.query.products.findMany({
+  const explicit = await db.query.products.findMany({
     where: eq(products.isFeatured, true),
     orderBy: [desc(products.createdAt)],
     limit: 3,
     with: { series: true },
   });
+
+  // Never show an empty (or half-empty) section: top up with the priciest
+  // regular products until there's a full row of 3 — a sensible default
+  // until featured is actually curated (e.g. driven by order volume later).
+  let featured = explicit;
+  if (featured.length < 3) {
+    const excludeIds = explicit.map((p) => p.id);
+    const fallback = await db.query.products.findMany({
+      where: and(
+        eq(products.priceOnRequest, false),
+        excludeIds.length > 0 ? notInArray(products.id, excludeIds) : undefined,
+      ),
+      orderBy: [desc(products.priceHuf)],
+      limit: 3 - featured.length,
+      with: { series: true },
+    });
+    featured = [...featured, ...fallback];
+  }
 
   if (featured.length === 0) return null;
 

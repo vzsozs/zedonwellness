@@ -22,14 +22,18 @@ export function ProductCard({ product }: { product: ProductWithSeries }) {
       href={`/termek/${product.slug}`}
       className="group mx-auto block w-[70%] bg-white transition-shadow hover:shadow-[0_8px_28px_rgba(15,45,80,0.12)]"
     >
-      <div
-        className={
-          image
-            ? "relative aspect-square bg-cover bg-center"
-            : `relative aspect-square bg-gradient-to-br ${getProductGradient(product.id)}`
-        }
-        style={image ? { backgroundImage: `url(${image})` } : undefined}
-      >
+      <div className="relative aspect-square overflow-hidden">
+        {image ? (
+          <div className="h-full w-full p-5">
+            <img
+              src={image}
+              alt={product.nameHu}
+              className="h-full w-full object-contain"
+            />
+          </div>
+        ) : (
+          <div className={`h-full w-full bg-gradient-to-br ${getProductGradient(product.id)}`} />
+        )}
         {badge ? (
           <span
             className={`absolute top-3 left-3 ${
@@ -46,7 +50,7 @@ export function ProductCard({ product }: { product: ProductWithSeries }) {
       </div>
       <div className="px-5 py-6">
         <div className="text-xl font-extrabold text-coprBlue">
-          <Price hufAmount={product.priceHuf} />
+          {product.priceOnRequest ? t("priceOnRequestLabel") : <Price hufAmount={product.priceHuf} />}
         </div>
         <h3 className="mt-1.5 text-lg font-bold group-hover:text-accent">
           {product.nameHu}

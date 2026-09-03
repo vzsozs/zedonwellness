@@ -47,7 +47,7 @@ export function NewExtraForm({ eurHufRate }: { eurHufRate: number }) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-muted">
-              Ár (EUR)
+              Ár (EUR) — üres = alapból benne
             </label>
             <input
               type="number"
@@ -55,14 +55,15 @@ export function NewExtraForm({ eurHufRate }: { eurHufRate: number }) {
               step="0.01"
               value={priceEur}
               onChange={(e) => setPriceEur(e.target.value)}
-              required
               className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
             />
             {priceEur ? (
               <p className="mt-1 text-xs text-muted">
                 ≈ {Math.round(Number(priceEur) * eurHufRate).toLocaleString("hu-HU")} Ft
               </p>
-            ) : null}
+            ) : (
+              <p className="mt-1 text-xs text-muted">Alapból benne (nincs külön ár)</p>
+            )}
           </div>
           <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
         </div>

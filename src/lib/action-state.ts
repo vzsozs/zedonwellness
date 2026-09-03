@@ -18,7 +18,23 @@ export function isRedirectError(error: unknown): boolean {
   );
 }
 
+/** Postgres unique-constraint violation (e.g. a duplicate slug) — surfaced
+ * by node-postgres as a plain object with `code: "23505"`, not a subclass
+ * of Error, so this can't just check `error instanceof SomeDbError`. */
+function isUniqueViolation(error: unknown): error is { code: string; constraint?: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code: unknown }).code === "23505"
+  );
+}
+
 export function toActionError(error: unknown): ActionState {
+  if (isUniqueViolation(error)) {
+    const field = error.constraint?.includes("slug") ? "szlug" : "érték";
+    return { error: `Ez a ${field} már foglalt — válassz másikat.` };
+  }
   if (error instanceof Error) return { error: error.message };
   return { error: "Váratlan hiba történt. Próbáld újra." };
 }

@@ -114,8 +114,10 @@ export const products = pgTable("products", {
   // Which entry of `images` is shown on product listing cards. Falls back
   // to mainImage when unset.
   cardImage: text("card_image"),
+  // `type: "boolean"` rows render as a green check / red X instead of free
+  // text (value is then literally "true"/"false").
   specs: jsonb("specs")
-    .$type<{ label: string; value: string }[]>()
+    .$type<{ label: string; value: string; type?: "text" | "boolean" }[]>()
     .notNull()
     .default([]),
   // Optional 3D/AR viewer link (e.g. a Matterport/Sketchfab/AR Quick Look URL).
@@ -136,6 +138,23 @@ export const products = pgTable("products", {
   isFeatured: boolean("is_featured").notNull().default(false),
   isNew: boolean("is_new").notNull().default(false),
   isOnSale: boolean("is_on_sale").notNull().default(false),
+  // Downloadable PDFs (spec sheet, assembly guide, ...), each with its own
+  // admin-entered label — an open list, not fixed slots.
+  documents: jsonb("documents")
+    .$type<{ label: string; url: string }[]>()
+    .notNull()
+    .default([]),
+  // "Hamarosan" / call-for-price products: no real priceHuf yet. When set,
+  // the storefront shows a call-for-price note instead of the price and
+  // skips add-to-cart — priceHuf is still populated (defaults to "0") only
+  // to satisfy the column's NOT NULL constraint, never displayed.
+  priceOnRequest: boolean("price_on_request").notNull().default(false),
+  // Where the Specifikáció block renders on the product page — "auto"
+  // follows the category default (right for grillek, left elsewhere),
+  // "left"/"right" force it regardless of category.
+  specsPosition: text("specs_position", { enum: ["auto", "left", "right"] })
+    .notNull()
+    .default("auto"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -175,6 +194,47 @@ export const productExtras = pgTable(
       .references(() => extras.id, { onDelete: "cascade" }),
   },
   (t) => [primaryKey({ columns: [t.productId, t.extraId] })],
+);
+
+// "Termék hozzávalók" (product features/ingredients) — small icon+label
+// badges shown on a product page (e.g. a sauna's "van kályha / van lámpa /
+// van szaunaszett" row), grouped into admin-managed tabs (e.g. "Szauna
+// jellemzők"). Distinct from `extras`: features aren't purchasable add-ons,
+// just informational badges.
+export const productFeatureGroups = pgTable("product_feature_groups", {
+  id: serial("id").primaryKey(),
+  nameHu: text("name_hu").notNull(),
+  nameEn: text("name_en"),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
+export const productFeatures = pgTable("product_features", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id")
+    .notNull()
+    .references(() => productFeatureGroups.id, { onDelete: "cascade" }),
+  nameHu: text("name_hu").notNull(),
+  nameEn: text("name_en"),
+  iconUrl: text("icon_url"),
+  // Optional, same convention as `extras` — blank means "included/no extra
+  // charge", not "free" as a real price point.
+  priceEur: numeric("price_eur", { precision: 10, scale: 2 }),
+  priceHuf: numeric("price_huf", { precision: 12, scale: 0 }),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
+// Which features a product has.
+export const productFeatureLinks = pgTable(
+  "product_feature_links",
+  {
+    productId: integer("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    featureId: integer("feature_id")
+      .notNull()
+      .references(() => productFeatures.id, { onDelete: "cascade" }),
+  },
+  (t) => [primaryKey({ columns: [t.productId, t.featureId] })],
 );
 
 // GLS-only shipping, priced by weight band within one of two zones. A band
@@ -269,6 +329,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
   extras: many(productExtras),
   variants: many(productVariants),
+  features: many(productFeatureLinks),
 }));
 
 export const productVariantsRelations = relations(productVariants, ({ one }) => ({
@@ -278,11 +339,36 @@ export const productVariantsRelations = relations(productVariants, ({ one }) => 
   }),
 }));
 
+export const productFeatureGroupsRelations = relations(productFeatureGroups, ({ many }) => ({
+  features: many(productFeatures),
+}));
+
+export const productFeaturesRelations = relations(productFeatures, ({ one, many }) => ({
+  group: one(productFeatureGroups, {
+    fields: [productFeatures.groupId],
+    references: [productFeatureGroups.id],
+  }),
+  products: many(productFeatureLinks),
+}));
+
+export const productFeatureLinksRelations = relations(productFeatureLinks, ({ one }) => ({
+  product: one(products, {
+    fields: [productFeatureLinks.productId],
+    references: [products.id],
+  }),
+  feature: one(productFeatures, {
+    fields: [productFeatureLinks.featureId],
+    references: [productFeatures.id],
+  }),
+}));
+
 export type Category = typeof categories.$inferSelect;
 export type ProductSeries = typeof productSeries.$inferSelect;
 export type Extra = typeof extras.$inferSelect;
 export type Setting = typeof settings.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
+export type ProductFeatureGroup = typeof productFeatureGroups.$inferSelect;
+export type ProductFeature = typeof productFeatures.$inferSelect;
 export type ShippingRate = typeof shippingRates.$inferSelect;
 export type Order = typeof orders.$inferSelect;

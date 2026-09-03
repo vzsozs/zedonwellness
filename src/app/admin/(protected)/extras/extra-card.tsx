@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, Trash2 } from "lucide-react";
 import type { Extra } from "@/db/schema";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
@@ -61,15 +61,16 @@ export function ExtraCard({ extra, eurHufRate }: { extra: Extra; eurHufRate: num
                 step="0.01"
                 value={priceEur}
                 onChange={(e) => setPriceEur(e.target.value)}
-                required
-                placeholder="Ár (EUR)"
+                placeholder="Ár (EUR) — üres = alapból benne"
                 className="w-full border border-line px-3 py-2 text-sm outline-none focus:border-accent"
               />
               {priceEur ? (
                 <p className="mt-1 text-[11px] text-muted">
                   ≈ {Math.round(Number(priceEur) * eurHufRate).toLocaleString("hu-HU")} Ft
                 </p>
-              ) : null}
+              ) : (
+                <p className="mt-1 text-[11px] text-muted">Alapból benne (nincs külön ár)</p>
+              )}
             </div>
             <input
               type="number"
@@ -96,9 +97,10 @@ export function ExtraCard({ extra, eurHufRate }: { extra: Extra; eurHufRate: num
             <button
               type="button"
               onClick={() => deleteExtra(extra.id)}
-              className="text-sm text-red-600 hover:text-red-800"
+              aria-label="Törlés"
+              className="text-red-600 hover:text-red-800"
             >
-              Törlés
+              <Trash2 className="size-4" strokeWidth={1.8} />
             </button>
           </div>
         </div>

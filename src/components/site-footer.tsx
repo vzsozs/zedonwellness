@@ -30,11 +30,11 @@ export function SiteFooter() {
             <Link href="/szaunak" className="text-muted hover:text-accent">
               {nav("saunas")}
             </Link>
-            <Link href="/grillek" className="text-muted hover:text-accent">
-              {nav("grills")}
-            </Link>
             <Link href="/kiegeszitok" className="text-muted hover:text-accent">
               {nav("accessories")}
+            </Link>
+            <Link href="/grillek" className="text-muted hover:text-accent">
+              {nav("grills")}
             </Link>
           </div>
         </div>

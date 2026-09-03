@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { formatHuf } from "@/lib/config";
 import { formatEur, hufToEur, eurToHuf } from "@/lib/currency";
 import { useCurrency } from "@/lib/currency-context";
@@ -8,20 +7,17 @@ import { useCurrency } from "@/lib/currency-context";
 export function PriceRangeSlider({
   min,
   max,
-  defaultMin,
-  defaultMax,
+  loHuf,
+  hiHuf,
+  onChange,
 }: {
   min: number;
   max: number;
-  defaultMin: number;
-  defaultMax: number;
+  loHuf: number;
+  hiHuf: number;
+  onChange: (loHuf: number, hiHuf: number) => void;
 }) {
   const { currency, eurHufRate } = useCurrency();
-  // Canonical state stays in HUF (what the filter actually submits) —
-  // display values are derived fresh every render so switching currency
-  // mid-session doesn't leave stale slider positions.
-  const [loHuf, setLoHuf] = useState(defaultMin);
-  const [hiHuf, setHiHuf] = useState(defaultMax);
 
   const toDisplay = (huf: number) => (currency === "EUR" ? hufToEur(huf, eurHufRate) : huf);
   const toHuf = (display: number) => (currency === "EUR" ? eurToHuf(display, eurHufRate) : display);
@@ -58,7 +54,7 @@ export function PriceRangeSlider({
           max={dMax}
           step={step}
           value={dLo}
-          onChange={(e) => setLoHuf(Math.min(toHuf(Number(e.target.value)), hiHuf))}
+          onChange={(e) => onChange(Math.min(toHuf(Number(e.target.value)), hiHuf), hiHuf)}
         />
         <input
           type="range"
@@ -66,10 +62,8 @@ export function PriceRangeSlider({
           max={dMax}
           step={step}
           value={dHi}
-          onChange={(e) => setHiHuf(Math.max(toHuf(Number(e.target.value)), loHuf))}
+          onChange={(e) => onChange(loHuf, Math.max(toHuf(Number(e.target.value)), loHuf))}
         />
-        <input type="hidden" name="priceMin" value={Math.round(loHuf)} />
-        <input type="hidden" name="priceMax" value={Math.round(hiHuf)} />
       </div>
     </div>
   );

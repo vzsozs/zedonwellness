@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, useEditorState, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon } from "lucide-react";
 import { looksLikeHtml, plainTextToHtml } from "@/lib/sanitize-description";
@@ -35,7 +35,7 @@ export function RichTextField({
         link: {
           openOnClick: false,
           autolink: false,
-          HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
+          HTMLAttributes: { rel: "noopener noreferrer" },
         },
       }),
     ],
@@ -50,6 +50,22 @@ export function RichTextField({
     },
   });
 
+  // Tiptap v3's useEditor no longer re-renders the component on every
+  // selection change — useEditorState subscribes to just the bits the
+  // toolbar needs, so the active-button highlighting tracks the cursor.
+  const activeMarks = useEditorState({
+    editor,
+    selector: (ctx) =>
+      ctx.editor
+        ? {
+            bold: ctx.editor.isActive("bold"),
+            italic: ctx.editor.isActive("italic"),
+            underline: ctx.editor.isActive("underline"),
+            link: ctx.editor.isActive("link"),
+          }
+        : { bold: false, italic: false, underline: false, link: false },
+  });
+
   const setLink = () => {
     if (!editor) return;
     const previousUrl = editor.getAttributes("link").href as string | undefined;
@@ -59,7 +75,13 @@ export function RichTextField({
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run();
+    const openInNewTab = window.confirm("Megnyitás új lapon (target=\"_blank\")?");
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: url.trim(), target: openInNewTab ? "_blank" : null })
+      .run();
   };
 
   return (
@@ -69,7 +91,7 @@ export function RichTextField({
         <div className="flex gap-1 border-b border-line bg-paper-muted p-1.5">
           <ToolbarButton
             label="Félkövér"
-            active={editor?.isActive("bold") ?? false}
+            active={activeMarks?.bold ?? false}
             disabled={!editor}
             onClick={() => editor?.chain().focus().toggleBold().run()}
           >
@@ -77,7 +99,7 @@ export function RichTextField({
           </ToolbarButton>
           <ToolbarButton
             label="Dőlt"
-            active={editor?.isActive("italic") ?? false}
+            active={activeMarks?.italic ?? false}
             disabled={!editor}
             onClick={() => editor?.chain().focus().toggleItalic().run()}
           >
@@ -85,7 +107,7 @@ export function RichTextField({
           </ToolbarButton>
           <ToolbarButton
             label="Aláhúzott"
-            active={editor?.isActive("underline") ?? false}
+            active={activeMarks?.underline ?? false}
             disabled={!editor}
             onClick={() => editor?.chain().focus().toggleUnderline().run()}
           >
@@ -93,7 +115,7 @@ export function RichTextField({
           </ToolbarButton>
           <ToolbarButton
             label="Link beszúrása/szerkesztése"
-            active={editor?.isActive("link") ?? false}
+            active={activeMarks?.link ?? false}
             disabled={!editor}
             onClick={setLink}
           >

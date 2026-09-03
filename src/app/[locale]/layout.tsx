@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { GrillThemeProvider } from "@/lib/grill-theme-context";
 import { CartProvider } from "@/lib/cart-context";
 import { CurrencyProvider } from "@/lib/currency-context";
 import { getEurHufRate } from "@/lib/settings";
@@ -63,9 +64,11 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <CurrencyProvider eurHufRate={eurHufRate}>
             <CartProvider>
-              <SiteHeader />
-              {children}
-              <SiteFooter />
+              <GrillThemeProvider>
+                <SiteHeader />
+                {children}
+                <SiteFooter />
+              </GrillThemeProvider>
             </CartProvider>
           </CurrencyProvider>
         </NextIntlClientProvider>

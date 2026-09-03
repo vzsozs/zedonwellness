@@ -26,7 +26,7 @@ export function VariantOptionGroup({
 
   return (
     <div>
-      <h2 className="mb-3 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+      <h2 className="mb-3 text-lg font-extrabold tracking-wide text-heading uppercase">
         {groupName}
       </h2>
       <div className="flex flex-wrap gap-3">

@@ -113,6 +113,20 @@
       "when": 1788324475742,
       "tag": "0015_careful_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1788349793282,
+      "tag": "0016_naive_silk_fever",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1788371563834,
+      "tag": "0017_furry_fenris",
+      "breakpoints": true
     }
   ]
 }

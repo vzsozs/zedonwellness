@@ -1,7 +1,15 @@
 "use client";
 
 import { useActionState, useEffect, useState, type ReactNode } from "react";
-import type { Category, Extra, Product, ProductSeries, ProductVariant } from "@/db/schema";
+import type {
+  Category,
+  Extra,
+  Product,
+  ProductSeries,
+  ProductVariant,
+  ProductFeatureGroup,
+  ProductFeature,
+} from "@/db/schema";
 import type { ActionState } from "@/lib/action-state";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
@@ -12,6 +20,8 @@ import { SpecsEditor } from "./specs-editor";
 import { VariantOptionsEditor } from "./variant-options-editor";
 import { VariantSkusEditor } from "./variant-skus-editor";
 import { ExtrasPicker } from "./extras-picker";
+import { FeaturesPicker } from "./features-picker";
+import { DocumentsEditor } from "./documents-editor";
 import { RichTextField } from "./rich-text-field";
 import { ToggleSwitch } from "./toggle-switch";
 import { PriceField } from "./price-field";
@@ -21,6 +31,8 @@ export function ProductForm({
   seriesList,
   allExtras,
   selectedExtraIds,
+  featureGroups,
+  selectedFeatureIds,
   values,
   action,
   submitLabel,
@@ -30,6 +42,8 @@ export function ProductForm({
   seriesList: ProductSeries[];
   allExtras: Extra[];
   selectedExtraIds: number[];
+  featureGroups: (ProductFeatureGroup & { features: ProductFeature[] })[];
+  selectedFeatureIds: number[];
   values?: Product & { variants?: ProductVariant[] };
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
   submitLabel: string;
@@ -95,6 +109,11 @@ export function ProductForm({
                 name="isOnSale"
                 defaultChecked={values?.isOnSale ?? false}
               />
+              <ToggleSwitch
+                label="Ár érdeklődésre (Hamarosan)"
+                name="priceOnRequest"
+                defaultChecked={values?.priceOnRequest ?? false}
+              />
             </div>
           </FormSection>
 
@@ -154,6 +173,13 @@ export function ProductForm({
             <ExtrasPicker allExtras={allExtras} selectedIds={selectedExtraIds} />
           </FormSection>
 
+          <FormSection
+            title="Termék hozzávalók"
+            description="Ikonos jellemzők, pl. egy szaunánál: van kályha, van lámpa."
+          >
+            <FeaturesPicker groups={featureGroups} selectedIds={selectedFeatureIds} />
+          </FormSection>
+
           <FormSection title="Képek">
             <ImageGalleryField
               existingImages={values?.images ?? []}
@@ -162,7 +188,25 @@ export function ProductForm({
             />
           </FormSection>
 
+          <FormSection title="Dokumentumok">
+            <DocumentsEditor defaultDocuments={values?.documents ?? []} />
+          </FormSection>
+
           <FormSection title="Specifikáció">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-muted">
+                Elhelyezés a termékoldalon
+              </label>
+              <select
+                name="specsPosition"
+                defaultValue={values?.specsPosition ?? "auto"}
+                className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
+              >
+                <option value="auto">Automatikus (grilleknél jobbra, egyébként balra)</option>
+                <option value="left">Mindig balra</option>
+                <option value="right">Mindig jobbra</option>
+              </select>
+            </div>
             <SpecsEditor defaultSpecs={values?.specs ?? []} />
           </FormSection>
 

@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   Package,
   FolderTree,
-  Puzzle,
+  ListChecks,
   Truck,
   ClipboardList,
   Settings,
@@ -17,10 +16,9 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/admin", label: "Áttekintés", icon: LayoutDashboard },
   { href: "/admin/products", label: "Termékek", icon: Package },
   { href: "/admin/categories", label: "Kategóriák", icon: FolderTree },
-  { href: "/admin/extras", label: "Extrák", icon: Puzzle },
+  { href: "/admin/hozzavalok", label: "Termék hozzávalók", icon: ListChecks },
   { href: "/admin/shipping", label: "Szállítási díjak", icon: Truck },
   { href: "/admin/orders", label: "Rendelések", icon: ClipboardList },
   { href: "/admin/settings", label: "Beállítások", icon: Settings },
@@ -36,8 +34,7 @@ export function AdminSidebar({
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  const isActive = (href: string) =>
-    href === "/admin" ? pathname === href : pathname.startsWith(href);
+  const isActive = (href: string) => pathname.startsWith(href);
 
   const links = (onNavigate?: () => void) => (
     <nav className="flex flex-col gap-1 p-3">

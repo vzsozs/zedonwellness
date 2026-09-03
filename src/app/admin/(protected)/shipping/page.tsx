@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import { db } from "@/db";
 import { shippingRates } from "@/db/schema";
 import { asc } from "drizzle-orm";
@@ -49,8 +50,8 @@ export default async function ShippingPage() {
                       await deleteShippingRate(r.id);
                     }}
                   >
-                    <button type="submit" className="text-red-600 hover:text-red-800">
-                      Törlés
+                    <button type="submit" aria-label="Törlés" className="text-red-600 hover:text-red-800">
+                      <Trash2 className="size-4" strokeWidth={1.8} />
                     </button>
                   </form>
                 </td>

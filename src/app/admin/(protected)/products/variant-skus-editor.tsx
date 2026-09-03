@@ -177,25 +177,27 @@ export function VariantSkusEditor({
                 placeholder="Súly (kg) — üres = alapsúly"
                 className="border border-line px-3 py-2 text-sm outline-none focus:border-accent"
               />
-              <label className="flex items-center gap-2 text-xs text-muted">
-                <input
-                  type="radio"
-                  name="variantSkuDefault"
-                  checked={sku.isDefault}
-                  onChange={() => setDefault(sku.key)}
-                  className="accent-accent"
-                />
-                Alapértelmezett
-              </label>
-              <label className="flex items-center gap-2 text-xs text-muted">
-                <input
-                  type="checkbox"
-                  checked={sku.inStock}
-                  onChange={(e) => update(sku.key, { inStock: e.target.checked })}
-                  className="accent-accent"
-                />
-                Készleten
-              </label>
+              <div className="flex items-center gap-5">
+                <label className="flex items-center gap-2 text-xs text-muted">
+                  <input
+                    type="radio"
+                    name="variantSkuDefault"
+                    checked={sku.isDefault}
+                    onChange={() => setDefault(sku.key)}
+                    className="accent-accent"
+                  />
+                  Alapértelmezett
+                </label>
+                <label className="flex items-center gap-2 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    checked={sku.inStock}
+                    onChange={(e) => update(sku.key, { inStock: e.target.checked })}
+                    className="accent-accent"
+                  />
+                  Készleten
+                </label>
+              </div>
             </div>
           </div>
         ))}

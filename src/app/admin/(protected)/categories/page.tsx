@@ -1,3 +1,4 @@
+import { Pencil, Trash2 } from "lucide-react";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { asc } from "drizzle-orm";
@@ -30,24 +31,30 @@ export default async function CategoriesPage() {
                 <td className="px-5 py-3">{c.nameHu}</td>
                 <td className="px-5 py-3 text-muted">{c.nameEn ?? "—"}</td>
                 <td className="px-5 py-3">{c.sortOrder}</td>
-                <td className="px-5 py-3 text-right">
-                  <a
-                    href={`/admin/categories/${c.id}/edit`}
-                    className="mr-4 text-accent hover:text-accent-dark"
-                  >
-                    Szerkesztés
-                  </a>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteCategory(c.id);
-                    }}
-                    className="inline"
-                  >
-                    <button type="submit" className="text-red-600 hover:text-red-800">
-                      Törlés
-                    </button>
-                  </form>
+                <td className="px-5 py-3">
+                  <div className="flex items-center justify-end gap-3.5">
+                    <a
+                      href={`/admin/categories/${c.id}/edit`}
+                      aria-label="Szerkesztés"
+                      className="text-accent hover:text-accent-dark"
+                    >
+                      <Pencil className="size-4" strokeWidth={1.8} />
+                    </a>
+                    <form
+                      action={async () => {
+                        "use server";
+                        await deleteCategory(c.id);
+                      }}
+                    >
+                      <button
+                        type="submit"
+                        aria-label="Törlés"
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="size-4" strokeWidth={1.8} />
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             ))}
