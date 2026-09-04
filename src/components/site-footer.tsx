@@ -43,13 +43,13 @@ export function SiteFooter() {
             {t("company")}
           </div>
           <div className="flex flex-col gap-2.5 text-sm text-muted">
-            <Link href="/rolunk" className="text-muted hover:text-accent">
+            <Link href="/a-ceg" className="text-muted hover:text-accent">
               {t("about")}
             </Link>
-            <Link href="/gyar" className="text-muted hover:text-accent">
+            <Link href="/a-ceg#gyar" className="text-muted hover:text-accent">
               {t("factory")}
             </Link>
-            <Link href="/szerviz" className="text-muted hover:text-accent">
+            <Link href="/a-ceg#szerviz" className="text-muted hover:text-accent">
               {t("service")}
             </Link>
             <Link href="/blog" className="text-muted hover:text-accent">

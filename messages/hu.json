@@ -208,6 +208,120 @@
     "total": "Összesen",
     "backToHome": "Vissza a főoldalra"
   },
+  "company": {
+    "eyebrow": "A cég",
+    "heroTitleStart": "Egy megbízható cég",
+    "heroTitleHighlight": "aranyat hoz.",
+    "heroSubtitle": "Hisszük, hogy a relaxáció a kiegyensúlyozott élet fontos része — ezért kínálunk prémium minőségű, mégis elérhető wellness-élményt mindenkinek, aki nyugodt pillanatokat szeretne a szeretteivel.",
+    "pillarsTitle": "Miért válassza a Zedonwellness-t?",
+    "pillars": {
+      "hiTech": {
+        "title": "Hi-tech gyártás",
+        "description": "Az első osztályú anyagoknak és a precíz kivitelezésnek köszönhetően minden pezsgőfürdőnk kivételes tartósságát garantálhatjuk. Minden terméket szigorú, valós körülmények közötti tesztelésnek vetünk alá, kiküszöbölve a lehetséges hibák túlnyomó többségét."
+      },
+      "physio": {
+        "title": "Fizikoterápia",
+        "description": "Martin Prochazka, MSc — a cseh élsportolók gyógytornásza — felügyeli, hogy minden pezsgőfürdőnk lehetővé tegye a test számára a természetes testhelyzetet, így valóban hatékony masszázsban részesülhessen."
+      },
+      "architect": {
+        "title": "Építésszel tervezve",
+        "description": "Ondrej Kamenicky, M.Arch. modern formái és vonzó vonalvezetése nem csak a testnek, a szemnek is élmény — kádaink megjelenése minden kertet felfrissít és kiegészít."
+      },
+      "ecological": {
+        "title": "Egészség és környezet",
+        "description": "Mindig szem előtt tartva a környezetet, kizárólag olyan minőségi anyagokat választunk, amelyek az egészségre és a természetre egyaránt ártalmatlanok. A gyártás során keletkező maradékanyagokat visszaforgatjuk a folyamatba."
+      }
+    },
+    "serviceTitle": "Szerviz szolgáltatásaink",
+    "serviceDescription0": "Bármilyen probléma merül fel a medencéjével kapcsolatban, nyugodtan hátradőlhet: teljes körű garanciánk az ország egész területén érvényes, és telefonon hívható szervizügyelet áll vásárlóink rendelkezésére.",
+    "serviceDescription1": "Saját szerviz hátterünknek köszönhetően nem csak a Hanscraft masszázsmedencéket szervizeljük és tartjuk karban, hanem márkafüggetlen szervizelést is végzünk az ország egész területén.",
+    "serviceDescription2": "Vállalunk időszakos karbantartási szolgáltatást is — nem csak szállodáknak és apartmanoknak, hanem magánszemélyeknek is, az ország egész területén. Kérje bővebb tájékoztatásunkat és ajánlatunkat!",
+    "pricingTitle": "Szervizszolgáltatások díjai",
+    "pricingNote": "Az árak tájékoztató jellegűek, ajánlatnak nem minősülnek.",
+    "pricing": {
+      "callout": { "label": "Kiszállási díj országosan", "price": "60 000 Ft + áfa" },
+      "hourly": { "label": "Szervizelési óradíj", "price": "18 000 Ft / óra + áfa" },
+      "maintenance": { "label": "Karbantartás / vízcsere", "price": "120 000 Ft + áfa" },
+      "commissioning": { "label": "Beüzemelés (jakuzzi / szauna / Swim spa)", "price": "120 000 Ft + áfa" },
+      "assessment": { "label": "Szakvélemény a medence állapotáról", "price": "69 900 Ft + áfa" }
+    },
+    "pricingFootnote": "* Végleges árajánlathoz a medence típusa, a probléma, valamint az állapot ismerete szükséges.",
+    "maintenance": {
+      "toggleLabel": "Karbantartási útmutató megtekintése",
+      "intro": "Ahhoz, hogy medencéje vize hosszú hónapokon keresztül kristálytiszta minőségben várja, néhány dologra érdemes odafigyelni. Célunk, hogy medencéink karbantartása minél kevesebb teendővel járjon, hogy a szabadidejét a gondtalan fürdőzésre fordíthassa.",
+      "daily": {
+        "title": "Napi karbantartás",
+        "text": "Amikor nem használja a medencét, a thermotetőt mindig tegye a helyére, és a csatokkal rögzítse. Ha hosszabb ideig nem használja a feltöltött medencét, hetente egyszer akkor is emelje fel a tetőt, hogy biztosítsa a megfelelő szellőzést. A tető használatával csökken a felfűtési idő és a hőmérséklet-tartáshoz szükséges energiafelhasználás, kint tartja a faleveleket, és segít megelőzni, hogy felügyelet nélkül gyerekek használják a medencét. A garancia szempontjából is előírt: a víz nélküli medencetestet károsíthatja a UV-sugárzás, erre a jótállás nem terjed ki."
+      },
+      "weekly": {
+        "title": "Hetente és minden használat előtt",
+        "hardness": {
+          "title": "Vízkeménység",
+          "text": "Ajánlott érték: 8–12 nK°. A vízben oldott kalcium- és magnézium-sók mennyisége határozza meg — kemény vízben ezekből túl sok van, ezért állás közben vízkő válik ki, ami károsíthatja a medence falát, a csővezetéket, a szűrőt és a gépészeti egységeket. Magyarországon jellemzően közepesen kemény (~15 nK°) a víz; ezt vegyszerezéssel csökkenteni nem lehet, csak a kicsapódását lehet megelőzni, lágy vizet gyantatartályos vízlágyítóval lehet előállítani."
+        },
+        "ph": {
+          "title": "pH érték",
+          "text": "Ajánlott érték: 7,2–7,6 (0–14-es skálán, 7 a semleges). 7,8 fölött csípi a fürdőzők szemét, és a magas pH csökkenti a fertőtlenítőszer hatását — állás közben a víz pH-ja jellemzően emelkedik, ezért többnyire pH-csökkentő szerre van szükség. Ajánlott: foszforsav-alapú pH-csökkentő folyadék — 100 m³ vízhez 1 liter szükséges 0,1 egységnyi csökkentéshez, célszerű a víz beáramlásánál adagolni."
+        },
+        "disinfection": {
+          "title": "Fertőtlenítés",
+          "text": "A fertőtlenítőszer semlegesíti a vízben lévő mikroorganizmusokat (baktériumok, algák, gombák, vírusok), amelyek eső, szél és a fürdőzők által kerülnek a vízbe, és opálossá, zavarossá tehetik azt. Ajánlott: Aqua Excellent 100%-ban bio, klórmentes fertőtlenítőszer — 1 m³ vízhez kb. 100 ml szükséges, a mennyiség tesztcsíkkal ellenőrizhető."
+        },
+        "foam": {
+          "title": "Habzás",
+          "text": "A víz felszínén megjelenő hab jellemzően bőrből kiázó szennyeződések, kozmetikumok és vegyszerek keveredéséből ered — akkor beszélünk róla, ha a masszázsmotorok leállítása után fél perccel is látható hab a felszínen. Ajánlott: Aqua Excellent Habstop habzásgátló, a habzás megszűnéséig adagolva, majd hagyni kell alaposan elkeveredni a vízben."
+        },
+        "filter": {
+          "title": "Szűrőbetét tisztítása",
+          "text": "A szűrőbetét távolítja el a szennyeződéseket a vízből, ezért heti tisztítása elengedhetetlen — erősen szennyezett betétnél a rendszer nem tud elegendő vizet mozgatni, és a vezérlés hibát jelezhet. Havonta ajánlott a betéteket Aqua Excellent Filter Cleaner szerbe áztatni 24 órára, 3 havonta pedig cserélni. Eltávolítás előtt mindig áramtalanítsa a medencét, és soha ne üzemeltesse szűrőbetét nélkül — tartalék betét beszerzése ajánlott."
+        }
+      },
+      "quarterly": {
+        "title": "3–4 havonta: vízcsere",
+        "text": "A medencét ilyenkor teljesen le kell engedni és friss vízzel feltölteni, a szűrőbetéteket pedig kicserélni. A feltöltést mindig a szűrőházon keresztül végezze — ha nem így teszi, a keringető rendszer levegősödhet, ami károsíthatja a medencében lévő fűtőtestet."
+        },
+      "yearly": {
+        "title": "Évente",
+        "text": "Ajánlott a medence átvizsgáltatása szakszervizzel — egy helyszíni ellenőrzés alkalmával felmérjük az állapotát, és a szükséges javításokat gyakran azonnal, helyszínen el tudjuk végezni."
+      },
+      "winterizing": {
+        "title": "Téliesítés",
+        "intro": "Ha a téli időszakban nem szeretné használni a medencét, gondoskodjon a téliesítéséről — vagy bízza szervizünkre.",
+        "steps": [
+          "A medencét áramtalanítjuk",
+          "A szűrőket eltávolítjuk",
+          "A medencéből búvárszivattyúval eltávolítjuk a vizet",
+          "A maradék vizet vizes porszívóval kiszívjuk a jetekből",
+          "A medencét szárazra töröljük",
+          "A medence oldalburkolatait eltávolítjuk",
+          "A motorok és a vezérlés oldható kötéseit szétkapcsoljuk, a fagydugókat kitekerjük, és a motorok szivattyúházából is eltávolítjuk a vizet",
+          "A medence burkolatait visszahelyezzük"
+        ]
+      },
+      "springPrep": {
+        "title": "Tavasziasítás",
+        "intro": "Amikor ismét használatba venné a medencét, végezze el az alábbi lépéseket — vagy kérje szervizes kollégáink segítségét.",
+        "steps": [
+          "A medence burkolatait eltávolítjuk",
+          "A motorok és a vezérlés oldható kötéseit összekapcsoljuk",
+          "A medencetestet a téli szezonban belehullott szennyeződésektől megtisztítjuk",
+          "A medencét friss vízzel feltöltjük",
+          "A vásárolt új szűrőket behelyezzük",
+          "Áram alá helyezzük a medencét",
+          "Ellenőrizzük a megfelelő működését (csöpögések, folyások, motorok)",
+          "A vásárolt vegyszerekkel feltöltjük"
+        ]
+      }
+    },
+    "distributorTitle": "Kizárólagos magyarországi forgalmazó",
+    "distributorDescription": "Cégünk a Hanscraft márka kizárólagos magyarországi forgalmazója. A minőségi és törvényi előírásoknak megfelelően masszázsmedencéinkre 3 év teljeskörű garanciát vállalunk, a szerkezetre és az akrilra pedig 10 évet. Termékeink TÜV és CE minősítéssel rendelkeznek, hogy a legmagasabb minőségi elvárásoknak is megfeleljenek.",
+    "distributorBadge1": "3 év teljeskörű garancia",
+    "distributorBadge2": "10 év szerkezetre és akrilra",
+    "distributorBadge3": "TÜV & CE minősítés",
+    "partnersCaption": "Válogatott nemzetközi beszállítók minden komponensben",
+    "waterTitle": "Professzionális vízkezelés és teljes körű kivitelezés",
+    "waterDescription": "A masszázsmedencékhez elengedhetetlen a professzionális vízkezelés, ezért kerestük meg a piac legjobbjait — így lettünk az Aqua Excellent kizárólagos magyarországi disztribútora. Emellett vállaljuk komplett wellness-részlegek kialakítását, egyedi szaunák gyártását kül- és beltéren egyaránt, valamint medencék és gőzkabinok építését is."
+  },
   "footer": {
     "tagline": "Prémium wellness-berendezések gyártótól a kertedig.",
     "products": "Termékek",

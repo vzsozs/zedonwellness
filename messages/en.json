@@ -208,6 +208,120 @@
     "total": "Total",
     "backToHome": "Back to homepage"
   },
+  "company": {
+    "eyebrow": "Company",
+    "heroTitleStart": "A trustworthy company",
+    "heroTitleHighlight": "is worth its weight in gold.",
+    "heroSubtitle": "We believe relaxation is a vital part of a balanced life — so we offer premium-quality, yet affordable wellness experiences for anyone looking for calm moments with the people they love.",
+    "pillarsTitle": "Why choose Zedonwellness?",
+    "pillars": {
+      "hiTech": {
+        "title": "Hi-tech manufacturing",
+        "description": "Thanks to first-class materials and precise workmanship, we can guarantee the exceptional durability of every hot tub we make. Every product undergoes rigorous, real-world testing that eliminates the vast majority of potential defects."
+      },
+      "physio": {
+        "title": "Physiotherapy",
+        "description": "Martin Prochazka, MSc — physiotherapist to leading Czech athletes — oversees the design of every hot tub, ensuring your body can settle into a natural position for a genuinely effective massage."
+      },
+      "architect": {
+        "title": "Designed with an architect",
+        "description": "Ondrej Kamenicky, M.Arch.'s modern shapes and striking lines are a treat for the eyes as well as the body — our tubs refresh and complement any garden."
+      },
+      "ecological": {
+        "title": "Health and environment",
+        "description": "Always keeping the environment in mind, we only choose quality materials that are safe for both health and nature. Leftover material from manufacturing is fed back into the process."
+      }
+    },
+    "serviceTitle": "Our service offering",
+    "serviceDescription0": "Whatever issue comes up with your hot tub, you can relax: our nationwide full warranty covers the whole country, and a phone service hotline is always there for our customers.",
+    "serviceDescription1": "Thanks to our own service background, we don't just service and maintain Hanscraft hot tubs — we also provide brand-independent hot tub servicing nationwide.",
+    "serviceDescription2": "We also offer periodic maintenance — not only for hotels and apartments, but for private individuals too, anywhere in the country. Get in touch for more information and a quote!",
+    "pricingTitle": "Service pricing",
+    "pricingNote": "Prices are indicative and do not constitute an offer.",
+    "pricing": {
+      "callout": { "label": "Nationwide callout fee", "price": "60,000 HUF + VAT" },
+      "hourly": { "label": "Service hourly rate", "price": "18,000 HUF / hour + VAT" },
+      "maintenance": { "label": "Maintenance / water change", "price": "120,000 HUF + VAT" },
+      "commissioning": { "label": "Commissioning (jacuzzi / sauna / swim spa)", "price": "120,000 HUF + VAT" },
+      "assessment": { "label": "Expert condition assessment", "price": "69,900 HUF + VAT" }
+    },
+    "pricingFootnote": "* A final quote requires knowing the pool type, the issue and its current condition.",
+    "maintenance": {
+      "toggleLabel": "View the maintenance guide",
+      "intro": "To keep your pool's water crystal clear for months, there are a few things worth paying attention to. Our goal is for our pools to need as little upkeep as possible, so you can spend your free time simply enjoying the water.",
+      "daily": {
+        "title": "Daily care",
+        "text": "When you're not using the pool, always put the thermal cover back on and secure it with the clips. If you won't be using a filled pool for a longer stretch, lift the cover once a week anyway to let it ventilate properly. The cover cuts heating time and the energy needed to hold the water temperature, keeps leaves out, and helps prevent unsupervised children from using the pool. It's also a warranty requirement: UV exposure can damage an empty pool shell, and that kind of damage isn't covered."
+      },
+      "weekly": {
+        "title": "Weekly, and before every use",
+        "hardness": {
+          "title": "Water hardness",
+          "text": "Recommended: 8–12 °dH. Determined by the dissolved calcium and magnesium salts in the water — hard water carries too much of these, so limescale precipitates over time, which can damage the pool wall, piping, filter and technical units. Hungarian tap water is typically medium-hard (~15 °dH); this can't be reduced with chemicals, only prevented from precipitating — soft water is produced with a resin-tank water softener."
+        },
+        "ph": {
+          "title": "pH level",
+          "text": "Recommended: 7.2–7.6 (on a 0–14 scale, 7 is neutral). Above 7.8 the water stings bathers' eyes, and high pH reduces how well the disinfectant works — pH tends to drift upward over time, so a pH-reducer is usually what's needed. Recommended: a phosphoric-acid-based pH reducer — 1 litre per 100 m³ of water lowers it by 0.1, best dosed where the water flows in."
+        },
+        "disinfection": {
+          "title": "Disinfection",
+          "text": "Disinfectant neutralizes microorganisms in the water (bacteria, algae, fungi, viruses) that get in via rain, wind and bathers, and that can turn the water cloudy. Recommended: Aqua Excellent, a 100% bio, chlorine-free disinfectant — about 100 ml per m³ of water, with the level checkable via test strip."
+        },
+        "foam": {
+          "title": "Foaming",
+          "text": "Foam on the surface usually comes from skin residue, cosmetics and lotions mixing with chemicals — it counts as foaming if a layer is still visible half a minute after the massage jets are switched off. Recommended: Aqua Excellent Habstop anti-foam, dosed until the foaming stops and left to mix thoroughly into the water."
+        },
+        "filter": {
+          "title": "Cleaning the filter cartridge",
+          "text": "The filter cartridge removes debris from the water, so cleaning it weekly is essential — a heavily soiled cartridge can't pass enough water through, and the control unit may flag an error. Soak the cartridges monthly in Aqua Excellent Filter Cleaner for 24 hours, and replace them every 3 months. Always cut power to the pool before removing a cartridge, and never run the pool without one — keeping a spare on hand is recommended."
+        }
+      },
+      "quarterly": {
+        "title": "Every 3–4 months: water change",
+        "text": "At this point the pool should be fully drained and refilled with fresh water, with the filter cartridges replaced. Always refill through the filter housing — otherwise the circulation system can pick up air, which can damage the pool's heating element."
+      },
+      "yearly": {
+        "title": "Yearly",
+        "text": "An annual inspection by our service team is recommended — an on-site check assesses the pool's condition, and any needed repairs can often be carried out on the spot."
+      },
+      "winterizing": {
+        "title": "Winterizing",
+        "intro": "If you won't be using the pool over winter, prepare it for the season — or leave it to our service team.",
+        "steps": [
+          "Cut power to the pool",
+          "Remove the filters",
+          "Pump out the water with a submersible pump",
+          "Vacuum any remaining water out of the jets with a wet vacuum",
+          "Dry the pool out",
+          "Remove the pool's side panels",
+          "Disconnect the motors' and controller's releasable fittings, unscrew the frost plugs, and remove any water from the motor pump housings",
+          "Refit the pool's side panels"
+        ]
+      },
+      "springPrep": {
+        "title": "Spring start-up",
+        "intro": "When you're ready to use the pool again, work through the steps below — or ask our service team for help.",
+        "steps": [
+          "Remove the pool's side panels",
+          "Reconnect the motors' and controller's releasable fittings",
+          "Clean any debris that fell into the pool body over winter",
+          "Fill the pool with fresh water",
+          "Fit the newly purchased filters",
+          "Restore power to the pool",
+          "Check it's running properly (drips, leaks, motors)",
+          "Add the purchased chemicals"
+        ]
+      }
+    },
+    "distributorTitle": "Exclusive Hungarian distributor",
+    "distributorDescription": "Our company is the exclusive Hungarian distributor of the Hanscraft brand. In line with quality and legal requirements, we provide a 3-year full warranty on our hot tubs, and 10 years on the structure and acrylic shell. Our products carry TÜV and CE certification to meet the highest quality standards.",
+    "distributorBadge1": "3-year full warranty",
+    "distributorBadge2": "10 years on structure & acrylic",
+    "distributorBadge3": "TÜV & CE certified",
+    "partnersCaption": "Hand-picked international suppliers for every component",
+    "waterTitle": "Professional water treatment & full-scale builds",
+    "waterDescription": "Professional water treatment is essential for hot tubs, so we sought out the best on the market — becoming the exclusive Hungarian distributor of Aqua Excellent. We also take on complete wellness-area builds, custom indoor and outdoor saunas, and pool and steam-room construction."
+  },
   "footer": {
     "tagline": "Premium wellness equipment, from manufacturer to your garden.",
     "products": "Products",
