@@ -1,57 +1,55 @@
-import { getTranslations } from "next-intl/server";
-import { desc, eq, and, notInArray } from "drizzle-orm";
+import { getTranslations, getLocale } from "next-intl/server";
+import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { products } from "@/db/schema";
+import { categories, products } from "@/db/schema";
 import { Link } from "@/i18n/navigation";
-import { ProductCard } from "@/components/product-card";
+import { localized } from "@/lib/localized";
+import { FeaturedProductsTabs } from "@/components/home/featured-products-tabs";
+
+const MAX_PER_TAB = 6;
 
 export async function FeaturedProducts() {
   const t = await getTranslations("home");
-  const explicit = await db.query.products.findMany({
+  const locale = await getLocale();
+
+  const featured = await db.query.products.findMany({
     where: eq(products.isFeatured, true),
     orderBy: [desc(products.createdAt)],
-    limit: 3,
-    with: { series: true },
+    with: { series: true, category: true },
   });
-
-  // Never show an empty (or half-empty) section: top up with the priciest
-  // regular products until there's a full row of 3 — a sensible default
-  // until featured is actually curated (e.g. driven by order volume later).
-  let featured = explicit;
-  if (featured.length < 3) {
-    const excludeIds = explicit.map((p) => p.id);
-    const fallback = await db.query.products.findMany({
-      where: and(
-        eq(products.priceOnRequest, false),
-        excludeIds.length > 0 ? notInArray(products.id, excludeIds) : undefined,
-      ),
-      orderBy: [desc(products.priceHuf)],
-      limit: 3 - featured.length,
-      with: { series: true },
-    });
-    featured = [...featured, ...fallback];
-  }
 
   if (featured.length === 0) return null;
 
+  const cats = await db.query.categories.findMany({
+    orderBy: [asc(categories.sortOrder), asc(categories.nameHu)],
+  });
+
+  const tabs = cats
+    .map((cat) => ({
+      slug: cat.slug,
+      name: localized(locale, cat.nameHu, cat.nameEn),
+      products: featured
+        .filter((p) => p.categoryId === cat.id)
+        .slice(0, MAX_PER_TAB),
+    }))
+    .filter((tab) => tab.products.length > 0);
+
+  if (tabs.length === 0) return null;
+
   return (
     <section className="px-16 py-22 max-lg:px-6">
-      <div className="mb-11 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-4">
+      <div className="mb-11 flex flex-col items-center gap-3 text-center">
         <div>
           <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {t("featuredEyebrow")}
           </div>
-          <h2 className="mt-3.5 text-3xl font-semibold">{t("featuredTitle")}</h2>
+          <h2 className="mt-3.5 text-4xl font-bold">{t("featuredTitle")}</h2>
         </div>
         <Link href="/jakuzzik" className="text-sm font-bold hover:text-accent">
           {t("viewAll")} →
         </Link>
       </div>
-      <div className="grid grid-cols-3 gap-7 max-lg:grid-cols-1">
-        {featured.map((p) => (
-          <ProductCard key={p.slug} product={p} />
-        ))}
-      </div>
+      <FeaturedProductsTabs tabs={tabs} />
     </section>
   );
 }

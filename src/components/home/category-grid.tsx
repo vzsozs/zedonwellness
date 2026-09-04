@@ -1,5 +1,6 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { asc, desc } from "drizzle-orm";
+import { ArrowUpRight } from "lucide-react";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
 import { Link } from "@/i18n/navigation";
@@ -31,7 +32,7 @@ export async function CategoryGrid() {
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("categoriesEyebrow")}
         </div>
-        <h2 className="mt-3.5 text-4xl font-semibold max-lg:text-3xl">
+        <h2 className="mt-3.5 text-4xl font-bold max-lg:text-3xl">
           {t("categoriesTitle")}
         </h2>
       </div>
@@ -49,33 +50,44 @@ export async function CategoryGrid() {
             <Link
               href={`/${cat.slug}`}
               key={cat.slug}
-              className="overflow-hidden border border-line bg-white"
+              className="group relative isolate flex h-80 flex-col justify-end overflow-hidden max-lg:h-64"
             >
               {image ? (
-                <div className="h-55 bg-paper-muted p-6">
-                  <img src={image} alt="" className="h-full w-full object-contain" />
-                </div>
+                <img
+                  src={image}
+                  alt=""
+                  className="absolute inset-0 -z-10 h-full w-full scale-105 object-cover transition-transform duration-500 ease-out group-hover:scale-115"
+                />
               ) : (
                 <div
-                  className={`flex h-55 items-center justify-center bg-gradient-to-br ${visual.gradient}`}
-                >
-                  <svg
-                    width={56}
-                    height={56}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={visual.iconColor}
-                    strokeWidth={1.3}
-                  >
-                    <path d={visual.icon} />
-                  </svg>
-                </div>
+                  className={`absolute inset-0 -z-10 bg-gradient-to-br ${visual.gradient} transition-transform duration-500 ease-out group-hover:scale-110`}
+                />
               )}
-              <div className="p-6">
-                <h3 className="text-lg font-semibold">{name}</h3>
+              <div className="absolute inset-0 -z-[5] bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
+              {!image ? (
+                <svg
+                  className="absolute top-6 right-6 -z-[5] opacity-70"
+                  width={44}
+                  height={44}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke={visual.iconColor}
+                  strokeWidth={1.3}
+                >
+                  <path d={visual.icon} />
+                </svg>
+              ) : null}
+              <div className="relative p-6">
+                <h3 className="text-xl font-bold text-white">{name}</h3>
                 {description ? (
-                  <p className="mt-2 text-sm text-muted">{description}</p>
+                  <p className="mt-1.5 line-clamp-2 text-sm text-white/80">
+                    {description}
+                  </p>
                 ) : null}
+                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-white/90 transition-transform group-hover:translate-x-1">
+                  {t("categoriesCta")}
+                  <ArrowUpRight className="size-4" strokeWidth={2.2} />
+                </span>
               </div>
             </Link>
           );

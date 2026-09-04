@@ -40,9 +40,51 @@
     },
     "categoriesEyebrow": "Termékkategóriák",
     "categoriesTitle": "Fedezd fel a kínálatot",
+    "categoriesCta": "Megnézem",
     "featuredEyebrow": "Kiemelt termékek",
     "featuredTitle": "Legnépszerűbb modelljeink",
     "viewAll": "Összes termék",
+    "virtualTour": {
+      "titleStart": "Fedezze fel új",
+      "titleHighlight": "Virtuális túránkat",
+      "description": "Tekintse meg az Otthon Design (Construma) kiállításon készült pavilonunkat, tegyen egy virtuális sétát a medencéink és szaunáink között.",
+      "cta": "Tovább"
+    },
+    "howWeWork": {
+      "title": "Hogyan dolgozunk",
+      "hiTech": {
+        "title": "Hi-tech gyártás",
+        "description": "A legújabb robottechnológiának köszönhetően minden részletet a legnagyobb pontossággal hajtunk végre."
+      },
+      "physio": {
+        "title": "Fizikoterápia",
+        "description": "Gyógytornászunk biztosítja, hogy minden pezsgőfürdőnk kényelmesen és hatékonyan masszírozzon."
+      },
+      "architect": {
+        "title": "Építésszel tervezve",
+        "description": "Modern formák és figyelemfelkeltő kiegészítők. Válassza ki az ízlésének leginkább megfelelőt."
+      },
+      "ecological": {
+        "title": "Ökológiai termékek",
+        "description": "Csak az egészségre és a környezetre ártalmatlan anyagokat választunk."
+      }
+    },
+    "videos": {
+      "eyebrow": "Videók",
+      "title": "Nézzen bele wellness-világunkba",
+      "massage": {
+        "title": "Kiváló minőségű masszázs, amelyért a teste is hálás lesz"
+      },
+      "construktiva": {
+        "title": "Zedonwellness a Construktíva műsorban"
+      },
+      "quality": {
+        "title": "Tökéletes minőség, professzionális hőmérséklet"
+      },
+      "hungexpo": {
+        "title": "HANSCRAFT és Zedonwellness a Construma Hungexpo 2022-n"
+      }
+    },
     "extrasEyebrow": "Extrák",
     "extrasTitle": "Tedd teljessé az élményt",
     "blogEyebrow": "Blog",

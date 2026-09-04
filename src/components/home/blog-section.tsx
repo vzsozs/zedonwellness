@@ -34,7 +34,7 @@ export async function BlogSection() {
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("blogEyebrow")}
         </div>
-        <h2 className="mt-3.5 text-3xl font-semibold">{t("blogTitle")}</h2>
+        <h2 className="mt-3.5 text-4xl font-bold">{t("blogTitle")}</h2>
       </div>
 
       <div className="relative">

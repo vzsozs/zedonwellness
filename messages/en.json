@@ -40,9 +40,51 @@
     },
     "categoriesEyebrow": "Product categories",
     "categoriesTitle": "Explore our range",
+    "categoriesCta": "View",
     "featuredEyebrow": "Featured products",
     "featuredTitle": "Our most popular models",
     "viewAll": "All products",
+    "virtualTour": {
+      "titleStart": "Discover our new",
+      "titleHighlight": "virtual tour",
+      "description": "Take a look at our pavilion built for the Otthon Design (Construma) exhibition, and take a virtual walk between our pools and saunas.",
+      "cta": "Learn more"
+    },
+    "howWeWork": {
+      "title": "How we work",
+      "hiTech": {
+        "title": "Hi-tech manufacturing",
+        "description": "Thanks to the latest robotic technology, every detail is carried out with the utmost precision."
+      },
+      "physio": {
+        "title": "Physiotherapy",
+        "description": "Our physiotherapist makes sure every hot tub massages comfortably and effectively."
+      },
+      "architect": {
+        "title": "Designed with an architect",
+        "description": "Modern shapes and eye-catching accessories. Choose the one that best suits your taste."
+      },
+      "ecological": {
+        "title": "Eco-friendly products",
+        "description": "We only choose materials that are safe for your health and the environment."
+      }
+    },
+    "videos": {
+      "eyebrow": "Videos",
+      "title": "Take a look inside our wellness world",
+      "massage": {
+        "title": "Premium-quality massage your body will thank you for"
+      },
+      "construktiva": {
+        "title": "Zedonwellness on the Construktíva TV show"
+      },
+      "quality": {
+        "title": "Perfect quality, professional temperature"
+      },
+      "hungexpo": {
+        "title": "HANSCRAFT and Zedonwellness at Construma Hungexpo 2022"
+      }
+    },
     "extrasEyebrow": "Extras",
     "extrasTitle": "Complete the experience",
     "blogEyebrow": "Blog",
