@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { GrillThemeProvider } from "@/lib/grill-theme-context";
 import { CartProvider } from "@/lib/cart-context";
 import { CurrencyProvider } from "@/lib/currency-context";
+import { ContactModalProvider } from "@/lib/contact-modal-context";
 import { getEurHufRate } from "@/lib/settings";
 import "../globals.css";
 
@@ -65,9 +66,11 @@ export default async function LocaleLayout({
           <CurrencyProvider eurHufRate={eurHufRate}>
             <CartProvider>
               <GrillThemeProvider>
-                <SiteHeader />
-                {children}
-                <SiteFooter />
+                <ContactModalProvider>
+                  <SiteHeader />
+                  {children}
+                  <SiteFooter />
+                </ContactModalProvider>
               </GrillThemeProvider>
             </CartProvider>
           </CurrencyProvider>

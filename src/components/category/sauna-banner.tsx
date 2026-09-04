@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { ContactButton } from "@/components/contact-button";
 import { ImageLightbox } from "@/components/image-lightbox";
 
 const GALLERY_IMAGES = [
@@ -33,12 +33,9 @@ export function SaunaBanner() {
         >
           {t("saunaBannerGallery")}
         </button>
-        <Link
-          href="/kapcsolat"
-          className="border-[1.5px] border-ink px-6 py-3 text-sm font-semibold whitespace-nowrap hover:bg-ink hover:text-white"
-        >
+        <ContactButton className="border-[1.5px] border-ink px-6 py-3 text-sm font-semibold whitespace-nowrap hover:bg-ink hover:text-white">
           {t("saunaBannerContact")}
-        </Link>
+        </ContactButton>
       </div>
 
       {lightboxIndex !== null ? (

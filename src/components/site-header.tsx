@@ -7,6 +7,7 @@ import { Search, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useCurrency, currencyForLocale } from "@/lib/currency-context";
 import { useGrillThemeActive } from "@/lib/grill-theme-context";
+import { useContactModal } from "@/lib/contact-modal-context";
 
 const links = [
   { href: "/jakuzzik", key: "jacuzzis" as const },
@@ -15,7 +16,6 @@ const links = [
   { href: "/grillek", key: "grills" as const },
   { href: "/blog", key: "blog" as const },
   { href: "/a-ceg", key: "company" as const },
-  { href: "/kapcsolat", key: "contact" as const },
 ];
 
 export function SiteHeader() {
@@ -30,6 +30,7 @@ export function SiteHeader() {
   const { itemCount } = useCart();
   const { currency, setCurrency } = useCurrency();
   const isGrillTheme = useGrillThemeActive();
+  const { open: openContact } = useContactModal();
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -114,6 +115,9 @@ export function SiteHeader() {
               {t(l.key)}
             </Link>
           ))}
+          <button type="button" onClick={openContact} className="text-ink hover:text-accent">
+            {t("contact")}
+          </button>
         </nav>
 
         <div className="flex items-center gap-5">
@@ -184,6 +188,16 @@ export function SiteHeader() {
               {t(l.key)}
             </Link>
           ))}
+          <button
+            type="button"
+            onClick={() => {
+              setMenuOpen(false);
+              openContact();
+            }}
+            className="block w-full border-b border-line py-3.5 text-left text-sm font-semibold text-ink last:border-0"
+          >
+            {t("contact")}
+          </button>
           <form onSubmit={submitSearch} className="relative py-3.5">
             <Search
               className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted"

@@ -15,6 +15,12 @@
     "search": "Keresés",
     "searchPlaceholder": "Keresés…"
   },
+  "contactModal": {
+    "close": "Bezárás",
+    "centralHeading": "Központi elérhetőség",
+    "serviceHeading": "Szerviz",
+    "followUs": "Kövessen minket"
+  },
   "search": {
     "heading": "Keresés",
     "prompt": "Írj be egy keresőszót a fejlécben.",

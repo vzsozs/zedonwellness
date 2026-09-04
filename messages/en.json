@@ -15,6 +15,12 @@
     "search": "Search",
     "searchPlaceholder": "Search…"
   },
+  "contactModal": {
+    "close": "Close",
+    "centralHeading": "Head office",
+    "serviceHeading": "Service",
+    "followUs": "Follow us"
+  },
   "search": {
     "heading": "Search",
     "prompt": "Type a keyword in the header search box.",

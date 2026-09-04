@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { FileText, Check, X } from "lucide-react";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
+import { ContactButton } from "@/components/contact-button";
 import type { Locale } from "@/i18n/routing";
 import { db } from "@/db";
 import { products } from "@/db/schema";
@@ -291,12 +292,9 @@ export default async function ProductPage({
         <div className="max-w-lg">
           <h2 className="mb-5.5 text-2xl font-semibold">{t("contactHeading")}</h2>
           <p className="text-sm leading-loose text-muted">{t("contactText")}</p>
-          <Link
-            href="/kapcsolat"
-            className="mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
-          >
+          <ContactButton className="mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white">
             {t("contactCta")}
-          </Link>
+          </ContactButton>
         </div>
       </div>
 

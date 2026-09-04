@@ -413,6 +413,34 @@ A user az élő zedonwellness.com `/szaunak` oldalára mutatott mintaként: egy 
 - **Két kör finomítás után** állt össze a végleges elrendezés: egysoros, vízszintesen minél vékonyabb sáv (kis `py-4` padding), a szöveg (cím+leírás) kitölti a rendelkezésre álló helyet (`flex-1`, nincs `max-w` korlát rajta), a Galéria+Kapcsolat gombpár jobbra zárva (`shrink-0`, `whitespace-nowrap`). A "Galéria" gomb a meglévő, más helyeken (termékgaléria) is használt `ImageLightbox` komponenst nyitja meg a 6 szaunafotóval — nem kellett új lightbox-implementáció.
 - Az embléma SVG mérete a user kérésére utólag nőtt (`h-16`→`h-24`), a margók/paddingek explicit kérésre változatlanul maradtak.
 
+## 2026-09-04 — Főoldal-redesign (Claude Design canvason keresztül), valódi Blog, "A cég" oldal, Kapcsolat modal
+
+Hosszú, több témát átfogó munkamenet: a főoldal vizuális megújítása (részben egy szerkeszthető Claude Design canvas-on keresztül egyeztetve), a Blog teljes átépítése a Soro CMS valódi adataira, egy vadonatúj "A cég" oldal a régi `/ceg` + `/factory` + `/szerviz` aloldalak tartalmából, és egy közös "Kapcsolat" felugró modal az egész oldalon.
+
+### Főoldal redesign
+- **Kategória-kártyák**: a korábbi lapos, fehér dobozok helyett teli fotós, hover-zoomos kártyák sötét gradiens-átfedéssel.
+- **Kiemelt termékek**: valódi kategória-fülekkel szűrhető lett (`featured-products-tabs.tsx`), és **csak a ténylegesen `isFeatured`-nek jelölt termékeket** mutatja — a korábbi "sosem üres, feltöltjük a legdrágábbal" auto-fill logika kikerült, user kifejezett kérésére.
+- **Új szekciók**: Virtuális túra sáv, sötét hátterű "Hogyan dolgozunk" (négy pillér, saját letöltött márkafotókkal), Videók blokk (4 valós YouTube videó, kattintásra helyben lejátszva, `img.youtube.com` thumbnail-lel).
+- **Design canvas kör**: a user kérésére a főoldal-tervet egy szerkeszthető Claude Design canvas-ra (`design` skill) tettem ki — a user ott kézzel átrendezte a Virtuális túra sávot (sorba, nem oszlopba), színt váltott (teal→coprBlue), nagyobbra vette a "Hogyan dolgozunk" fotókat —, amit utána visszaolvastam (`seed-canvas.mjs --extract`) és pontosan átvezettem a valódi kódba. **Fontos módszertani tanulság**: a canvas-on placeholder-gradiens volt a fotók helyén, ezért a valós, alfa-csatornás "Hogyan dolgozunk" képeken csak élesben derült ki, hogy a kör-mask eltávolítása után a kép saját, eleve kör alakú+jelvényes tartalma "lóg ki" a négyzetes keretből — ezt a felhasználó jelezte, `overflow-hidden` helyett `object-contain`-nel oldottuk meg, hogy semmi ne vágódjon le.
+- **Sorrend**: Hero → Bizalmi sáv → Kategóriák → Blog → Kiemelt termékek → Virtuális túra → Videók → Hogyan dolgozunk (a user kérésére a Videók a Hogyan dolgozunk elé került).
+
+### Blog — valódi Soro-integráció, nem csak beágyazott widget
+A user eredeti kérése egy egyszerű `<div id="soro-blog"></div><script>` beágyazás volt a Soro CMS-től — ez működött, de két korlátja volt: (1) kliens-oldali route-váltás után (nem frissítéssel) a widget nem futott le újra, üres maradt; (2) a widget mindig **az összes** cikket egyszerre rendereli, nincs valódi lapozás.
+- **Felfedezés**: a Soro embed script (`https://app.trysoro.com/api/embed/<token>`) egyetlen JS-fájlban tartalmazza az összes cikk adatát (`var SORO_ARTICLES = [...]`, cím/kép/kivonat/dátum, már dátum szerint rendezve), és van egy külön, dokumentálatlan, de a script forrásában megtalálható végpont is a teljes cikk-HTML lekéréséhez (`.../article/<id>`). Ez alapján épült a `src/lib/soro.ts` (`getSoroArticles`, `getSoroArticleContent`) — innentől a widget helyett **a mi saját kódunk** rendereli a listát és a cikk-részletezőt is.
+- **`/blog`**: saját 2 oszlopos lista (fotó+cím+kivonat+dátum), 20 cikk után "További cikkek" gomb, kategória-szűrő fülek (mivel a Soro-feed nem ad valódi kategóriát, ez egy kulcsszó-egyezés a cím+kivonat ellen — csak az a fül jelenik meg, amihez van tényleges találat), élő szöveges kereső, és per-cikk valódi SEO metaadat (`generateMetadata`) — ez utóbbi jobb, mint amit az eredeti widget tudott.
+- **Főoldali "Legfrissebb cikkeink"** a 3 legfrissebb valódi Soro-cikket mutatja, valódi fotóval, `/blog?post=<slug>`-ra linkelve.
+
+### "A cég" oldal (`/a-ceg`)
+A user kérésére a régi élő oldal **három** aloldalát (`/ceg`, `/factory`, `/szerviz`) vontuk össze egyetlen, logikusan tagolt oldalba (a header-menü csak egy "A cég" pontot tartalmaz):
+- Hero, 4 pillér-kártya ("Miért válassza a Zedonwellness-t?" — ugyanazok a fotók, mint a főoldali "Hogyan dolgozunk"-nál, de a `/factory` oldal teljesebb szövegével), Szerviz szekció (valódi bevezető szöveg + díjtáblázat + **lenyíló karbantartási útmutató** natív `<details>`-szel: napi/heti/negyedéves/éves teendők, téliesítés/tavasziasítás lépéslisták, a régi oldalról letöltött illusztráló fotókkal), Hanscraft kizárólagos-forgalmazó blokk (logó, garancia-jelvények, beszállítói/technológiai partner-grafika), Aqua Excellent vízkezelés szekció.
+- **Több finomítási kör** a háttérszínekről/szélességekről: végül minden szekció háttere fehér (kivéve a Szerviz, ami `#ebf6fe`), a szövegblokkok és a Hanscraft-kép szélessége egységesen `max-w-4xl`-re igazítva, a pillér-rács pedig `max-w-[1400px]`-en (nem a szűkebb szöveg-szélességen).
+- A lábléc korábban élő, de sehova nem mutató `/rolunk`, `/gyar`, `/szerviz` linkjei mostantól mind ide (`/a-ceg`, `/a-ceg#gyar`, `/a-ceg#szerviz`) irányítanak.
+
+### Kapcsolat — közös felugró modal, mindenhol
+A user kérésére a site-wide "Kapcsolat" gomb (és a rajta kívül eső, korábban a nem létező `/kapcsolat` oldalra mutató linkek: Hero másodlagos CTA, termékoldal "ár érdeklődésre" doboz, szauna-banner) most mind **ugyanazt az egy, megosztott modal-t** nyitják meg, valódi céges elérhetőségekkel (email/telefon, külön szerviz-kontakt, Facebook-link).
+- Architektúra: `ContactModalProvider` (`src/lib/contact-modal-context.tsx`) az egész app-ot becsomagolja a locale-layoutban, egyetlen `<ContactModal>` példányt tart életben; bármelyik gomb (`<ContactButton>`, kliens-komponens) csak `useContactModal().open()`-t hív — így egy szerver-komponens oldalba (pl. a termékrészletező) is simán beilleszthető, csak magát a gombot kell kliens-komponensnek jelölni, az oldal többi része maradhat szerver-oldali.
+- **Grill-témás variáns**: a modal saját maga érzékeli a `useGrillThemeActive()` hookkal, hogy a sötét Grill-téma aktív-e, és ilyenkor automatikusan a ZedonGrill logót (dupla méretben, user kérésére), a `sales@zedongrill.com` e-mailt és a grill Facebook-oldalt mutatja, a Szerviz blokk pedig teljesen kimarad — nincs külön prop-babrálás, bárhonnan nyitva jó tartalmat mutat.
+
 ## Munkamódszer-jegyzetek jövőbeli sessionöknek
 
 Ez a szakasz nem egy adott munkanaphoz kötött, hanem a **projekttel/userrel való együttműködés bevált mintáit** rögzíti — új session elején érdemes elolvasni a fenti dátumozott bejegyzések mellett.

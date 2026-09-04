@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { ContactButton } from "@/components/contact-button";
 
 export function Hero() {
   const t = useTranslations("home");
@@ -33,12 +34,9 @@ export function Hero() {
             {t("ctaPrimary")}
             <ArrowRight className="size-4" strokeWidth={2.2} />
           </Link>
-          <Link
-            href="/kapcsolat"
-            className="inline-flex items-center justify-center border-[1.5px] border-ink px-7 py-4 text-sm font-semibold text-ink"
-          >
+          <ContactButton className="inline-flex items-center justify-center border-[1.5px] border-ink px-7 py-4 text-sm font-semibold text-ink">
             {t("ctaSecondary")}
-          </Link>
+          </ContactButton>
         </div>
       </div>
 

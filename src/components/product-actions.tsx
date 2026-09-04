@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { ContactButton } from "@/components/contact-button";
 import { useCart } from "@/lib/cart-context";
 import { Price } from "@/lib/currency-context";
 import { localized } from "@/lib/localized";
@@ -88,12 +88,9 @@ export function ProductActions({
           {t("priceOnRequestLabel")}
         </div>
         <p className="mt-2 text-sm text-muted">{t("priceOnRequestNote")}</p>
-        <Link
-          href="/kapcsolat"
-          className="mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
-        >
+        <ContactButton className="mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white">
           {t("contactCta")}
-        </Link>
+        </ContactButton>
       </div>
     );
   }
