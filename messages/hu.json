@@ -21,6 +21,21 @@
     "resultCount": "{count, plural, =0 {Nincs találat erre: \"{query}\"} other {# találat erre: \"{query}\"}}",
     "noResults": "Nincs találat — próbálj más kulcsszót."
   },
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Cikkeink",
+    "back": "Összes cikk",
+    "loadMore": "További cikkek",
+    "empty": "Jelenleg nincs elérhető cikk.",
+    "filterAll": "Összes",
+    "filterJakuzzik": "Jakuzzik",
+    "filterSzaunak": "Szaunák",
+    "filterMedence": "Medencék",
+    "filterKarbantartas": "Karbantartás",
+    "filterGrillek": "Grillek",
+    "searchPlaceholder": "Keresés a cikkek között…",
+    "noResults": "Nincs a szűrésnek megfelelő cikk."
+  },
   "topbar": {
     "phone": "Ingyenes szaktanácsadás: +36 1 234 5678",
     "shipping": "Országos kiszállítás"

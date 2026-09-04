@@ -170,3 +170,53 @@ h3 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
   cursor: pointer;
 }
+
+/* Blog article body (/blog?post=...) — raw HTML from the Soro CMS
+   (headings, paragraphs, lists, links, images), styled to match the rest
+   of the site's typography since it arrives as plain markup, no classes. */
+.blog-article-content {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-ink);
+}
+
+.blog-article-content h2 {
+  margin: 40px 0 16px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.blog-article-content h3 {
+  margin: 32px 0 12px;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.blog-article-content p {
+  margin: 0 0 20px;
+}
+
+.blog-article-content ul,
+.blog-article-content ol {
+  margin: 0 0 20px;
+  padding-left: 24px;
+}
+
+.blog-article-content li {
+  margin-bottom: 8px;
+}
+
+.blog-article-content a {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.blog-article-content a:hover {
+  color: var(--color-accent-dark);
+}
+
+.blog-article-content img {
+  width: 100%;
+  height: auto;
+  margin: 24px 0;
+}

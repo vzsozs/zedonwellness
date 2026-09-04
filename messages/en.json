@@ -21,6 +21,21 @@
     "resultCount": "{count, plural, =0 {No results for \"{query}\"} one {# result for \"{query}\"} other {# results for \"{query}\"}}",
     "noResults": "No results — try a different keyword."
   },
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Our articles",
+    "back": "All articles",
+    "loadMore": "Load more",
+    "empty": "No articles yet.",
+    "filterAll": "All",
+    "filterJakuzzik": "Jacuzzis",
+    "filterSzaunak": "Saunas",
+    "filterMedence": "Pools",
+    "filterKarbantartas": "Maintenance",
+    "filterGrillek": "Grills",
+    "searchPlaceholder": "Search articles…",
+    "noResults": "No articles match this filter."
+  },
   "topbar": {
     "phone": "Free consultation: +36 1 234 5678",
     "shipping": "Nationwide delivery"

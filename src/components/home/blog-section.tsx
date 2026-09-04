@@ -1,32 +1,12 @@
-import { getTranslations, getLocale } from "next-intl/server";
-import { localized } from "@/lib/localized";
-
-// No blog system yet — placeholder cards until real posts exist, so the
-// homepage isn't left with an empty section in the meantime.
-const POSTS = [
-  {
-    slug: "elso-jakuzzi",
-    titleHu: "Hogyan válaszd ki az első jakuzzidat",
-    titleEn: "How to choose your first jacuzzi",
-    gradient: "from-[#0e8c9a] to-[#04bbf0]",
-  },
-  {
-    slug: "szauna-teli-karbantartas",
-    titleHu: "5 tipp a szauna téli karbantartásához",
-    titleEn: "5 tips for winter sauna maintenance",
-    gradient: "from-[#17201e] to-[#63706d]",
-  },
-  {
-    slug: "grillezes-profi-modra",
-    titleHu: "Grillezés profi módra: mit tud egy BULL grill",
-    titleEn: "Grilling like a pro: what a BULL grill can do",
-    gradient: "from-[#e0691a] to-[#f9ce67]",
-  },
-] as const;
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { getSoroArticles } from "@/lib/soro";
 
 export async function BlogSection() {
   const t = await getTranslations("home");
-  const locale = await getLocale();
+  const posts = (await getSoroArticles()).slice(0, 3);
+
+  if (posts.length === 0) return null;
 
   return (
     <section className="bg-white px-16 py-22 max-lg:px-6">
@@ -39,18 +19,27 @@ export async function BlogSection() {
 
       <div className="relative">
         <div className="flex gap-6 overflow-hidden">
-          {POSTS.map((post) => (
-            <div
+          {posts.map((post) => (
+            <Link
               key={post.slug}
-              className="w-[38%] shrink-0 border border-line max-lg:w-[80%]"
+              href={`/blog?post=${post.slug}`}
+              className="group w-[38%] shrink-0 border border-line max-lg:w-[80%]"
             >
-              <div className={`h-44 bg-gradient-to-br ${post.gradient}`} />
+              <div className="h-44 overflow-hidden bg-paper-muted">
+                {post.image ? (
+                  <img
+                    src={post.image}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                ) : null}
+              </div>
               <div className="p-6">
-                <h3 className="text-base font-bold">
-                  {localized(locale, post.titleHu, post.titleEn)}
+                <h3 className="text-base font-bold group-hover:text-accent">
+                  {post.title}
                 </h3>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
         <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-white to-transparent max-lg:w-16" />
