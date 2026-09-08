@@ -29,7 +29,7 @@ export async function CategoryGrid() {
   if (items.length === 0) return null;
 
   return (
-    <section className="px-16 pt-24 pb-10 max-lg:px-6">
+    <section className="px-[5%] pt-24 pb-10 max-lg:px-6">
       <div className="mb-14 text-center">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("categoriesEyebrow")}

@@ -126,7 +126,7 @@ export function ContactModal({
             }
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3.5 inline-flex items-center gap-2 border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+            className="rounded-control mt-3.5 inline-flex items-center gap-2 border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
           >
             <Facebook className="size-4" strokeWidth={1.8} />
             Facebook

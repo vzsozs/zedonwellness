@@ -16,7 +16,7 @@ export function FeatureBadgeCard({
   const t = useTranslations("product");
 
   return (
-    <div className="overflow-hidden border-2 border-coprBlue">
+    <div className="rounded-card overflow-hidden border-2 border-coprBlue">
       <div className="flex h-[166px] w-full items-center justify-center overflow-hidden p-6">
         {iconUrl ? (
           <SafeImage

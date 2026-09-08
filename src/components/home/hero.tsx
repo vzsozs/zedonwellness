@@ -21,7 +21,7 @@ export function Hero() {
       />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-paper)_0%,var(--color-paper)_28%,rgba(235,246,255,0.55)_52%,rgba(235,246,255,0)_72%)]" />
 
-      <div className="relative max-w-xl px-16 py-32 max-lg:px-6 max-lg:py-20">
+      <div className="relative max-w-xl px-[5%] py-32 max-lg:px-6 max-lg:py-20">
         <div className="mb-4 text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
@@ -35,7 +35,7 @@ export function Hero() {
         <div className="flex gap-4 max-sm:flex-col">
           <Link
             href="/jakuzzik"
-            className="inline-flex items-center gap-2.5 bg-accent px-8 py-4 text-sm font-semibold text-white hover:bg-accent-dark"
+            className="rounded-control inline-flex items-center gap-2.5 bg-accent px-8 py-4 text-sm font-semibold text-white hover:bg-accent-dark"
           >
             {t("ctaPrimary")}
             <ArrowRight className="size-4" strokeWidth={2.2} />

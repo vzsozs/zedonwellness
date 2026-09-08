@@ -34,7 +34,7 @@ export default async function CompanyPage({
   return (
     <main>
       {/* Hero */}
-      <div className="px-16 pt-16 pb-14 text-center max-lg:px-6">
+      <div className="px-[5%] pt-16 pb-14 text-center max-lg:px-6">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
@@ -45,7 +45,7 @@ export default async function CompanyPage({
       </div>
 
       {/* Why us — 4 pillars */}
-      <div id="gyar" className="bg-white px-16 py-20 max-lg:px-6">
+      <div id="gyar" className="bg-white px-[5%] py-20 max-lg:px-6">
         <div className="mx-auto max-w-[1400px]">
           <h2 className="text-center text-4xl font-bold max-lg:text-3xl">
             {t("pillarsTitle")}
@@ -76,7 +76,7 @@ export default async function CompanyPage({
       </div>
 
       {/* Service */}
-      <div id="szerviz" className="bg-[#ebf6fe] px-16 py-20 max-lg:px-6">
+      <div id="szerviz" className="bg-[#ebf6fe] px-[5%] py-20 max-lg:px-6">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-bold max-lg:text-3xl">{t("serviceTitle")}</h2>
           <p className="mt-4 text-muted">{t("serviceDescription0")}</p>
@@ -203,7 +203,7 @@ export default async function CompanyPage({
       </div>
 
       {/* Exclusive distributor */}
-      <div className="bg-white px-16 py-20 max-lg:px-6">
+      <div className="bg-white px-[5%] py-20 max-lg:px-6">
         <div className="mx-auto max-w-4xl text-center">
           <Image
             src="/company/logo-hanscraft.png"
@@ -240,7 +240,7 @@ export default async function CompanyPage({
       </div>
 
       {/* Water treatment / full builds */}
-      <div className="bg-white px-16 py-20 max-lg:px-6">
+      <div className="bg-white px-[5%] py-20 max-lg:px-6">
         <div className="mx-auto flex max-w-4xl items-center gap-14 max-lg:flex-col max-lg:gap-8 max-lg:text-center">
           <Image
             src="/company/logo-aqua-excellent.jpg"

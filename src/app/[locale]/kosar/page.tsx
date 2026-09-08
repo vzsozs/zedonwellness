@@ -23,7 +23,7 @@ export default function CartPage() {
   // state on every load.
   if (!hydrated) {
     return (
-      <main className="mx-auto max-w-4xl px-16 pt-10 pb-25 max-lg:px-6">
+      <main className="mx-auto max-w-4xl px-[5%] pt-10 pb-25 max-lg:px-6">
         <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
         <div className="mt-10 h-24 animate-pulse bg-line/60" aria-hidden />
       </main>
@@ -31,7 +31,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-16 pt-10 pb-25 max-lg:px-6">
+    <main className="mx-auto max-w-4xl px-[5%] pt-10 pb-25 max-lg:px-6">
       <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
 
       <CartRemovedNotice names={sync.removed} />
@@ -41,7 +41,7 @@ export default function CartPage() {
           <p className="text-sm text-muted">{t("empty")}</p>
           <Link
             href="/"
-            className="mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+            className="rounded-control mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
           >
             {t("backToProducts")}
           </Link>
@@ -154,7 +154,7 @@ export default function CartPage() {
           ) : (
             <Link
               href="/penztar"
-              className="mt-6 block bg-ink py-4 text-center text-sm font-semibold text-white hover:bg-accent-dark"
+              className="rounded-control mt-6 block bg-ink py-4 text-center text-sm font-semibold text-white hover:bg-accent-dark"
             >
               {t("continue")}
             </Link>

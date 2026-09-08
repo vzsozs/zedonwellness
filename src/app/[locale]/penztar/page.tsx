@@ -42,7 +42,7 @@ export default function CheckoutPage() {
   // every visitor who actually has items.
   if (!hydrated) {
     return (
-      <main className="mx-auto max-w-2xl px-16 pt-10 pb-25 max-lg:px-6">
+      <main className="mx-auto max-w-2xl px-[5%] pt-10 pb-25 max-lg:px-6">
         <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
         <div className="mt-8 h-40 animate-pulse bg-line/60" aria-hidden />
       </main>
@@ -51,13 +51,13 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <main className="mx-auto max-w-2xl px-16 pt-10 pb-25 max-lg:px-6">
+      <main className="mx-auto max-w-2xl px-[5%] pt-10 pb-25 max-lg:px-6">
         <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
         <CartRemovedNotice names={sync.removed} />
         <p className="mt-6 text-sm text-muted">{t("emptyCart")}</p>
         <Link
           href="/"
-          className="mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+          className="rounded-control mt-5 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
         >
           {t("backToProducts")}
         </Link>
@@ -72,7 +72,7 @@ export default function CheckoutPage() {
   const submitDisabled = pending || sync.checking || sync.blocked || priceChanged;
 
   return (
-    <main className="mx-auto max-w-4xl px-16 pt-10 pb-25 max-lg:px-6">
+    <main className="mx-auto max-w-4xl px-[5%] pt-10 pb-25 max-lg:px-6">
       <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
 
       <CartRemovedNotice names={sync.removed} />

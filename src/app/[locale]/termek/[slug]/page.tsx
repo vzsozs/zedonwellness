@@ -224,7 +224,7 @@ export default async function ProductPage({
         dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbLd) }}
       />
       <GrillTheme active={product.category?.slug === "grillek"} />
-      <div className="px-16 pt-7 text-[13px] text-muted/80 max-lg:px-6">
+      <div className="px-[5%] pt-7 text-[13px] text-muted/80 max-lg:px-6">
         <Link href="/" className="hover:text-accent">
           {tc("home")}
         </Link>{" "}
@@ -241,7 +241,7 @@ export default async function ProductPage({
         <span className="font-semibold text-ink">{name}</span>
       </div>
 
-      <div className="px-16 pt-7.5 max-lg:px-6">
+      <div className="px-[5%] pt-7.5 max-lg:px-6">
         {product.series ? (
           <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
             {product.series.name} {t("seriesSuffix")}
@@ -279,7 +279,7 @@ export default async function ProductPage({
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-3 border border-line p-5 text-center hover:border-ink"
+                    className="rounded-card flex flex-col items-center gap-3 border border-line p-5 text-center hover:border-ink"
                   >
                     <FileText className="size-12 text-coprBlue" strokeWidth={1.5} />
                     <span className="text-sm font-semibold text-ink">{doc.label}</span>
@@ -400,7 +400,7 @@ export default async function ProductPage({
       </div>
 
       {/* Contact */}
-      <div className="px-16 py-22 max-lg:px-6">
+      <div className="px-[5%] py-22 max-lg:px-6">
         <div className="max-w-lg">
           <h2 className="mb-5.5 text-2xl font-semibold">{t("contactHeading")}</h2>
           <p className="text-sm leading-loose text-muted">{t("contactText")}</p>
@@ -412,7 +412,7 @@ export default async function ProductPage({
 
       {/* Related */}
       {related.length > 0 ? (
-        <div className="px-16 pb-25 max-lg:px-6">
+        <div className="px-[5%] pb-25 max-lg:px-6">
           <h2 className="mb-7.5 text-[26px] font-semibold">{t("relatedHeading")}</h2>
           <div className="grid grid-cols-4 gap-6 max-lg:grid-cols-2">
             {related.map((p) => (

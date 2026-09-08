@@ -13,7 +13,7 @@ export function BlogArticle({
   backLabel: string;
 }) {
   return (
-    <article className="mx-auto max-w-3xl px-16 pb-25 max-lg:px-6">
+    <article className="mx-auto max-w-3xl px-[5%] pb-25 max-lg:px-6">
       <Link
         href="/blog"
         className="mb-8 inline-flex items-center gap-2 border border-line px-4 py-2 text-sm font-semibold hover:text-accent"

@@ -170,7 +170,7 @@ export function CategoryBrowser({
   );
 
   return (
-    <div className="px-16 max-lg:px-6">
+    <div className="px-[5%] max-lg:px-6">
       {banner ? <div className="mt-8">{banner}</div> : null}
 
       <div className="mt-5 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3">

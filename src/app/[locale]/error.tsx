@@ -19,7 +19,7 @@ export default function StorefrontError({
   }, [error]);
 
   return (
-    <main className="mx-auto max-w-2xl px-16 pt-24 pb-32 text-center max-lg:px-6">
+    <main className="mx-auto max-w-2xl px-[5%] pt-24 pb-32 text-center max-lg:px-6">
       <h1 className="text-3xl font-bold max-lg:text-2xl">{t("title")}</h1>
       <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
         {t("description")}

@@ -100,7 +100,7 @@ export default async function CategoryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbLd) }}
       />
-      <div className="px-16 pt-10 max-lg:px-6">
+      <div className="px-[5%] pt-10 max-lg:px-6">
         <div className="text-[13px] text-muted/80">
           <Link href="/" className="hover:text-accent">
             {tc("home")}

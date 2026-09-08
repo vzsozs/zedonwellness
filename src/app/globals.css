@@ -19,6 +19,26 @@
 
   --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Corner radii — one source for the whole site, so "rounded buttons"
+     stays one decision rather than a number retyped in fifty places.
+     `control` covers anything you click or type into, `card` the raised
+     surfaces. Product/category photos deliberately stay square: rounding
+     them clips the corner of the actual photo. */
+  --radius-control: 8px;
+  --radius-card: 12px;
+}
+
+@layer base {
+  /* Applies to every real control without touching a single component.
+     Tailwind utilities sit in a later layer, so `rounded-full` on the
+     header's circular icon buttons still wins over this. */
+  button,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    border-radius: var(--radius-control);
+  }
 }
 
 body {

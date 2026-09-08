@@ -20,19 +20,19 @@ export default async function ProductsPage() {
               would prefetch it and trigger a spurious export. */}
           <a
             href="/admin/products/export"
-            className="border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink"
+            className="rounded-control border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink"
           >
             CSV export
           </a>
           <Link
             href="/admin/products/import"
-            className="border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink"
+            className="rounded-control border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink"
           >
             CSV import
           </Link>
           <Link
             href="/admin/products/new"
-            className="bg-ink px-5 py-2.5 text-sm font-semibold text-white"
+            className="rounded-control bg-ink px-5 py-2.5 text-sm font-semibold text-white"
           >
             + Új termék
           </Link>

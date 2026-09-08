@@ -56,7 +56,7 @@ export function SiteHeader() {
 
   return (
     <header>
-      <div className="flex items-center justify-between gap-6 bg-ink px-16 py-2.5 text-xs tracking-wide text-line max-lg:px-6">
+      <div className="flex items-center justify-between gap-6 bg-ink px-[5%] py-2.5 text-xs tracking-wide text-line max-lg:px-6">
         <div className="flex gap-7 max-md:hidden">
           <span>{tb("phone", { phone: COMPANY.phone })}</span>
           <span>{tb("shipping")}</span>
@@ -100,7 +100,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b border-line bg-white px-16 py-5 max-lg:px-6">
+      <div className="flex items-center justify-between border-b border-line bg-white px-[5%] py-5 max-lg:px-6">
         <Link
           href="/"
           className="relative h-14 w-[191px] shrink-0"

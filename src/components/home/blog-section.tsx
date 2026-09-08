@@ -10,7 +10,7 @@ export async function BlogSection() {
   if (posts.length === 0) return null;
 
   return (
-    <section className="bg-white px-16 py-22 max-lg:px-6">
+    <section className="bg-white px-[5%] py-22 max-lg:px-6">
       <div className="mb-11 text-center">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("blogEyebrow")}

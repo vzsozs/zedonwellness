@@ -40,14 +40,14 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
   return (
     <main className="mx-auto max-w-[1400px]">
-      <div className="px-16 pt-16 pb-10 text-center max-lg:px-6">
+      <div className="px-[5%] pt-16 pb-10 text-center max-lg:px-6">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
         <h1 className="mt-3.5 text-4xl font-bold max-lg:text-3xl">{t("title")}</h1>
       </div>
 
-      <div className="px-16 pb-25 max-lg:px-6">
+      <div className="px-[5%] pb-25 max-lg:px-6">
         {articles.length > 0 ? (
           <BlogList articles={articles} />
         ) : (

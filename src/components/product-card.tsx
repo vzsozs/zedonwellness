@@ -58,7 +58,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
   return (
     <Link
       href={`/termek/${product.slug}`}
-      className="group block bg-white transition-shadow hover:shadow-[0_8px_28px_rgba(15,45,80,0.12)]"
+      className="rounded-card group block overflow-hidden bg-white transition-shadow hover:shadow-[0_8px_28px_rgba(15,45,80,0.12)]"
     >
       <div className="relative aspect-square overflow-hidden">
         {image ? (

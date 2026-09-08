@@ -17,7 +17,7 @@ export function VideoSection() {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   return (
-    <section className="bg-[#cee0e9] px-16 py-22 max-lg:px-6">
+    <section className="bg-[#cee0e9] px-[5%] py-22 max-lg:px-6">
       <div className="mb-11 text-center">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("eyebrow")}

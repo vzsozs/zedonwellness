@@ -8,7 +8,7 @@ export function ExtraCard({ name, extra }: { name: string; extra: Extra }) {
   const included = Number(extra.priceHuf) === 0;
 
   return (
-    <div className="overflow-hidden border-2 border-coprBlue">
+    <div className="rounded-card overflow-hidden border-2 border-coprBlue">
       <div className="flex h-32 w-full items-center justify-center overflow-hidden p-6">
         {extra.imageUrl ? (
           <SafeImage

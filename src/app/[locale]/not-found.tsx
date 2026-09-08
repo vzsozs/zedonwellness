@@ -31,7 +31,7 @@ export default async function NotFound() {
 
       <Link
         href="/"
-        className="mt-8 inline-block bg-ink px-8 py-3.5 text-sm font-semibold text-white hover:bg-accent-dark"
+        className="rounded-control mt-8 inline-block bg-ink px-8 py-3.5 text-sm font-semibold text-white hover:bg-accent-dark"
       >
         {t("backHome")}
       </Link>
@@ -45,7 +45,7 @@ export default async function NotFound() {
             <Link
               key={l.href}
               href={l.href}
-              className="border border-line px-5 py-2.5 text-sm font-semibold hover:border-ink"
+              className="rounded-control border border-line px-5 py-2.5 text-sm font-semibold hover:border-ink"
             >
               {l.label}
             </Link>

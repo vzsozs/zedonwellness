@@ -12,7 +12,7 @@ export function HowWeWork() {
   const t = useTranslations("home.howWeWork");
 
   return (
-    <section className="bg-[#17201f] px-16 py-22 max-lg:px-6">
+    <section className="bg-[#17201f] px-[5%] py-22 max-lg:px-6">
       <div className="mb-14 text-center">
         <h2 className="text-4xl font-bold text-white max-lg:text-3xl">
           {t("title")}

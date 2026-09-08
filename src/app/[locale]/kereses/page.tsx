@@ -68,7 +68,7 @@ export default async function SearchPage({
     : [];
 
   return (
-    <main className="px-16 pt-10 pb-25 max-lg:px-6">
+    <main className="px-[5%] pt-10 pb-25 max-lg:px-6">
       <h1 className="text-3xl font-semibold max-lg:text-2xl">{t("heading")}</h1>
       <p className="mt-2.5 text-sm text-muted">
         {query ? t("resultCount", { count: results.length, query }) : t("prompt")}
