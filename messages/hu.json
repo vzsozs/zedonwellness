@@ -64,10 +64,22 @@
     "ctaPrimary": "Termékek felfedezése",
     "ctaSecondary": "Kapcsolat",
     "trust": {
-      "warranty": "5 év garancia",
-      "shipping": "Országos házhozszállítás",
-      "service": "Saját szerviz háttér",
-      "consulting": "Helyszíni szaktanácsadás"
+      "warranty": {
+        "title": "5 év gyári garancia",
+        "description": "Közvetlen gyártói alkatrészellátás és hivatalos szakszerviz."
+      },
+      "shipping": {
+        "title": "Országos házhozszállítás",
+        "description": "Saját szállítóflottával, daruzási és beüzemelési segítséggel."
+      },
+      "service": {
+        "title": "Saját szervizcsapat",
+        "description": "Gyors hibaelhárítás, karbantartási és téliesítési szolgáltatások."
+      },
+      "consulting": {
+        "title": "Helyszíni szaktanácsadás",
+        "description": "Kollégáink díjmentesen felmérik a kertet és a teraszt."
+      }
     },
     "categoriesEyebrow": "Termékkategóriák",
     "categoriesTitle": "Fedezd fel a kínálatot",

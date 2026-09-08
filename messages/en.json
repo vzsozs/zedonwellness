@@ -64,10 +64,22 @@
     "ctaPrimary": "Explore products",
     "ctaSecondary": "Contact",
     "trust": {
-      "warranty": "5-year warranty",
-      "shipping": "Nationwide home delivery",
-      "service": "In-house service team",
-      "consulting": "On-site expert consultation"
+      "warranty": {
+        "title": "5-year manufacturer warranty",
+        "description": "Direct manufacturer parts supply and official service."
+      },
+      "shipping": {
+        "title": "Nationwide delivery",
+        "description": "With our own fleet, including crane assistance and commissioning."
+      },
+      "service": {
+        "title": "In-house service team",
+        "description": "Fast fault repair, maintenance and winterising services."
+      },
+      "consulting": {
+        "title": "On-site consultation",
+        "description": "Our colleagues survey your garden and terrace free of charge."
+      }
     },
     "categoriesEyebrow": "Product categories",
     "categoriesTitle": "Explore our range",
