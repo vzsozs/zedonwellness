@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
 import Image from "next/image";
+import { Container } from "@/components/layout/container";
 
 const VIDEOS = [
   { id: "ubkWMKEfyNE", titleKey: "massage" },
@@ -17,7 +18,8 @@ export function VideoSection() {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   return (
-    <section className="bg-[#cee0e9] px-[5%] py-22 max-lg:px-6">
+    <section className="bg-[#cee0e9] py-22">
+      <Container>
       <div className="mb-11 text-center">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("eyebrow")}
@@ -62,6 +64,7 @@ export function VideoSection() {
           </div>
         ))}
       </div>
+      </Container>
     </section>
   );
 }

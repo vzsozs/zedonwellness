@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { extras } from "@/db/schema";
 import { localized } from "@/lib/localized";
 import { ExtraCard } from "@/components/extra-card";
+import { Container } from "@/components/layout/container";
 
 export async function ExtrasSection() {
   const locale = await getLocale();
@@ -15,7 +16,8 @@ export async function ExtrasSection() {
   if (items.length === 0) return null;
 
   return (
-    <section className="bg-white px-[5%] py-22 max-lg:px-6">
+    <section className="bg-white py-22">
+      <Container>
       <div className="mb-11 text-center">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("extrasEyebrow")}
@@ -31,6 +33,7 @@ export async function ExtrasSection() {
           />
         ))}
       </div>
+      </Container>
     </section>
   );
 }

@@ -48,6 +48,16 @@ export default async function EditCategoryPage({
             defaultValue={category.descriptionEn ?? ""}
           />
           <Field
+            label="Főoldali kártya felirata (HU) — pl. HC Design & OKA · 25+ modell"
+            name="cardBadgeHu"
+            defaultValue={category.cardBadgeHu ?? ""}
+          />
+          <Field
+            label="Főoldali kártya felirata (EN)"
+            name="cardBadgeEn"
+            defaultValue={category.cardBadgeEn ?? ""}
+          />
+          <Field
             label="Sorrend"
             name="sortOrder"
             type="number"

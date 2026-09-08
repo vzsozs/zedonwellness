@@ -82,8 +82,8 @@
       }
     },
     "categoriesEyebrow": "Termékkategóriák",
-    "categoriesTitle": "Fedezd fel a kínálatot",
-    "categoriesCta": "Megnézem",
+    "categoriesTitle": "Fedezd fel exkluzív wellness kínálatunkat",
+    "categoriesCta": "Kínálat megtekintése",
     "featuredEyebrow": "Kiemelt termékek",
     "featuredTitle": "Legnépszerűbb modelljeink",
     "viewAll": "Összes termék",
@@ -133,7 +133,8 @@
     "blogEyebrow": "Blog",
     "blogTitle": "Legfrissebb cikkeink",
     "tuvTitle": "TÜV Rheinland®",
-    "tuvSubtitle": "Európai biztonsági és minőségi tanúsítvány"
+    "tuvSubtitle": "Európai biztonsági és minőségi tanúsítvány",
+    "categoriesSubtitle": "Válassz prémium jakuzzijaink, egyedi tervezésű szaunáink és professzionális kerti konyháink közül."
   },
   "category": {
     "productCount": "{count, plural, other {# termék}}",

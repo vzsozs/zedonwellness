@@ -82,8 +82,8 @@
       }
     },
     "categoriesEyebrow": "Product categories",
-    "categoriesTitle": "Explore our range",
-    "categoriesCta": "View",
+    "categoriesTitle": "Explore our exclusive wellness range",
+    "categoriesCta": "View the range",
     "featuredEyebrow": "Featured products",
     "featuredTitle": "Our most popular models",
     "viewAll": "All products",
@@ -133,7 +133,8 @@
     "blogEyebrow": "Blog",
     "blogTitle": "Latest from our blog",
     "tuvTitle": "TÜV Rheinland®",
-    "tuvSubtitle": "European safety and quality certification"
+    "tuvSubtitle": "European safety and quality certification",
+    "categoriesSubtitle": "Choose from our premium hot tubs, custom-built saunas and professional outdoor kitchens."
   },
   "category": {
     "productCount": "{count, plural, one {# product} other {# products}}",

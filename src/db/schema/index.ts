@@ -32,6 +32,13 @@ export const categories = pgTable("categories", {
   // Dedicated hero photo for the homepage category card. Without one, the
   // card falls back to the category's most expensive product's photo.
   imageUrl: text("image_url"),
+  // Small label above the title on the homepage card, e.g.
+  // "HC Design & OKA · 25+ modell". Editable rather than derived from the
+  // series list and product count: the catalogue is still being filled, so
+  // a computed number would undersell categories whose products aren't in
+  // yet.
+  cardBadgeHu: text("card_badge_hu"),
+  cardBadgeEn: text("card_badge_en"),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

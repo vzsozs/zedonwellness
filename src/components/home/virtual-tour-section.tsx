@@ -7,7 +7,7 @@ export function VirtualTourSection() {
   const t = useTranslations("home.virtualTour");
 
   return (
-    <section className="px-[5%] py-22 max-lg:px-6">
+    <section className="mx-auto max-w-[1480px] px-[5%] py-22 max-lg:px-6">
       <div className="mx-auto flex max-w-[1000px] items-center gap-24 overflow-hidden px-12 py-16 text-left max-lg:max-w-2xl max-lg:flex-col max-lg:gap-0 max-lg:bg-accent-soft max-lg:px-6 max-lg:py-10 max-lg:text-center">
         <Image
           src="/home/virtual-tour-icon.svg"

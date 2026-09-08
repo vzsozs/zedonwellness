@@ -25,6 +25,8 @@ const categorySchema = z.object({
   nameEn: z.string().optional(),
   descriptionHu: z.string().optional(),
   descriptionEn: z.string().optional(),
+  cardBadgeHu: z.string().optional(),
+  cardBadgeEn: z.string().optional(),
   sortOrder: z.coerce.number().int().default(0),
 });
 
@@ -43,6 +45,8 @@ function readForm(formData: FormData) {
     nameEn: formData.get("nameEn") || undefined,
     descriptionHu: formData.get("descriptionHu") || undefined,
     descriptionEn: formData.get("descriptionEn") || undefined,
+    cardBadgeHu: formData.get("cardBadgeHu") || undefined,
+    cardBadgeEn: formData.get("cardBadgeEn") || undefined,
     sortOrder: formData.get("sortOrder") || 0,
   });
 }

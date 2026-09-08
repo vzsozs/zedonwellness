@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getSoroArticles } from "@/lib/soro";
 import Image from "next/image";
+import { Container } from "@/components/layout/container";
 
 export async function BlogSection() {
   const t = await getTranslations("home");
@@ -10,7 +11,8 @@ export async function BlogSection() {
   if (posts.length === 0) return null;
 
   return (
-    <section className="bg-white px-[5%] py-22 max-lg:px-6">
+    <section className="bg-white py-22">
+      <Container>
       <div className="mb-11 text-center">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("blogEyebrow")}
@@ -47,6 +49,7 @@ export async function BlogSection() {
         </div>
         <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-white to-transparent max-lg:w-16" />
       </div>
+      </Container>
     </section>
   );
 }

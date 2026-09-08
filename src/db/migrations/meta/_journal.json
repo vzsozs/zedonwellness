@@ -141,6 +141,13 @@
       "when": 1788772469235,
       "tag": "0019_short_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1788840149936,
+      "tag": "0020_charming_demogoblin",
+      "breakpoints": true
     }
   ]
 }

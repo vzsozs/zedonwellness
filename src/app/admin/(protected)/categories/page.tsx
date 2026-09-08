@@ -84,6 +84,13 @@ export default async function CategoriesPage() {
             <Field label="Leírás (EN)" name="descriptionEn" />
             <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
           </div>
+          <div className="grid grid-cols-3 gap-5">
+            <Field
+              label="Főoldali kártya felirata (HU) — pl. HC Design & OKA · 25+ modell"
+              name="cardBadgeHu"
+            />
+            <Field label="Főoldali kártya felirata (EN)" name="cardBadgeEn" />
+          </div>
           <CategoryImageField current={null} />
           <button
             type="submit"
