@@ -53,7 +53,7 @@
     "metaDescription": "Tanácsok, tippek és hírek a wellness, szauna és grill világából — a Zedonwellness szakértőitől."
   },
   "topbar": {
-    "phone": "Ingyenes szaktanácsadás: {phone}",
+    "phone": "Ingyenes szaktanácsadás: <highlight>{phone}</highlight>",
     "shipping": "Országos kiszállítás"
   },
   "home": {

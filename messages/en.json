@@ -53,7 +53,7 @@
     "metaDescription": "Advice, tips and news from the world of wellness, saunas and grills — by the Zedonwellness experts."
   },
   "topbar": {
-    "phone": "Free consultation: {phone}",
+    "phone": "Free consultation: <highlight>{phone}</highlight>",
     "shipping": "Nationwide delivery"
   },
   "home": {
