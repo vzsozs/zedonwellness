@@ -4,17 +4,17 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
+import { useActionError } from "@/components/admin/use-action-error";
 import { createGroup } from "./actions";
 
 export function NewGroupForm() {
   const [state, formAction, pending] = useActionState(createGroup, initialActionState);
-  const [modalOpen, setModalOpen] = useState(false);
+  const actionError = useActionError(state);
   const [open, setOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const wasPending = useRef(false);
 
   useEffect(() => {
-    if (state.error) setModalOpen(true);
     if (wasPending.current && !pending && !state.error) {
       formRef.current?.reset();
       setOpen(false);
@@ -25,8 +25,8 @@ export function NewGroupForm() {
   return (
     <div>
       <ErrorModal
-        message={modalOpen ? state.error : null}
-        onClose={() => setModalOpen(false)}
+        message={actionError.message}
+        onClose={actionError.dismiss}
       />
       {open ? (
         <form ref={formRef} action={formAction} className="flex items-end gap-2.5">

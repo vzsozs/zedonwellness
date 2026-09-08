@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getSoroArticles } from "@/lib/soro";
+import Image from "next/image";
 
 export async function BlogSection() {
   const t = await getTranslations("home");
@@ -22,15 +23,17 @@ export async function BlogSection() {
           {posts.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog?post=${post.slug}`}
+              href={`/blog/${post.slug}`}
               className="group w-[38%] shrink-0 border border-line max-lg:w-[80%]"
             >
-              <div className="h-44 overflow-hidden bg-paper-muted">
+              <div className="relative h-44 overflow-hidden bg-paper-muted">
                 {post.image ? (
-                  <img
+                  <Image
                     src={post.image}
                     alt=""
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 640px) 80vw, 380px"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
                 ) : null}
               </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
+import Image from "next/image";
 
 const VIDEOS = [
   { id: "ubkWMKEfyNE", titleKey: "massage" },
@@ -40,10 +41,12 @@ export function VideoSection() {
                 onClick={() => setPlayingId(video.id)}
                 className="relative block h-full w-full cursor-pointer"
               >
-                <img
+                <Image
                   src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
                   alt={t(`${video.titleKey}.title`)}
-                  className="h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-70"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 320px"
+                  className="object-cover opacity-90 transition-opacity group-hover:opacity-70"
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
                 <span className="absolute inset-0 flex items-center justify-center">

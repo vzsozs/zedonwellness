@@ -8,7 +8,10 @@ import { productFeatureGroups, productFeatures } from "@/db/schema";
 import { saveUploadedImage } from "@/lib/upload";
 import { getEurHufRate } from "@/lib/settings";
 import { eurToHuf } from "@/lib/currency";
+import { requireAdmin } from "@/lib/require-admin";
 import { type ActionState, toActionError } from "@/lib/action-state";
+
+const idSchema = z.coerce.number().int().positive();
 
 const groupSchema = z.object({
   nameHu: z.string().min(1, "Kötelező"),
@@ -35,6 +38,7 @@ export async function createGroup(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    await requireAdmin();
     const parsed = groupSchema.parse({
       nameHu: formData.get("nameHu"),
       nameEn: formData.get("nameEn") || undefined,
@@ -49,11 +53,21 @@ export async function createGroup(
   }
 }
 
-export async function deleteGroup(id: number) {
-  await db.delete(productFeatureGroups).where(eq(productFeatureGroups.id, id));
-  revalidatePath("/admin/hozzavalok");
-  revalidatePath("/admin/products");
-  revalidatePath("/", "layout");
+export async function deleteGroup(id: number): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    // product_features cascades from the group, and product_feature_links
+    // cascades from those — so the whole tab goes in one statement.
+    await db
+      .delete(productFeatureGroups)
+      .where(eq(productFeatureGroups.id, idSchema.parse(id)));
+    revalidatePath("/admin/hozzavalok");
+    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
+    return {};
+  } catch (err) {
+    return toActionError(err);
+  }
 }
 
 async function resolveIcon(formData: FormData, existing: string | null) {
@@ -68,6 +82,7 @@ export async function createFeature(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    await requireAdmin();
     const parsed = featureSchema.parse({
       groupId: formData.get("groupId"),
       nameHu: formData.get("nameHu"),
@@ -98,8 +113,10 @@ export async function updateFeature(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    await requireAdmin();
+    const featureId = idSchema.parse(id);
     const current = await db.query.productFeatures.findFirst({
-      where: eq(productFeatures.id, id),
+      where: eq(productFeatures.id, featureId),
     });
     const parsed = featureSchema.parse({
       groupId: formData.get("groupId") ?? current?.groupId,
@@ -119,7 +136,7 @@ export async function updateFeature(
         priceHuf: priceEur === null ? null : String(eurToHuf(priceEur, rate)),
         iconUrl,
       })
-      .where(eq(productFeatures.id, id));
+      .where(eq(productFeatures.id, featureId));
     revalidatePath("/admin/hozzavalok");
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -129,9 +146,15 @@ export async function updateFeature(
   }
 }
 
-export async function deleteFeature(id: number) {
-  await db.delete(productFeatures).where(eq(productFeatures.id, id));
-  revalidatePath("/admin/hozzavalok");
-  revalidatePath("/admin/products");
-  revalidatePath("/", "layout");
+export async function deleteFeature(id: number): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    await db.delete(productFeatures).where(eq(productFeatures.id, idSchema.parse(id)));
+    revalidatePath("/admin/hozzavalok");
+    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
+    return {};
+  } catch (err) {
+    return toActionError(err);
+  }
 }

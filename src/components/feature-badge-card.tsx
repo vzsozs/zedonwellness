@@ -1,14 +1,17 @@
 import { useTranslations } from "next-intl";
 import { Price } from "@/lib/currency-context";
+import { SafeImage } from "@/components/safe-image";
 
 export function FeatureBadgeCard({
   name,
   iconUrl,
   priceHuf,
+  priceEur,
 }: {
   name: string;
   iconUrl: string | null;
   priceHuf?: number | null;
+  priceEur?: number | string | null;
 }) {
   const t = useTranslations("product");
 
@@ -16,7 +19,13 @@ export function FeatureBadgeCard({
     <div className="overflow-hidden border-2 border-coprBlue">
       <div className="flex h-[166px] w-full items-center justify-center overflow-hidden p-6">
         {iconUrl ? (
-          <img src={iconUrl} alt={name} className="h-full w-full object-contain" />
+          <SafeImage
+            src={iconUrl}
+            alt={name}
+            width={176}
+            height={166}
+            className="h-full w-full object-contain"
+          />
         ) : null}
       </div>
       <div className="p-5 text-center">
@@ -26,7 +35,7 @@ export function FeatureBadgeCard({
             <div className="mt-2 text-sm font-extrabold text-accent">{t("includedLabel")}</div>
           ) : (
             <div className="mt-2 text-lg font-extrabold text-accent">
-              <Price hufAmount={priceHuf} />
+              <Price hufAmount={priceHuf} eurAmount={priceEur} />
             </div>
           )
         ) : null}

@@ -1,5 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { COMPANY } from "@/lib/company";
+import Image from "next/image";
 
 export function SiteFooter() {
   const t = useTranslations("footer");
@@ -10,9 +12,11 @@ export function SiteFooter() {
     <footer className="px-16 pb-10 pt-16 max-lg:px-6">
       <div className="grid grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 border-b border-line pb-12 max-lg:grid-cols-2 max-lg:gap-8">
         <div>
-          <img
+          <Image
             src="/brand/zedonwellness-logo.png"
             alt="Zedonwellness"
+            width={191}
+            height={28}
             className="mb-4 h-7 w-auto"
           />
           <p className="max-w-64 text-sm leading-relaxed text-muted">
@@ -62,8 +66,12 @@ export function SiteFooter() {
             {t("contactSection")}
           </div>
           <div className="flex flex-col gap-2.5 text-sm text-muted">
-            <span>+36 1 234 5678</span>
-            <span>info@zedonwellness.com</span>
+            <a href={`tel:${COMPANY.phoneHref}`} className="hover:text-accent">
+              {COMPANY.phone}
+            </a>
+            <a href={`mailto:${COMPANY.email}`} className="hover:text-accent">
+              {COMPANY.email}
+            </a>
           </div>
         </div>
       </div>
@@ -71,7 +79,10 @@ export function SiteFooter() {
         <span>
           © {year} Zedonwellness. {t("rights")}
         </span>
-        <div className="flex gap-6">
+        <div className="flex flex-wrap gap-6">
+          <Link href="/impresszum" className="text-muted/70 hover:text-accent">
+            {t("imprint")}
+          </Link>
           <Link href="/adatvedelem" className="text-muted/70 hover:text-accent">
             {t("privacy")}
           </Link>

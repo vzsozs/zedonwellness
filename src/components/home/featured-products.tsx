@@ -15,7 +15,27 @@ export async function FeaturedProducts() {
   const featured = await db.query.products.findMany({
     where: eq(products.isFeatured, true),
     orderBy: [desc(products.createdAt)],
-    with: { series: true, category: true },
+    columns: {
+      id: true,
+      slug: true,
+      nameHu: true,
+      nameEn: true,
+      shortDescriptionHu: true,
+      shortDescriptionEn: true,
+      priceHuf: true,
+      priceEur: true,
+      priceOnRequest: true,
+      capacity: true,
+      seriesId: true,
+      categoryId: true,
+      cardImage: true,
+      mainImage: true,
+      images: true,
+      inStock: true,
+      isNew: true,
+      isOnSale: true,
+    },
+    with: { series: true },
   });
 
   if (featured.length === 0) return null;

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { SoroArticle } from "@/lib/soro";
+import Image from "next/image";
 
 const PAGE_SIZE = 20;
 
@@ -133,15 +134,17 @@ export function BlogList({ articles }: { articles: SoroArticle[] }) {
           {shown.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog?post=${post.slug}`}
+              href={`/blog/${post.slug}`}
               className="group border border-line bg-white"
             >
-              <div className="h-44 overflow-hidden bg-paper-muted">
+              <div className="relative h-44 overflow-hidden bg-paper-muted">
                 {post.image ? (
-                  <img
+                  <Image
                     src={post.image}
                     alt=""
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 640px) 100vw, 45vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
                 ) : null}
               </div>

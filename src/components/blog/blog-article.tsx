@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { SoroArticle } from "@/lib/soro";
+import Image from "next/image";
 
 export function BlogArticle({
   article,
@@ -27,10 +28,13 @@ export function BlogArticle({
       </time>
 
       {article.image ? (
-        <img
+        <Image
           src={article.image}
           alt={article.title}
-          className="mt-8 w-full object-cover"
+          width={1000}
+          height={560}
+          sizes="(max-width: 1024px) 100vw, 768px"
+          className="mt-8 h-auto w-full object-cover"
         />
       ) : null}
 

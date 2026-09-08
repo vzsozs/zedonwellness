@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 
 export function VirtualTourSection() {
   const t = useTranslations("home.virtualTour");
@@ -8,9 +9,11 @@ export function VirtualTourSection() {
   return (
     <section className="px-16 py-22 max-lg:px-6">
       <div className="mx-auto flex max-w-[1000px] items-center gap-24 overflow-hidden px-12 py-16 text-left max-lg:max-w-2xl max-lg:flex-col max-lg:gap-0 max-lg:bg-accent-soft max-lg:px-6 max-lg:py-10 max-lg:text-center">
-        <img
+        <Image
           src="/home/virtual-tour-icon.svg"
           alt=""
+          width={256}
+          height={256}
           className="h-64 w-64 shrink-0 max-lg:h-24 max-lg:w-24"
         />
         <div className="flex flex-col items-start max-lg:items-center">

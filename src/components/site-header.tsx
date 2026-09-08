@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Search, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useCurrency, currencyForLocale } from "@/lib/currency-context";
 import { useGrillThemeActive } from "@/lib/grill-theme-context";
 import { useContactModal } from "@/lib/contact-modal-context";
+import { COMPANY } from "@/lib/company";
+import Image from "next/image";
 
 const links = [
   { href: "/jakuzzik", key: "jacuzzis" as const },
@@ -24,6 +26,7 @@ export function SiteHeader() {
   const tb = useTranslations("topbar");
   const tc = useTranslations("common");
   const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -31,6 +34,16 @@ export function SiteHeader() {
   const { currency, setCurrency } = useCurrency();
   const isGrillTheme = useGrillThemeActive();
   const { open: openContact } = useContactModal();
+
+  /** Switching language keeps you on the same page. It used to link to "/",
+   * so changing language from a product page dumped you on the homepage —
+   * and left the hreflang pairs pointing at content nobody could reach by
+   * clicking. */
+  function switchLocale(next: "hu" | "en") {
+    setCurrency(currencyForLocale(next));
+    router.replace(pathname, { locale: next });
+    setMenuOpen(false);
+  }
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -45,27 +58,27 @@ export function SiteHeader() {
     <header>
       <div className="flex items-center justify-between gap-6 bg-ink px-16 py-2.5 text-xs tracking-wide text-line max-lg:px-6">
         <div className="flex gap-7 max-md:hidden">
-          <span>{tb("phone")}</span>
+          <span>{tb("phone", { phone: COMPANY.phone })}</span>
           <span>{tb("shipping")}</span>
         </div>
         <div className="ml-auto flex items-center gap-4">
           <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              locale="hu"
-              onClick={() => setCurrency(currencyForLocale("hu"))}
+            <button
+              type="button"
+              onClick={() => switchLocale("hu")}
+              aria-current={locale === "hu" ? "true" : undefined}
               className={locale === "hu" ? "font-bold text-white" : "text-line/60"}
             >
               HU
-            </Link>
-            <Link
-              href="/"
-              locale="en"
-              onClick={() => setCurrency(currencyForLocale("en"))}
+            </button>
+            <button
+              type="button"
+              onClick={() => switchLocale("en")}
+              aria-current={locale === "en" ? "true" : undefined}
               className={locale === "en" ? "font-bold text-white" : "text-line/60"}
             >
               EN
-            </Link>
+            </button>
           </div>
           <span className="text-line/30">|</span>
           <div className="flex items-center gap-4">
@@ -93,16 +106,21 @@ export function SiteHeader() {
           className="relative h-14 w-[191px] shrink-0"
           onClick={() => setMenuOpen(false)}
         >
-          <img
+          <Image
             src="/brand/zedonwellness-logo.png"
             alt="Zedonwellness"
+            width={191}
+            height={32}
+            priority
             className={`absolute top-1/2 left-0 h-8 w-auto -translate-y-1/2 transition-opacity duration-[2000ms] ease-in-out ${
               isGrillTheme ? "opacity-0" : "opacity-100"
             }`}
           />
-          <img
+          <Image
             src="/ZedonGrill-logo-Eng-update.svg"
             alt="ZedonGrill"
+            width={140}
+            height={56}
             className={`absolute top-1/2 left-0 h-14 w-auto -translate-y-1/2 transition-opacity duration-[2000ms] ease-in-out ${
               isGrillTheme ? "opacity-100" : "opacity-0"
             }`}
@@ -162,7 +180,7 @@ export function SiteHeader() {
           </Link>
           <button
             type="button"
-            aria-label={menuOpen ? "Menü bezárása" : "Menü megnyitása"}
+            aria-label={menuOpen ? tc("closeMenu") : tc("openMenu")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
             className="hidden max-lg:block"

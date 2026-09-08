@@ -15,6 +15,19 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
 
+# Applies pending migrations, then exits. Run as a one-shot service before
+# the web container starts (see docker-compose.yml) so the app can never
+# come up against an un-migrated schema. Needs the dev dependencies, hence
+# the full node_modules rather than the standalone output.
+FROM base AS migrator
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json drizzle.config.ts ./
+COPY src/db ./src/db
+CMD ["npx", "drizzle-kit", "migrate"]
+
 FROM base AS runner
 WORKDIR /app
 

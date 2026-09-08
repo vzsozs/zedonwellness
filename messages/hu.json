@@ -13,7 +13,16 @@
     "home": "Főoldal",
     "products": "Termékek",
     "search": "Keresés",
-    "searchPlaceholder": "Keresés…"
+    "searchPlaceholder": "Keresés…",
+    "close": "Bezárás",
+    "previousImage": "Előző kép",
+    "nextImage": "Következő kép",
+    "imageViewer": "Képnézegető",
+    "zoomImage": "Kép nagyítása",
+    "openMenu": "Menü megnyitása",
+    "closeMenu": "Menü bezárása",
+    "yes": "Igen",
+    "no": "Nem"
   },
   "contactModal": {
     "close": "Bezárás",
@@ -40,10 +49,11 @@
     "filterKarbantartas": "Karbantartás",
     "filterGrillek": "Grillek",
     "searchPlaceholder": "Keresés a cikkek között…",
-    "noResults": "Nincs a szűrésnek megfelelő cikk."
+    "noResults": "Nincs a szűrésnek megfelelő cikk.",
+    "metaDescription": "Tanácsok, tippek és hírek a wellness, szauna és grill világából — a Zedonwellness szakértőitől."
   },
   "topbar": {
-    "phone": "Ingyenes szaktanácsadás: +36 1 234 5678",
+    "phone": "Ingyenes szaktanácsadás: {phone}",
     "shipping": "Országos kiszállítás"
   },
   "home": {
@@ -170,7 +180,16 @@
     "removeItem": "Törlés a kosárból",
     "shippingNote": "A szállítási díj a következő lépésben, a cím megadása után kerül kiszámításra.",
     "subtotal": "Részösszeg",
-    "continue": "Tovább a megrendeléshez"
+    "continue": "Tovább a megrendeléshez",
+    "blockedNote": "A kosárban lévő tételek egyike jelenleg nem rendelhető — távolítsd el, hogy továbbléphess a pénztárhoz.",
+    "issues": {
+      "unavailable": "Ez a termék már nem elérhető.",
+      "variantUnavailable": "A választott változat már nem elérhető.",
+      "outOfStock": "Jelenleg elfogyott.",
+      "priceOnRequest": "Ennek a terméknek nincs online ára — kérj ajánlatot.",
+      "priceChanged": "A termék ára megváltozott, azóta hogy a kosaradba került. A fenti ár az érvényes.",
+      "removed": "A kosaradból eltávolítottuk a következőt, mert már nem elérhető: {names}"
+    }
   },
   "checkout": {
     "title": "Megrendelés",
@@ -188,7 +207,7 @@
     "city": "Város",
     "street": "Cím (utca, házszám)",
     "noteOptional": "Megjegyzés (opcionális)",
-    "submit": "Megrendelés elküldése",
+    "submit": "Megrendelés elküldése (fizetési kötelezettséggel)",
     "submitting": "Feldolgozás…",
     "summary": "Összesítő",
     "subtotal": "Részösszeg",
@@ -200,7 +219,12 @@
     "errorInvalidEmail": "Érvénytelen email cím",
     "errorEmptyCart": "A kosár üres.",
     "errorProductUnavailable": "Az egyik termék már nem elérhető.",
-    "errorVariantUnavailable": "Az egyik kiválasztott termékváltozat már nem elérhető."
+    "errorVariantUnavailable": "Az egyik kiválasztott termékváltozat már nem elérhető.",
+    "acceptTerms": "Elolvastam és elfogadom az <terms>Általános Szerződési Feltételeket</terms> és az <privacy>Adatkezelési tájékoztatót</privacy>.",
+    "errorTermsRequired": "Az ÁSZF és az adatkezelési tájékoztató elfogadása kötelező.",
+    "errorCartChanged": "A kosarad tartalma időközben megváltozott — nézd át a tételeket, majd próbáld újra.",
+    "errorPriceChanged": "Egy termék ára megváltozott. Frissítettük a kosaradat — ellenőrizd az összeget, majd küldd el újra.",
+    "submitHint": "A megrendelés elküldése fizetési kötelezettséget keletkeztet. Online fizetés jelenleg nem érhető el — a fizetés módjáról munkatársunk egyeztet veled."
   },
   "orderConfirmation": {
     "title": "Köszönjük a rendelésed!",
@@ -245,11 +269,26 @@
     "pricingTitle": "Szervizszolgáltatások díjai",
     "pricingNote": "Az árak tájékoztató jellegűek, ajánlatnak nem minősülnek.",
     "pricing": {
-      "callout": { "label": "Kiszállási díj országosan", "price": "60 000 Ft + áfa" },
-      "hourly": { "label": "Szervizelési óradíj", "price": "18 000 Ft / óra + áfa" },
-      "maintenance": { "label": "Karbantartás / vízcsere", "price": "120 000 Ft + áfa" },
-      "commissioning": { "label": "Beüzemelés (jakuzzi / szauna / Swim spa)", "price": "120 000 Ft + áfa" },
-      "assessment": { "label": "Szakvélemény a medence állapotáról", "price": "69 900 Ft + áfa" }
+      "callout": {
+        "label": "Kiszállási díj országosan",
+        "price": "60 000 Ft + áfa"
+      },
+      "hourly": {
+        "label": "Szervizelési óradíj",
+        "price": "18 000 Ft / óra + áfa"
+      },
+      "maintenance": {
+        "label": "Karbantartás / vízcsere",
+        "price": "120 000 Ft + áfa"
+      },
+      "commissioning": {
+        "label": "Beüzemelés (jakuzzi / szauna / Swim spa)",
+        "price": "120 000 Ft + áfa"
+      },
+      "assessment": {
+        "label": "Szakvélemény a medence állapotáról",
+        "price": "69 900 Ft + áfa"
+      }
     },
     "pricingFootnote": "* Végleges árajánlathoz a medence típusa, a probléma, valamint az állapot ismerete szükséges.",
     "maintenance": {
@@ -285,7 +324,7 @@
       "quarterly": {
         "title": "3–4 havonta: vízcsere",
         "text": "A medencét ilyenkor teljesen le kell engedni és friss vízzel feltölteni, a szűrőbetéteket pedig kicserélni. A feltöltést mindig a szűrőházon keresztül végezze — ha nem így teszi, a keringető rendszer levegősödhet, ami károsíthatja a medencében lévő fűtőtestet."
-        },
+      },
       "yearly": {
         "title": "Évente",
         "text": "Ajánlott a medence átvizsgáltatása szakszervizzel — egy helyszíni ellenőrzés alkalmával felmérjük az állapotát, és a szükséges javításokat gyakran azonnal, helyszínen el tudjuk végezni."
@@ -338,6 +377,22 @@
     "contactSection": "Kapcsolat",
     "rights": "Minden jog fenntartva.",
     "privacy": "Adatvédelmi nyilatkozat",
-    "terms": "Felhasználási feltételek"
+    "terms": "Felhasználási feltételek",
+    "imprint": "Impresszum"
+  },
+  "notFound": {
+    "title": "Ezt az oldalt nem találjuk",
+    "description": "Lehet, hogy a keresett oldal időközben megszűnt vagy új címre költözött. Az alábbi menüpontokból biztosan eljutsz oda, amit keresel.",
+    "backHome": "Vissza a főoldalra",
+    "popularHeading": "Népszerű oldalak"
+  },
+  "errorPage": {
+    "title": "Valami félrement",
+    "description": "Az oldal betöltése közben hiba lépett fel. Próbáld újra — ha továbbra sem működik, keress minket bizalommal.",
+    "retry": "Újrapróbálkozás"
+  },
+  "meta": {
+    "defaultTitle": "Zedonwellness — jakuzzi, szauna, grill",
+    "defaultDescription": "Prémium jakuzzik, szaunák és grillek — tervezéstől a telepítésig. TÜV Rheinland tanúsított minőség, saját gyártás, országos kiszállítás."
   }
 }

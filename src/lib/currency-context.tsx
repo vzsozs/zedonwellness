@@ -24,7 +24,7 @@ type CurrencyContextValue = {
   currency: Currency;
   setCurrency: (currency: Currency) => void;
   eurHufRate: number;
-  format: (priceHuf: number) => string;
+  format: (priceHuf: number, priceEur?: number | null) => string;
 };
 
 const CurrencyContext = createContext<CurrencyContextValue | null>(null);
@@ -43,14 +43,16 @@ export function CurrencyProvider({
 
   // On first mount, an explicit prior choice (from either the currency
   // switcher or a language switch) wins over the locale-based default.
+  // Same as the cart: localStorage can only be read after mount, so this is
+  // an external-store sync rather than a render cascade.
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- external store, see above
       if (stored === "HUF" || stored === "EUR") setCurrencyState(stored);
     } catch {
       // Storage unavailable — keep the locale-based default.
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function setCurrency(next: Currency) {
@@ -63,8 +65,14 @@ export function CurrencyProvider({
   }
 
   const format = useMemo(
-    () => (priceHuf: number) =>
-      currency === "EUR" ? formatEur(hufToEur(priceHuf, eurHufRate)) : formatHuf(priceHuf),
+    () => (priceHuf: number, priceEur?: number | null) => {
+      if (currency !== "EUR") return formatHuf(priceHuf);
+      // Prefer the euro price the admin actually entered. Converting the
+      // stored forints back would re-divide a value that was rounded to
+      // the nearest 10 Ft on the way in, so a 1 234,56 € product showed up
+      // as 1 234,55 €.
+      return formatEur(priceEur ?? hufToEur(priceHuf, eurHufRate));
+    },
     [currency, eurHufRate],
   );
 
@@ -88,8 +96,22 @@ export function currencyForLocale(locale: string): Currency {
   return defaultCurrencyForLocale(locale);
 }
 
-/** Renders a HUF amount in whichever currency is currently selected. */
-export function Price({ hufAmount }: { hufAmount: number | string }) {
+/**
+ * Renders a price in whichever currency is currently selected.
+ *
+ * `hufAmount` is the stored source of truth. Pass `eurAmount` too whenever
+ * the record has its own EUR price, so euro visitors see the exact figure
+ * the admin typed rather than one converted back out of forints.
+ */
+export function Price({
+  hufAmount,
+  eurAmount,
+}: {
+  hufAmount: number | string;
+  eurAmount?: number | string | null;
+}) {
   const { format } = useCurrency();
-  return <>{format(Number(hufAmount))}</>;
+  const eur =
+    eurAmount === null || eurAmount === undefined ? null : Number(eurAmount);
+  return <>{format(Number(hufAmount), eur)}</>;
 }

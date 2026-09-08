@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ProductCard } from "@/components/product-card";
-import type { Product, ProductSeries } from "@/db/schema";
-
-type ProductWithSeries = Product & { series?: ProductSeries | null };
+import { ProductCard, type ProductCardData } from "@/components/product-card";
 
 export function FeaturedProductsTabs({
   tabs,
 }: {
-  tabs: { slug: string; name: string; products: ProductWithSeries[] }[];
+  tabs: { slug: string; name: string; products: ProductCardData[] }[];
 }) {
   const [active, setActive] = useState(tabs[0]?.slug);
   const current = tabs.find((tab) => tab.slug === active) ?? tabs[0];

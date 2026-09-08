@@ -6,7 +6,10 @@ import { db } from "@/db";
 import { products, categories, productSeries } from "@/db/schema";
 import { csvToRecords } from "@/lib/csv";
 import { csvToBool } from "../csv-columns";
-import { resolvePrice } from "../actions";
+import { resolvePriceWithRate } from "@/lib/pricing";
+import { getEurHufRate } from "@/lib/settings";
+import { requireAdmin } from "@/lib/require-admin";
+import { toActionError } from "@/lib/action-state";
 
 export type ImportRowResult = {
   row: number;
@@ -37,9 +40,18 @@ export async function importProductsCsv(
   _prevState: ImportState,
   formData: FormData,
 ): Promise<ImportState> {
+  try {
+    await requireAdmin();
+  } catch (err) {
+    return toActionError(err);
+  }
+
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) {
     return { error: "Válassz egy CSV fájlt." };
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: "A CSV fájl mérete legfeljebb 5 MB lehet." };
   }
 
   const text = await file.text();
@@ -48,9 +60,12 @@ export async function importProductsCsv(
     return { error: "A CSV fájl üres, vagy nem sikerült beolvasni." };
   }
 
-  const [allCategories, allSeries] = await Promise.all([
+  // Fetched once up front rather than per row — resolvePrice would
+  // otherwise hit the settings table for every line of the CSV.
+  const [allCategories, allSeries, eurHufRate] = await Promise.all([
     db.select().from(categories),
     db.select().from(productSeries),
+    getEurHufRate(),
   ]);
   const categoryBySlug = new Map(allCategories.map((c) => [c.slug, c]));
   const seriesByKey = new Map(
@@ -90,7 +105,7 @@ export async function importProductsCsv(
       }
       const priceHufManual = csvToBool(r.ar_huf_manualis);
       const submittedHuf = parseNum(r.ar_huf) ?? 0;
-      const price = await resolvePrice(priceEur, submittedHuf, priceHufManual);
+      const price = resolvePriceWithRate(priceEur, submittedHuf, priceHufManual, eurHufRate);
 
       const capacityNum = parseNum(r.ferohely);
       const weightNum = parseNum(r.suly_kg);
@@ -119,18 +134,30 @@ export async function importProductsCsv(
         threeDArUrl: r.ar_3d?.trim() || null,
       };
 
-      const existing = await db.query.products.findFirst({ where: eq(products.slug, slug) });
-      if (existing) {
-        await db
-          .update(products)
-          .set({ ...values, updatedAt: new Date() })
-          .where(eq(products.id, existing.id));
-        updated++;
-        rows.push({ row: rowNum, slug, status: "updated" });
-      } else {
-        await db.insert(products).values(values);
+      // Per row rather than per file: the report is row-by-row and one bad
+      // line shouldn't undo the good ones — but a single row still has to
+      // apply completely or not at all.
+      const wasCreated = await db.transaction(async (tx) => {
+        const existing = await tx.query.products.findFirst({
+          where: eq(products.slug, slug),
+        });
+        if (existing) {
+          await tx
+            .update(products)
+            .set({ ...values, updatedAt: new Date() })
+            .where(eq(products.id, existing.id));
+          return false;
+        }
+        await tx.insert(products).values(values);
+        return true;
+      });
+
+      if (wasCreated) {
         created++;
         rows.push({ row: rowNum, slug, status: "created" });
+      } else {
+        updated++;
+        rows.push({ row: rowNum, slug, status: "updated" });
       }
     } catch (err) {
       errors++;

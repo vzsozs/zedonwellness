@@ -1,23 +1,28 @@
 "use client";
 
-import { useActionState, useEffect, useState, useTransition } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { RefreshCw } from "lucide-react";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
-import { updateExchangeRate, fetchExchangeRateFromMnb } from "./actions";
+import { useActionError } from "@/components/admin/use-action-error";
+import {
+  updateExchangeRate,
+  fetchExchangeRateFromMnb,
+  type ExchangeRateState,
+} from "./actions";
 
 export function ExchangeRateForm({ currentRate }: { currentRate: number }) {
-  const [state, formAction, pending] = useActionState(updateExchangeRate, initialActionState);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [state, formAction, pending] = useActionState(
+    updateExchangeRate,
+    initialActionState as ExchangeRateState,
+  );
+  const actionError = useActionError(state);
   const [saved, setSaved] = useState(false);
   const [rate, setRate] = useState(String(currentRate));
   const [mnbPending, startMnbFetch] = useTransition();
   const [mnbError, setMnbError] = useState<string | null>(null);
   const [mnbSuccess, setMnbSuccess] = useState(false);
 
-  useEffect(() => {
-    if (state.error) setModalOpen(true);
-  }, [state]);
 
   function handleMnbFetch() {
     setMnbError(null);
@@ -36,14 +41,20 @@ export function ExchangeRateForm({ currentRate }: { currentRate: number }) {
   return (
     <div className="max-w-md border border-line bg-white p-6">
       <ErrorModal
-        message={modalOpen ? state.error : null}
-        onClose={() => setModalOpen(false)}
+        message={actionError.message}
+        onClose={actionError.dismiss}
       />
       <h2 className="mb-2 text-base font-semibold">EUR / HUF árfolyam</h2>
       <p className="mb-5 text-sm text-muted">
         Ezt az árfolyamot használja a rendszer, amikor egy euróban megadott
         árat (pl. extrák, termékek) forintra vált — a számított forint érték
         mindig a legközelebbi 10 Ft-ra kerekítve kerül tárolásra.
+      </p>
+      <p className="mb-5 border-l-[3px] border-accent bg-accent-soft px-4 py-3 text-[13px] text-ink">
+        Mentéskor a rendszer <strong>minden</strong> euróban megadott árat
+        újraszámol az új árfolyammal (termékek, extrák, hozzávalók). Azok a
+        termékek, amiknél a forint ár kézzel, lakat feloldásával lett beírva,
+        változatlanok maradnak.
       </p>
 
       <button
@@ -61,7 +72,10 @@ export function ExchangeRateForm({ currentRate }: { currentRate: number }) {
         </p>
       ) : null}
       {mnbSuccess ? (
-        <p className="mb-4 text-sm text-accent">Sikeresen frissítve az MNB adata alapján — mentsd el lent.</p>
+        <p className="mb-4 text-sm text-accent">
+          Lekérve az MNB középárfolyama — a <strong>Mentés</strong> gombbal lép életbe
+          és számolja újra a katalógus árait.
+        </p>
       ) : null}
 
       <form action={formAction} className="flex items-end gap-3">
@@ -92,7 +106,12 @@ export function ExchangeRateForm({ currentRate }: { currentRate: number }) {
         </button>
       </form>
       {saved && !pending && !state.error ? (
-        <p className="mt-3 text-sm text-accent">Elmentve.</p>
+        <p className="mt-3 text-sm text-accent">
+          Elmentve.
+          {state.repriced
+            ? ` Újraszámolva: ${state.repriced.products} termék, ${state.repriced.extras} extra, ${state.repriced.features} hozzávaló.`
+            : ""}
+        </p>
       ) : null}
     </div>
   );

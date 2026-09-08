@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
+import Image from "next/image";
 
 const PILLARS = [
   { key: "hiTech", image: "/home/howwework-hitech.png" },
@@ -53,7 +54,14 @@ export default async function CompanyPage({
             {PILLARS.map((pillar) => (
               <div key={pillar.key} className="border border-line">
                 <div className="flex h-40 items-center justify-center bg-paper-muted p-6">
-                  <img src={pillar.image} alt="" className="h-full w-full object-contain" />
+                  <Image
+                    src={pillar.image}
+                    alt=""
+                    width={400}
+                    height={300}
+                    sizes="(max-width: 1024px) 50vw, 340px"
+                    className="h-full w-full object-contain"
+                  />
                 </div>
                 <div className="p-6">
                   <h3 className="text-base font-bold">{t(`pillars.${pillar.key}.title`)}</h3>
@@ -126,9 +134,11 @@ export default async function CompanyPage({
                     </p>
                   </div>
                   {row === "filter" ? (
-                    <img
+                    <Image
                       src="/company/maintenance/filter-cartridge.jpg"
                       alt=""
+                      width={128}
+                      height={96}
                       className="h-24 w-32 shrink-0 border border-line object-cover"
                     />
                   ) : null}
@@ -147,10 +157,13 @@ export default async function CompanyPage({
                 "drain-cleaning.jpg",
                 "refill-cleaning.jpg",
               ].map((file) => (
-                <img
+                <Image
                   key={file}
                   src={`/company/maintenance/${file}`}
                   alt=""
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 1024px) 45vw, 250px"
                   className="aspect-square w-full border border-line object-cover"
                 />
               ))}
@@ -192,9 +205,11 @@ export default async function CompanyPage({
       {/* Exclusive distributor */}
       <div className="bg-white px-16 py-20 max-lg:px-6">
         <div className="mx-auto max-w-4xl text-center">
-          <img
+          <Image
             src="/company/logo-hanscraft.png"
             alt="Hanscraft"
+            width={200}
+            height={40}
             className="mx-auto h-10 w-auto object-contain"
           />
           <h2 className="mt-6 text-4xl font-bold max-lg:text-3xl">{t("distributorTitle")}</h2>
@@ -212,10 +227,13 @@ export default async function CompanyPage({
           </div>
         </div>
         <div className="mx-auto mt-14 max-w-4xl">
-          <img
+          <Image
             src="/company/hanscraft-tech-partners.jpg"
             alt=""
-            className="w-full object-contain"
+            width={900}
+            height={500}
+            sizes="(max-width: 1024px) 100vw, 900px"
+            className="h-auto w-full object-contain"
           />
           <p className="mt-4 text-center text-xs text-muted">{t("partnersCaption")}</p>
         </div>
@@ -224,9 +242,11 @@ export default async function CompanyPage({
       {/* Water treatment / full builds */}
       <div className="bg-white px-16 py-20 max-lg:px-6">
         <div className="mx-auto flex max-w-4xl items-center gap-14 max-lg:flex-col max-lg:gap-8 max-lg:text-center">
-          <img
+          <Image
             src="/company/logo-aqua-excellent.jpg"
             alt="Aqua Excellent"
+            width={160}
+            height={80}
             className="h-20 w-auto shrink-0 border border-line object-contain p-3"
           />
           <div>

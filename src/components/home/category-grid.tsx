@@ -6,6 +6,7 @@ import { categories, products } from "@/db/schema";
 import { Link } from "@/i18n/navigation";
 import { getCategoryVisual } from "@/lib/visuals";
 import { localized } from "@/lib/localized";
+import { SafeImage } from "@/components/safe-image";
 
 export async function CategoryGrid() {
   const t = await getTranslations("home");
@@ -13,9 +14,10 @@ export async function CategoryGrid() {
   const items = await db.query.categories.findMany({
     orderBy: [asc(categories.sortOrder), asc(categories.nameHu)],
     with: {
-      // One representative photo per category card — highest-priced item
-      // tends to be the flagship model, a reasonable stand-in until these
-      // get dedicated category hero shots.
+      // Fallback only: used when the category has no dedicated photo of its
+      // own. The highest-priced item tends to be the flagship model, but it
+      // also means adding a new expensive product redraws the homepage —
+      // hence `categories.imageUrl`, set from the category admin page.
       products: {
         limit: 1,
         orderBy: [desc(products.priceHuf)],
@@ -39,7 +41,7 @@ export async function CategoryGrid() {
       <div className="grid grid-cols-4 gap-6 max-lg:grid-cols-2">
         {items.map((cat) => {
           const visual = getCategoryVisual(cat.slug);
-          const image = cat.products[0]?.mainImage ?? null;
+          const image = cat.imageUrl ?? cat.products[0]?.mainImage ?? null;
           const name = localized(locale, cat.nameHu, cat.nameEn);
           const description = localized(
             locale,
@@ -53,10 +55,12 @@ export async function CategoryGrid() {
               className="group relative isolate flex h-80 flex-col justify-end overflow-hidden max-lg:h-64"
             >
               {image ? (
-                <img
+                <SafeImage
                   src={image}
                   alt=""
-                  className="absolute inset-0 -z-10 h-full w-full scale-105 object-cover transition-transform duration-500 ease-out group-hover:scale-115"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  className="-z-10 scale-105 object-cover transition-transform duration-500 ease-out group-hover:scale-115"
                 />
               ) : (
                 <div

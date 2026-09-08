@@ -1,30 +1,28 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
-import { getSoroArticles, getSoroArticleContent } from "@/lib/soro";
+import { getSoroArticles } from "@/lib/soro";
 import { BlogList } from "@/components/blog/blog-list";
-import { BlogArticle } from "@/components/blog/blog-article";
+import { pageMetadata } from "@/lib/seo";
+
+export const revalidate = 900;
 
 type Props = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ post?: string }>;
 };
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { post } = await searchParams;
-  if (!post) return {};
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "blog" });
 
-  const articles = await getSoroArticles();
-  const article = articles.find((a) => a.slug === post);
-  if (!article) return {};
-
-  return {
-    title: article.title,
-    description: article.excerpt,
-    openGraph: article.image
-      ? { title: article.title, description: article.excerpt, images: [article.image] }
-      : { title: article.title, description: article.excerpt },
-  };
+  return pageMetadata({
+    title: t("title"),
+    description: t("metaDescription"),
+    path: "/blog",
+    locale,
+  });
 }
 
 export default async function BlogPage({ params, searchParams }: Props) {
@@ -32,10 +30,13 @@ export default async function BlogPage({ params, searchParams }: Props) {
   setRequestLocale(locale as Locale);
   const t = await getTranslations("blog");
 
+  // Articles used to live at /blog?post=<slug>. They have their own route
+  // now (better for indexing and sharing); this keeps every old link and
+  // any already-indexed URL working.
   const { post } = await searchParams;
+  if (post) redirect(`/blog/${post}`);
+
   const articles = await getSoroArticles();
-  const article = post ? articles.find((a) => a.slug === post) : undefined;
-  const content = article ? await getSoroArticleContent(article.id) : null;
 
   return (
     <main className="mx-auto max-w-[1400px]">
@@ -46,17 +47,13 @@ export default async function BlogPage({ params, searchParams }: Props) {
         <h1 className="mt-3.5 text-4xl font-bold max-lg:text-3xl">{t("title")}</h1>
       </div>
 
-      {article ? (
-        <BlogArticle article={article} content={content} backLabel={t("back")} />
-      ) : (
-        <div className="px-16 pb-25 max-lg:px-6">
-          {articles.length > 0 ? (
-            <BlogList articles={articles} />
-          ) : (
-            <p className="text-center text-muted">{t("empty")}</p>
-          )}
-        </div>
-      )}
+      <div className="px-16 pb-25 max-lg:px-6">
+        {articles.length > 0 ? (
+          <BlogList articles={articles} />
+        ) : (
+          <p className="text-center text-muted">{t("empty")}</p>
+        )}
+      </div>
     </main>
   );
 }

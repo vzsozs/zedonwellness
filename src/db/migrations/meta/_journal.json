@@ -127,6 +127,20 @@
       "when": 1788371563834,
       "tag": "0017_furry_fenris",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1788772464116,
+      "tag": "0018_wet_golden_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1788772469235,
+      "tag": "0019_short_deadpool",
+      "breakpoints": true
     }
   ]
 }

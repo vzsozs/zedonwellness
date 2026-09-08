@@ -4,6 +4,9 @@ import { db } from "@/db";
 import { categories, productSeries } from "@/db/schema";
 import { updateCategory } from "../../actions";
 import { createSeries, deleteSeries } from "../../series-actions";
+import { ActionForm } from "@/components/admin/action-form";
+import { ActionButton } from "@/components/admin/action-button";
+import { CategoryImageField } from "../../category-image-field";
 
 export default async function EditCategoryPage({
   params,
@@ -27,7 +30,7 @@ export default async function EditCategoryPage({
     <div>
       <h1 className="mb-8 text-2xl font-semibold">Kategória szerkesztése</h1>
       <div className="grid grid-cols-2 gap-8 max-lg:grid-cols-1">
-        <form
+        <ActionForm
           action={updateWithId}
           className="flex flex-col gap-4 border border-line bg-white p-6"
         >
@@ -50,10 +53,11 @@ export default async function EditCategoryPage({
             type="number"
             defaultValue={String(category.sortOrder)}
           />
+          <CategoryImageField current={category.imageUrl} />
           <button type="submit" className="mt-1 bg-ink py-2.5 text-sm font-semibold text-white">
             Mentés
           </button>
-        </form>
+        </ActionForm>
 
         <div className="border border-line bg-white p-6">
           <h2 className="mb-1.5 text-base font-semibold">Sorozatok</h2>
@@ -69,16 +73,13 @@ export default async function EditCategoryPage({
                 className="flex items-center justify-between border border-line px-3.5 py-2.5 text-sm"
               >
                 {s.name}
-                <form
-                  action={async () => {
-                    "use server";
-                    await deleteSeries(s.id);
-                  }}
+                <ActionButton
+                  action={deleteSeries.bind(null, s.id)}
+                  confirmMessage={`Biztosan törlöd a(z) "${s.name}" sorozatot?`}
+                  className="text-red-600 hover:text-red-800 disabled:opacity-50"
                 >
-                  <button type="submit" className="text-red-600 hover:text-red-800">
-                    Törlés
-                  </button>
-                </form>
+                  Törlés
+                </ActionButton>
               </div>
             ))}
             {series.length === 0 ? (
@@ -86,7 +87,7 @@ export default async function EditCategoryPage({
             ) : null}
           </div>
 
-          <form action={createSeries} className="flex gap-2.5">
+          <ActionForm action={createSeries} className="flex gap-2.5">
             <input type="hidden" name="categoryId" value={category.id} />
             <input
               type="text"
@@ -101,7 +102,7 @@ export default async function EditCategoryPage({
             >
               Hozzáadás
             </button>
-          </form>
+          </ActionForm>
         </div>
       </div>
     </div>

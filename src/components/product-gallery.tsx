@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ZoomIn } from "lucide-react";
 import { ImageLightbox } from "./image-lightbox";
 import { useProductMedia } from "@/lib/product-media-context";
+import { SafeImage } from "@/components/safe-image";
 
 export function ProductGallery({
   images,
@@ -14,6 +16,7 @@ export function ProductGallery({
   badge: string | null;
   fallbackGradient: string;
 }) {
+  const t = useTranslations("common");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const { variantImage } = useProductMedia();
 
@@ -27,7 +30,7 @@ export function ProductGallery({
       <button
         type="button"
         onClick={() => hasImages && setLightboxIndex(0)}
-        aria-label={hasImages ? "Kép nagyítása" : undefined}
+        aria-label={hasImages ? t("zoomImage") : undefined}
         className={
           hasImages
             ? "group relative flex h-130 w-full items-center justify-center overflow-hidden max-lg:h-80"
@@ -41,10 +44,13 @@ export function ProductGallery({
         ) : null}
         {hasImages ? (
           <>
-            <img
+            <SafeImage
               src={mainImage}
               alt=""
-              className="h-full w-full object-contain"
+              fill
+              sizes="(max-width: 1024px) 100vw, 700px"
+              priority
+              className="object-contain"
             />
             <span className="ar-zoom-btn absolute right-4 bottom-4 flex size-9 items-center justify-center bg-white/90 text-ink opacity-0 transition-opacity group-hover:opacity-100">
               <ZoomIn className="size-4.5" strokeWidth={1.8} />
@@ -60,10 +66,16 @@ export function ProductGallery({
               key={`${src}-${i}`}
               type="button"
               onClick={() => setLightboxIndex(i)}
-              aria-label={`${i + 1}. kép nagyítása`}
+              aria-label={`${t("zoomImage")} ${i + 1}`}
               className="h-20 w-25 shrink-0 overflow-hidden bg-white p-1 opacity-80 hover:opacity-100"
             >
-              <img src={src} alt="" className="h-full w-full object-contain" />
+              <SafeImage
+                src={src}
+                alt=""
+                width={100}
+                height={80}
+                className="h-full w-full object-contain"
+              />
             </button>
           ))}
         </div>

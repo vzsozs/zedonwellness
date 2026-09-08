@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { FileText, Check, X } from "lucide-react";
@@ -7,34 +8,30 @@ import { ContactButton } from "@/components/contact-button";
 import type { Locale } from "@/i18n/routing";
 import { db } from "@/db";
 import { products } from "@/db/schema";
-import { isOrderOnly, ORDER_ONLY_THRESHOLD_HUF } from "@/lib/config";
+import { isOrderOnly } from "@/lib/config";
 import { localized } from "@/lib/localized";
 import { looksLikeHtml, plainTextToHtml } from "@/lib/sanitize-description";
 import { getProductGradient } from "@/lib/visuals";
 import { ProductCard } from "@/components/product-card";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductActions } from "@/components/product-actions";
-import { OrderOnlyNote } from "@/components/order-only-note";
 import { ExtraCard } from "@/components/extra-card";
 import { FeatureBadgeCard } from "@/components/feature-badge-card";
 import { VariantOptionGroup } from "@/components/variant-option-group";
 import { GrillTheme } from "@/components/grill-theme";
 import { ProductMediaProvider } from "@/lib/product-media-context";
 import { normalizeArUrl } from "@/lib/ar-url";
+import { jsonLdScript, localeUrl, pageMetadata, SITE_URL, toMetaDescription } from "@/lib/seo";
+import Image from "next/image";
 
 export const revalidate = 60;
 
-export default async function ProductPage({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
-  const { locale, slug } = await params;
-  setRequestLocale(locale as Locale);
-  const t = await getTranslations("product");
-  const tc = await getTranslations("common");
+type Props = { params: Promise<{ locale: string; slug: string }> };
 
-  const product = await db.query.products.findFirst({
+/** Loads the row both generateMetadata and the page itself need. Next
+ * dedupes the two calls within a request, so this is one query, not two. */
+async function loadProduct(slug: string) {
+  return db.query.products.findFirst({
     where: eq(products.slug, slug),
     with: {
       category: true,
@@ -44,6 +41,37 @@ export default async function ProductPage({
       variants: { orderBy: (v, { asc }) => [asc(v.sortOrder)] },
     },
   });
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const product = await loadProduct(slug);
+  if (!product) return {};
+
+  const name = localized(locale, product.nameHu, product.nameEn);
+  const description =
+    toMetaDescription(localized(locale, product.shortDescriptionHu ?? "", product.shortDescriptionEn)) ||
+    toMetaDescription(localized(locale, product.descriptionHu ?? "", product.descriptionEn));
+  const image = product.mainImage ?? product.cardImage ?? product.images[0];
+
+  return pageMetadata({
+    title: name,
+    description,
+    path: `/termek/${product.slug}`,
+    locale,
+    images: image ? [image] : undefined,
+  });
+}
+
+export default async function ProductPage({
+  params,
+}: Props) {
+  const { locale, slug } = await params;
+  setRequestLocale(locale as Locale);
+  const t = await getTranslations("product");
+  const tc = await getTranslations("common");
+
+  const product = await loadProduct(slug);
   if (!product) notFound();
 
   const related = await db.query.products.findMany({
@@ -53,6 +81,25 @@ export default async function ProductPage({
     ),
     orderBy: [desc(products.createdAt)],
     limit: 4,
+      columns: {
+        id: true,
+        slug: true,
+        nameHu: true,
+        nameEn: true,
+        shortDescriptionHu: true,
+        shortDescriptionEn: true,
+        priceHuf: true,
+        priceEur: true,
+        priceOnRequest: true,
+        capacity: true,
+        seriesId: true,
+        cardImage: true,
+        mainImage: true,
+        images: true,
+        inStock: true,
+        isNew: true,
+        isOnSale: true,
+      },
     with: { series: true },
   });
 
@@ -87,18 +134,18 @@ export default async function ProductPage({
           {t("specsHeading")}
         </h2>
         <dl>
-          {specs.map((spec) => (
+          {specs.map((spec, i) => (
             <div
-              key={spec.label}
+              key={`${spec.label}-${i}`}
               className="flex items-center justify-between border-b border-line py-3 text-sm"
             >
               <dt className="text-muted">{spec.label}</dt>
               <dd className="font-semibold">
                 {spec.type === "boolean" ? (
                   spec.value === "true" ? (
-                    <Check className="size-4.5 text-emerald-600" strokeWidth={2.5} aria-label="Igen" />
+                    <Check className="size-4.5 text-emerald-600" strokeWidth={2.5} aria-label={tc("yes")} />
                   ) : (
-                    <X className="size-4.5 text-red-600" strokeWidth={2.5} aria-label="Nem" />
+                    <X className="size-4.5 text-red-600" strokeWidth={2.5} aria-label={tc("no")} />
                   )
                 ) : (
                   spec.value
@@ -110,8 +157,72 @@ export default async function ProductPage({
       </div>
     ) : null;
 
+  // Structured data: lets search results show price/availability/breadcrumb
+  // instead of a bare blue link — the single highest-leverage SEO addition
+  // for a product page.
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name,
+    description: toMetaDescription(
+      localized(locale, product.shortDescriptionHu ?? "", product.shortDescriptionEn) ||
+        localized(locale, product.descriptionHu ?? "", product.descriptionEn),
+      500,
+    ),
+    sku: product.sku ?? undefined,
+    image: allImages.map((src) => `${SITE_URL}${src}`),
+    brand: { "@type": "Brand", name: product.series?.name ?? "Zedonwellness" },
+    category: categoryName ?? undefined,
+    ...(product.priceOnRequest
+      ? {}
+      : {
+          offers: {
+            "@type": "Offer",
+            url: localeUrl(`/termek/${product.slug}`, locale),
+            price: String(Number(product.priceHuf)),
+            priceCurrency: "HUF",
+            availability: product.inStock
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+            seller: { "@type": "Organization", name: "Zedonwellness" },
+          },
+        }),
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: tc("home"), item: localeUrl("/", locale) },
+      ...(product.category
+        ? [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: categoryName,
+              item: localeUrl(`/${product.category.slug}`, locale),
+            },
+          ]
+        : []),
+      {
+        "@type": "ListItem",
+        position: product.category ? 3 : 2,
+        name,
+        item: localeUrl(`/termek/${product.slug}`, locale),
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto max-w-[1600px]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(productLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbLd) }}
+      />
       <GrillTheme active={product.category?.slug === "grillek"} />
       <div className="px-16 pt-7 text-[13px] text-muted/80 max-lg:px-6">
         <Link href="/" className="hover:text-accent">
@@ -195,8 +306,8 @@ export default async function ProductPage({
             </div>
           ) : null}
 
-          {product.variantOptions.map((group) => (
-            <VariantOptionGroup key={group.nameHu} group={group} locale={locale} />
+          {product.variantOptions.map((group, i) => (
+            <VariantOptionGroup key={`${group.nameHu}-${i}`} group={group} locale={locale} />
           ))}
 
           {product.features.length > 0 ? (
@@ -211,6 +322,7 @@ export default async function ProductPage({
                       name={localized(locale, feature.nameHu, feature.nameEn ?? "")}
                       iconUrl={feature.iconUrl}
                       priceHuf={feature.priceHuf !== null ? Number(feature.priceHuf) : null}
+                      priceEur={feature.priceEur}
                     />
                   </div>
                 ))}
@@ -247,23 +359,23 @@ export default async function ProductPage({
           ) : null}
 
           {product.category?.slug === "jakuzzik" || product.category?.slug === "szaunak" ? (
-            <img
+            <Image
               src="/tuv_certified.webp"
               alt="TÜV Rheinland Certified"
+              width={160}
+              height={96}
               className="mt-6 h-24 w-auto"
             />
-          ) : null}
-
-          {orderOnly && !product.priceOnRequest ? (
-            <OrderOnlyNote thresholdHuf={ORDER_ONLY_THRESHOLD_HUF} />
           ) : null}
 
           <ProductActions
             productId={product.id}
             slug={product.slug}
             nameHu={product.nameHu}
+            nameEn={product.nameEn}
             image={allImages[0] ?? null}
             priceHuf={Number(product.priceHuf)}
+            priceEur={product.priceEur}
             priceOnRequest={product.priceOnRequest}
             weightKg={product.weightKg !== null ? Number(product.weightKg) : null}
             orderOnly={orderOnly}

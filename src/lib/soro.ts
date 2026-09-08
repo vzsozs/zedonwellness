@@ -1,4 +1,7 @@
-const SORO_TOKEN = "84acc88f-14b8-4296-96d3-1bfd6f19b957";
+// Public embed token (it ships in the widget's own <script> tag, so it is
+// not a secret) — read from env so it can be rotated without a rebuild.
+const SORO_TOKEN =
+  process.env.SORO_EMBED_TOKEN ?? "84acc88f-14b8-4296-96d3-1bfd6f19b957";
 const SORO_API_BASE = "https://app.trysoro.com/api/embed";
 const SORO_EMBED_URL = `${SORO_API_BASE}/${SORO_TOKEN}`;
 

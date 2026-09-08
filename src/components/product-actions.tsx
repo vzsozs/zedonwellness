@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import { ContactButton } from "@/components/contact-button";
@@ -8,6 +8,8 @@ import { useCart } from "@/lib/cart-context";
 import { Price } from "@/lib/currency-context";
 import { localized } from "@/lib/localized";
 import { useProductMedia } from "@/lib/product-media-context";
+import { OrderOnlyNote } from "@/components/order-only-note";
+import { isOrderOnly, ORDER_ONLY_THRESHOLD_HUF } from "@/lib/config";
 
 export type ProductSkuVariant = {
   id: number;
@@ -25,8 +27,10 @@ export function ProductActions({
   productId,
   slug,
   nameHu,
+  nameEn,
   image,
   priceHuf,
+  priceEur,
   priceOnRequest = false,
   weightKg,
   orderOnly,
@@ -36,8 +40,10 @@ export function ProductActions({
   productId: number;
   slug: string;
   nameHu: string;
+  nameEn: string | null;
   image: string | null;
   priceHuf: number;
+  priceEur: string | null;
   priceOnRequest?: boolean;
   weightKg: number | null;
   orderOnly: boolean;
@@ -49,12 +55,22 @@ export function ProductActions({
   const { addItem } = useCart();
   const { setVariantImage } = useProductMedia();
   const [added, setAdded] = useState(false);
+  const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (addedTimer.current) clearTimeout(addedTimer.current);
+    },
+    [],
+  );
   const [selectedId, setSelectedId] = useState<number | null>(
     () => variants.find((v) => v.isDefault)?.id ?? variants[0]?.id ?? null,
   );
 
   const selected = variants.find((v) => v.id === selectedId) ?? null;
   const effectivePrice = selected?.priceHuf ?? priceHuf;
+  // A variant can cross the order-only threshold even when the base product
+  // sits below it — the CTA has to follow the price actually being ordered.
+  const effectiveOrderOnly = isOrderOnly(effectivePrice, orderOnly);
   const effectiveWeight = selected ? (selected.weightKg ?? weightKg) : weightKg;
   const effectiveImage = selected?.imageUrl ?? image;
   const canOrder = inStock && (selected ? selected.inStock : true);
@@ -69,16 +85,19 @@ export function ProductActions({
     addItem({
       productId,
       variantId: selected?.id ?? null,
-      variantLabel: selected ? localized(locale, selected.nameHu, selected.nameEn) : null,
+      variantLabel: selected?.nameHu ?? null,
+      variantLabelEn: selected?.nameEn ?? null,
       slug,
       nameHu,
+      nameEn,
       image: effectiveImage,
       priceHuf: effectivePrice,
       weightKg: effectiveWeight,
-      orderOnly,
+      orderOnly: effectiveOrderOnly,
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1600);
+    if (addedTimer.current) clearTimeout(addedTimer.current);
+    addedTimer.current = setTimeout(() => setAdded(false), 1600);
   }
 
   if (priceOnRequest) {
@@ -97,8 +116,12 @@ export function ProductActions({
 
   return (
     <div>
+      {effectiveOrderOnly ? <OrderOnlyNote thresholdHuf={ORDER_ONLY_THRESHOLD_HUF} /> : null}
+
       <div className="mt-6 text-[32px] font-extrabold text-accent">
-        <Price hufAmount={effectivePrice} />
+        {/* A SKU variant carries its own forint price and no euro one, so
+            only the base product's price maps back to an entered EUR value. */}
+        <Price hufAmount={effectivePrice} eurAmount={selected ? null : priceEur} />
       </div>
 
       {variants.length > 0 ? (
@@ -141,7 +164,9 @@ export function ProductActions({
           className="flex-1 bg-coprBlue bg-[length:auto_140%] bg-left-bottom bg-no-repeat py-4.5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-muted disabled:bg-none"
           style={canOrder ? { backgroundImage: "url(/brand/button-wave.svg)" } : undefined}
         >
-          {added ? t("addedToCart") : orderOnly ? t("orderNow") : t("addToCart")}
+          <span aria-live="polite">
+            {added ? t("addedToCart") : effectiveOrderOnly ? t("orderNow") : t("addToCart")}
+          </span>
         </button>
       </div>
     </div>

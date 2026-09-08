@@ -3,6 +3,9 @@ import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { createCategory, deleteCategory } from "./actions";
+import { ActionForm } from "@/components/admin/action-form";
+import { ActionButton } from "@/components/admin/action-button";
+import { CategoryImageField } from "./category-image-field";
 
 export default async function CategoriesPage() {
   const items = await db.query.categories.findMany({
@@ -20,6 +23,7 @@ export default async function CategoriesPage() {
               <th className="px-5 py-3">Slug</th>
               <th className="px-5 py-3">Név (HU)</th>
               <th className="px-5 py-3">Név (EN)</th>
+              <th className="px-5 py-3">Fotó</th>
               <th className="px-5 py-3">Sorrend</th>
               <th className="px-5 py-3"></th>
             </tr>
@@ -30,6 +34,7 @@ export default async function CategoriesPage() {
                 <td className="px-5 py-3 font-mono text-[13px]">{c.slug}</td>
                 <td className="px-5 py-3">{c.nameHu}</td>
                 <td className="px-5 py-3 text-muted">{c.nameEn ?? "—"}</td>
+                <td className="px-5 py-3 text-muted">{c.imageUrl ? "van" : "—"}</td>
                 <td className="px-5 py-3">{c.sortOrder}</td>
                 <td className="px-5 py-3">
                   <div className="flex items-center justify-end gap-3.5">
@@ -40,27 +45,21 @@ export default async function CategoriesPage() {
                     >
                       <Pencil className="size-4" strokeWidth={1.8} />
                     </a>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await deleteCategory(c.id);
-                      }}
+                    <ActionButton
+                      action={deleteCategory.bind(null, c.id)}
+                      confirmMessage={`Biztosan törlöd a(z) "${c.nameHu}" kategóriát?`}
+                      aria-label="Törlés"
+                      className="text-red-600 hover:text-red-800 disabled:opacity-50"
                     >
-                      <button
-                        type="submit"
-                        aria-label="Törlés"
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="size-4" strokeWidth={1.8} />
-                      </button>
-                    </form>
+                      <Trash2 className="size-4" strokeWidth={1.8} />
+                    </ActionButton>
                   </div>
                 </td>
               </tr>
             ))}
             {items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-6 text-center text-muted">
+                <td colSpan={6} className="px-5 py-6 text-center text-muted">
                   Még nincs kategória.
                 </td>
               </tr>
@@ -71,7 +70,7 @@ export default async function CategoriesPage() {
 
       <div className="border border-line bg-white p-6">
         <h2 className="mb-5 text-base font-semibold">Új kategória</h2>
-        <form action={createCategory} className="flex flex-col gap-4">
+        <ActionForm action={createCategory} className="flex flex-col gap-4">
           <div className="grid grid-cols-3 gap-5">
             <Field label="Slug (URL, pl. jakuzzik)" name="slug" required />
             <Field label="Név (HU)" name="nameHu" required />
@@ -85,13 +84,14 @@ export default async function CategoriesPage() {
             <Field label="Leírás (EN)" name="descriptionEn" />
             <Field label="Sorrend" name="sortOrder" type="number" defaultValue="0" />
           </div>
+          <CategoryImageField current={null} />
           <button
             type="submit"
             className="mt-1 w-fit bg-ink px-8 py-2.5 text-sm font-semibold text-white"
           >
             Létrehozás
           </button>
-        </form>
+        </ActionForm>
       </div>
     </div>
   );

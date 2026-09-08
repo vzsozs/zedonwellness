@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const STEPS = [
   { key: "hiTech", image: "/home/howwework-hitech.png" },
@@ -21,9 +22,12 @@ export function HowWeWork() {
         {STEPS.map((step) => (
           <div key={step.key} className="flex flex-col items-center text-center">
             <div className="flex size-[240px] items-center justify-center max-lg:size-[185px]">
-              <img
+              <Image
                 src={step.image}
                 alt=""
+                width={240}
+                height={240}
+                sizes="(max-width: 1024px) 185px, 240px"
                 className="h-full w-full object-contain"
               />
             </div>

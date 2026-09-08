@@ -2,19 +2,26 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { eq, notInArray, and } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { products, productExtras, productVariants, productFeatureLinks } from "@/db/schema";
 import { saveUploadedImage, saveUploadedDocument } from "@/lib/upload";
 import { sanitizeDescription } from "@/lib/sanitize-description";
-import { getEurHufRate } from "@/lib/settings";
-import { eurToHuf } from "@/lib/currency";
+import { resolvePrice } from "@/lib/pricing";
+import { requireAdmin } from "@/lib/require-admin";
 import {
   type ActionState,
   isRedirectError,
   toActionError,
 } from "@/lib/action-state";
+
+/** Ids arrive as bound Server Action arguments, i.e. from the network —
+ * validate them like any other request input. */
+const idSchema = z.coerce.number().int().positive();
+
+/** The transaction handle drizzle hands to `db.transaction(cb)`. */
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 const checkbox = z.union([z.literal("on"), z.null()]).transform(Boolean);
 
@@ -87,6 +94,7 @@ const variantOptionsDataSchema = z.array(
 const variantSkusDataSchema = z.array(
   z.object({
     key: z.string(),
+    id: z.number().int().positive().nullable(),
     nameHu: z.string(),
     nameEn: z.string(),
     sku: z.string(),
@@ -234,6 +242,7 @@ async function resolveProductVariants(formData: FormData) {
     const isDefault = s.isDefault && !hasDefault;
     if (isDefault) hasDefault = true;
     result.push({
+      id: s.id,
       nameHu: s.nameHu.trim(),
       nameEn: s.nameEn.trim() || null,
       sku: s.sku.trim() || null,
@@ -250,43 +259,61 @@ async function resolveProductVariants(formData: FormData) {
   return result;
 }
 
-async function syncProductVariants(productId: number, formData: FormData) {
+/**
+ * Reconciles the submitted variant rows against what's stored.
+ *
+ * Deliberately *not* a delete-all-then-insert: `product_variants.id` is
+ * referenced by placed orders (`orders.items[].variantId`), so re-creating
+ * the rows on every product save would leave those references pointing at
+ * ids that no longer exist. Rows the admin actually removed are deleted,
+ * the rest keep their id.
+ */
+async function syncProductVariants(tx: Tx, productId: number, formData: FormData) {
   const variants = await resolveProductVariants(formData);
-  await db.delete(productVariants).where(eq(productVariants.productId, productId));
-  if (variants.length > 0) {
-    await db.insert(productVariants).values(variants.map((v) => ({ ...v, productId })));
+
+  const keptIds = variants.map((v) => v.id).filter((id): id is number => id !== null);
+  await tx
+    .delete(productVariants)
+    .where(
+      keptIds.length > 0
+        ? and(
+            eq(productVariants.productId, productId),
+            notInArray(productVariants.id, keptIds),
+          )
+        : eq(productVariants.productId, productId),
+    );
+
+  for (const { id, ...values } of variants) {
+    if (id === null) {
+      await tx.insert(productVariants).values({ ...values, productId });
+    } else {
+      // Scoped by productId too, so a forged id can't retarget another
+      // product's variant row.
+      await tx
+        .update(productVariants)
+        .set(values)
+        .where(and(eq(productVariants.id, id), eq(productVariants.productId, productId)));
+    }
   }
 }
 
-export async function resolvePrice(priceEur: number | null, submittedHuf: number, manual: boolean) {
-  // Locked (not manual) needs a EUR value to compute from — never trust the
-  // client-side computed HUF preview, always recompute from the current
-  // rate server-side. If there's no EUR value at all, fall back to
-  // whatever HUF was submitted (legacy/EUR-less product).
-  if (manual || priceEur === null) {
-    return { priceHuf: submittedHuf, priceHufManual: manual };
-  }
-  const rate = await getEurHufRate();
-  return { priceHuf: eurToHuf(priceEur, rate), priceHufManual: false };
-}
-
-async function syncExtras(productId: number, formData: FormData) {
+async function syncExtras(tx: Tx, productId: number, formData: FormData) {
   const ids = [
     ...new Set(formData.getAll("extraIds").map((v) => Number(v)).filter(Number.isFinite)),
   ];
-  await db.delete(productExtras).where(eq(productExtras.productId, productId));
+  await tx.delete(productExtras).where(eq(productExtras.productId, productId));
   if (ids.length > 0) {
-    await db.insert(productExtras).values(ids.map((extraId) => ({ productId, extraId })));
+    await tx.insert(productExtras).values(ids.map((extraId) => ({ productId, extraId })));
   }
 }
 
-async function syncFeatures(productId: number, formData: FormData) {
+async function syncFeatures(tx: Tx, productId: number, formData: FormData) {
   const ids = [
     ...new Set(formData.getAll("featureIds").map((v) => Number(v)).filter(Number.isFinite)),
   ];
-  await db.delete(productFeatureLinks).where(eq(productFeatureLinks.productId, productId));
+  await tx.delete(productFeatureLinks).where(eq(productFeatureLinks.productId, productId));
   if (ids.length > 0) {
-    await db
+    await tx
       .insert(productFeatureLinks)
       .values(ids.map((featureId) => ({ productId, featureId })));
   }
@@ -297,6 +324,7 @@ export async function createProduct(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    await requireAdmin();
     const parsed = readForm(formData);
     const { priceEur, priceHuf: submittedHuf, priceHufManual, weightKg, ...rest } = parsed;
 
@@ -307,26 +335,31 @@ export async function createProduct(
       resolveDocuments(formData),
     ]);
 
-    const [product] = await db
-      .insert(products)
-      .values({
-        ...rest,
-        priceEur: priceEur === null ? null : String(priceEur),
-        priceHuf: String(price.priceHuf),
-        priceHufManual: price.priceHufManual,
-        weightKg: weightKg === null ? null : String(weightKg),
-        images,
-        mainImage,
-        cardImage,
-        specs: readSpecs(formData),
-        variantOptions,
-        documents,
-      })
-      .returning();
+    // One transaction: the product row and its extras/features/variants are
+    // one logical record, so a failure partway through must not leave a
+    // half-linked product behind.
+    await db.transaction(async (tx) => {
+      const [product] = await tx
+        .insert(products)
+        .values({
+          ...rest,
+          priceEur: priceEur === null ? null : String(priceEur),
+          priceHuf: String(price.priceHuf),
+          priceHufManual: price.priceHufManual,
+          weightKg: weightKg === null ? null : String(weightKg),
+          images,
+          mainImage,
+          cardImage,
+          specs: readSpecs(formData),
+          variantOptions,
+          documents,
+        })
+        .returning();
 
-    await syncExtras(product.id, formData);
-    await syncFeatures(product.id, formData);
-    await syncProductVariants(product.id, formData);
+      await syncExtras(tx, product.id, formData);
+      await syncFeatures(tx, product.id, formData);
+      await syncProductVariants(tx, product.id, formData);
+    });
 
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -343,6 +376,8 @@ export async function updateProduct(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    await requireAdmin();
+    const productId = idSchema.parse(id);
     const parsed = readForm(formData);
     const { priceEur, priceHuf: submittedHuf, priceHufManual, weightKg, ...rest } = parsed;
 
@@ -353,27 +388,29 @@ export async function updateProduct(
       resolveDocuments(formData),
     ]);
 
-    await db
-      .update(products)
-      .set({
-        ...rest,
-        priceEur: priceEur === null ? null : String(priceEur),
-        priceHuf: String(price.priceHuf),
-        priceHufManual: price.priceHufManual,
-        weightKg: weightKg === null ? null : String(weightKg),
-        images,
-        mainImage,
-        cardImage,
-        specs: readSpecs(formData),
-        variantOptions,
-        documents,
-        updatedAt: new Date(),
-      })
-      .where(eq(products.id, id));
+    await db.transaction(async (tx) => {
+      await tx
+        .update(products)
+        .set({
+          ...rest,
+          priceEur: priceEur === null ? null : String(priceEur),
+          priceHuf: String(price.priceHuf),
+          priceHufManual: price.priceHufManual,
+          weightKg: weightKg === null ? null : String(weightKg),
+          images,
+          mainImage,
+          cardImage,
+          specs: readSpecs(formData),
+          variantOptions,
+          documents,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, productId));
 
-    await syncExtras(id, formData);
-    await syncFeatures(id, formData);
-    await syncProductVariants(id, formData);
+      await syncExtras(tx, productId, formData);
+      await syncFeatures(tx, productId, formData);
+      await syncProductVariants(tx, productId, formData);
+    });
 
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -384,8 +421,15 @@ export async function updateProduct(
   redirect("/admin/products");
 }
 
-export async function deleteProduct(id: number) {
-  await db.delete(products).where(eq(products.id, id));
-  revalidatePath("/admin/products");
-  revalidatePath("/", "layout");
+export async function deleteProduct(id: number): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const productId = idSchema.parse(id);
+    await db.delete(products).where(eq(products.id, productId));
+    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
+    return {};
+  } catch (err) {
+    return toActionError(err);
+  }
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ProductFeatureGroup, ProductFeature, Extra } from "@/db/schema";
 import { deleteGroup } from "./actions";
+import { ActionButton } from "@/components/admin/action-button";
 import { FeatureCard } from "./feature-card";
 import { NewFeatureForm } from "./new-feature-form";
 import { ExtrasPane } from "../extras/extras-pane";
@@ -57,13 +58,13 @@ export function HozzavalokTabs({
                 ? "Ebben a csoportban még nincs jellemző."
                 : `${activeGroup.features.length} jellemző ebben a csoportban.`}
             </p>
-            <button
-              type="button"
-              onClick={() => deleteGroup(activeGroup.id)}
-              className="text-xs text-red-600 hover:text-red-800"
+            <ActionButton
+              action={deleteGroup.bind(null, activeGroup.id)}
+              confirmMessage={`Biztosan törlöd a(z) "${activeGroup.nameHu}" csoportot a benne lévő jellemzőkkel együtt?`}
+              className="text-xs text-red-600 hover:text-red-800 disabled:opacity-50"
             >
               Csoport törlése
-            </button>
+            </ActionButton>
           </div>
 
           <div className="mb-8 grid grid-cols-4 gap-4 max-lg:grid-cols-3 max-sm:grid-cols-2">

@@ -23,7 +23,7 @@ export default async function HozzavalokPage() {
     <div>
       <h1 className="mb-2 text-2xl font-semibold">Termék hozzávalók</h1>
       <p className="mb-6 max-w-2xl text-sm text-muted">
-        A "Jakuzzi extrák" lap a rendelhető (ár szerinti) extrák katalógusa,
+        A &bdquo;Jakuzzi extrák&rdquo; lap a rendelhető (ár szerinti) extrák katalógusa,
         a többi lap ikonos, informatív jellemző-csoport (pl. egy szaunánál:
         van kályha, van lámpa, van szaunaszett) — a termék szerkesztésénél
         innen lehet kiválasztani, mi jelenjen meg az adott terméken.
