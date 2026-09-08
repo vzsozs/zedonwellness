@@ -84,9 +84,9 @@
     "categoriesEyebrow": "Product categories",
     "categoriesTitle": "Explore our exclusive wellness range",
     "categoriesCta": "View the range",
-    "featuredEyebrow": "Featured products",
-    "featuredTitle": "Our most popular models",
-    "viewAll": "All products",
+    "featuredEyebrow": "Featured models",
+    "featuredTitle": "Most popular choices",
+    "viewAll": "View all products",
     "virtualTour": {
       "titleStart": "Discover our new",
       "titleHighlight": "virtual tour",
@@ -182,7 +182,10 @@
     "favoriteAria": "Add to favorites",
     "badgeNew": "NEW",
     "badgeSale": "SALE",
-    "badgeOutOfStock": "OUT OF STOCK"
+    "badgeOutOfStock": "OUT OF STOCK",
+    "badgeInStock": "In stock",
+    "detailsCta": "Details",
+    "capacityValue": "Seats {count}"
   },
   "cart": {
     "title": "Cart",

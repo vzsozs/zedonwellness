@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ProductCard, type ProductCardData } from "@/components/product-card";
+import {
+  FeaturedProductCard,
+  type FeaturedProductData,
+} from "@/components/home/featured-product-card";
 
 export function FeaturedProductsTabs({
   tabs,
 }: {
-  tabs: { slug: string; name: string; products: ProductCardData[] }[];
+  tabs: { slug: string; name: string; products: FeaturedProductData[] }[];
 }) {
   const [active, setActive] = useState(tabs[0]?.slug);
   const current = tabs.find((tab) => tab.slug === active) ?? tabs[0];
@@ -23,7 +26,7 @@ export function FeaturedProductsTabs({
               className={`px-6 py-2.5 text-sm font-semibold transition-colors ${
                 tab.slug === current.slug
                   ? "bg-accent text-white"
-                  : "bg-white text-ink hover:bg-accent-soft"
+                  : "border border-line bg-white text-ink hover:bg-accent-soft"
               }`}
             >
               {tab.name}
@@ -33,7 +36,7 @@ export function FeaturedProductsTabs({
       ) : null}
       <div className="grid grid-cols-3 gap-7 max-lg:grid-cols-2 max-sm:grid-cols-1">
         {current.products.map((p) => (
-          <ProductCard key={p.slug} product={p} />
+          <FeaturedProductCard key={p.slug} product={p} />
         ))}
       </div>
     </div>

@@ -23,8 +23,8 @@ export default async function PrivacyPage({
     <LegalPage title="Adatkezelési tájékoztató">
       <p className="border-l-[3px] border-amber-500 bg-amber-50 px-4.5 py-3.5 text-sm text-amber-900">
         <strong>Jogi ellenőrzésre vár.</strong> Ez a tájékoztató a webáruház tényleges
-        adatkezelése alapján készült vázlat — élesítés előtt egészítsd ki a sárgával
-        jelölt adatokkal, és hagyasd jóvá adatvédelmi szakértővel.
+        adatkezelése alapján készült vázlat — élesítés előtt egészítse ki a sárgával
+        jelölt adatokkal, és hagyassa jóvá adatvédelmi szakértővel.
       </p>
 
       <LegalSection title="1. Az adatkezelő">
@@ -101,13 +101,13 @@ export default async function PrivacyPage({
 
       <LegalSection title="5. Az érintett jogai">
         <p className="text-sm text-muted">
-          Kérheted a rólad tárolt adatokhoz való hozzáférést, azok helyesbítését, törlését,
-          a kezelés korlátozását, továbbá élhetsz az adathordozhatósághoz való jogoddal.
-          Kérésedet a{" "}
+          Kérheti az Önről tárolt adatokhoz való hozzáférést, azok helyesbítését,
+          törlését, a kezelés korlátozását, továbbá élhet az adathordozhatósághoz való
+          jogával. Kérését a{" "}
           <a href={`mailto:${COMPANY.email}`} className="text-accent underline">
             {COMPANY.email}
           </a>{" "}
-          címen jelezheted; 30 napon belül válaszolunk. Panasszal a Nemzeti Adatvédelmi és
+          címen jelezheti; 30 napon belül válaszolunk. Panasszal a Nemzeti Adatvédelmi és
           Információszabadság Hatósághoz (
           <a
             href="https://naih.hu"
@@ -117,7 +117,7 @@ export default async function PrivacyPage({
           >
             naih.hu
           </a>
-          ) fordulhatsz.
+          ) fordulhat.
         </p>
       </LegalSection>
 

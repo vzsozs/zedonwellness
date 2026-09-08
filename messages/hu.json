@@ -78,15 +78,15 @@
       },
       "consulting": {
         "title": "Helyszíni szaktanácsadás",
-        "description": "Kollégáink díjmentesen felmérik a kertet és a teraszt."
+        "description": "Kollégáink díjmentesen felmérik a kertjét és a teraszát."
       }
     },
     "categoriesEyebrow": "Termékkategóriák",
-    "categoriesTitle": "Fedezd fel exkluzív wellness kínálatunkat",
+    "categoriesTitle": "Fedezze fel exkluzív wellness kínálatunkat",
     "categoriesCta": "Kínálat megtekintése",
-    "featuredEyebrow": "Kiemelt termékek",
-    "featuredTitle": "Legnépszerűbb modelljeink",
-    "viewAll": "Összes termék",
+    "featuredEyebrow": "Kiemelt modellek",
+    "featuredTitle": "Legnépszerűbb választások",
+    "viewAll": "Összes termék megtekintése",
     "virtualTour": {
       "titleStart": "Fedezze fel új",
       "titleHighlight": "Virtuális túránkat",
@@ -129,12 +129,12 @@
       }
     },
     "extrasEyebrow": "Extrák",
-    "extrasTitle": "Tedd teljessé az élményt",
+    "extrasTitle": "Tegye teljessé az élményt",
     "blogEyebrow": "Blog",
     "blogTitle": "Legfrissebb cikkeink",
     "tuvTitle": "TÜV Rheinland®",
     "tuvSubtitle": "Európai biztonsági és minőségi tanúsítvány",
-    "categoriesSubtitle": "Válassz prémium jakuzzijaink, egyedi tervezésű szaunáink és professzionális kerti konyháink közül."
+    "categoriesSubtitle": "Válasszon prémium jakuzzijaink, egyedi tervezésű szaunáink és professzionális kerti konyháink közül."
   },
   "category": {
     "productCount": "{count, plural, other {# termék}}",
@@ -160,12 +160,12 @@
     "arHeading": "3D / AR (kiterjesztett valóság)",
     "viewInAr": "Megtekintés kiterjesztett valóságban",
     "extrasHeading": "Rendelhető extrák",
-    "orderOnlyNote": "Ez a termék {threshold} feletti értékű, ezért online fizetés nem elérhető — a rendelés leadása után kollégáink 1 munkanapon belül felveszik veled a kapcsolatot az egyeztetéshez.",
+    "orderOnlyNote": "Ez a termék {threshold} feletti értékű, ezért online fizetés nem elérhető — a rendelés leadása után kollégáink 1 munkanapon belül felveszik Önnel a kapcsolatot az egyeztetéshez.",
     "specsHeading": "Specifikációk",
     "includedByDefault": "Alapból benne",
     "includedLabel": "TARTALMAZZA",
     "contactHeading": "Kapcsolat",
-    "contactText": "Kérdésed van a termékkel kapcsolatban? Kollégáink szívesen segítenek a választásban, a helyszíni felmérés és a telepítés részleteiben.",
+    "contactText": "Kérdése van a termékkel kapcsolatban? Kollégáink szívesen segítenek a választásban, a helyszíni felmérés és a telepítés részleteiben.",
     "contactCta": "Kapcsolatfelvétel",
     "relatedHeading": "Hasonló termékek",
     "chooseVariant": "Opciók",
@@ -175,18 +175,21 @@
     "addedToCart": "Kosárba téve ✓",
     "orderNow": "Megrendelés leadása",
     "priceOnRequestLabel": "Hamarosan",
-    "priceOnRequestNote": "Ennél a terméknél még nincs online ár feltüntetve — kollégáink szívesen tájékoztatnak az árról és az elérhetőségről.",
+    "priceOnRequestNote": "Ennél a terméknél még nincs online ár feltüntetve — kollégáink szívesen tájékoztatják az árról és az elérhetőségről.",
     "documentsHeading": "Letölthető dokumentumok",
     "featuresHeading": "Kiegészítők",
     "addToCart": "Kosárba",
     "favoriteAria": "Kedvencekhez adás",
     "badgeNew": "ÚJDONSÁG",
     "badgeSale": "AKCIÓ",
-    "badgeOutOfStock": "ELFOGYOTT"
+    "badgeOutOfStock": "ELFOGYOTT",
+    "badgeInStock": "Raktáron",
+    "detailsCta": "Részletek",
+    "capacityValue": "{count} személyes"
   },
   "cart": {
     "title": "Kosár",
-    "empty": "A kosarad jelenleg üres.",
+    "empty": "A kosara jelenleg üres.",
     "backToProducts": "Vissza a termékekhez",
     "orderOnlyNote": "Csak megrendelhető termék",
     "missingWeight": "Súlyadat hiányzik — a szállítási díj egyeztetéssel kerül meghatározásra",
@@ -196,19 +199,19 @@
     "shippingNote": "A szállítási díj a következő lépésben, a cím megadása után kerül kiszámításra.",
     "subtotal": "Részösszeg",
     "continue": "Tovább a megrendeléshez",
-    "blockedNote": "A kosárban lévő tételek egyike jelenleg nem rendelhető — távolítsd el, hogy továbbléphess a pénztárhoz.",
+    "blockedNote": "A kosárban lévő tételek egyike jelenleg nem rendelhető — távolítsa el, hogy továbbléphessen a pénztárhoz.",
     "issues": {
       "unavailable": "Ez a termék már nem elérhető.",
       "variantUnavailable": "A választott változat már nem elérhető.",
       "outOfStock": "Jelenleg elfogyott.",
-      "priceOnRequest": "Ennek a terméknek nincs online ára — kérj ajánlatot.",
-      "priceChanged": "A termék ára megváltozott, azóta hogy a kosaradba került. A fenti ár az érvényes.",
-      "removed": "A kosaradból eltávolítottuk a következőt, mert már nem elérhető: {names}"
+      "priceOnRequest": "Ennek a terméknek nincs online ára — kérjen ajánlatot.",
+      "priceChanged": "A termék ára megváltozott, amióta a kosarába került. A fenti ár az érvényes.",
+      "removed": "A kosarából eltávolítottuk a következőt, mert már nem elérhető: {names}"
     }
   },
   "checkout": {
     "title": "Megrendelés",
-    "emptyCart": "A kosarad üres, nincs mit megrendelni.",
+    "emptyCart": "A kosara üres, nincs mit megrendelni.",
     "backToProducts": "Vissza a termékekhez",
     "fullName": "Teljes név",
     "email": "Email cím",
@@ -229,7 +232,7 @@
     "shipping": "Szállítás (GLS)",
     "customQuote": "Egyedi ajánlat",
     "total": "Összesen",
-    "quoteNote": "A szállítási díjról (súlyadat vagy 40 kg feletti csomag miatt) kollégáink a rendelés leadása után egyeztetnek veled.",
+    "quoteNote": "A szállítási díjról (súlyadat vagy 40 kg feletti csomag miatt) kollégáink a rendelés leadása után egyeztetnek Önnel.",
     "errorRequired": "Kötelező",
     "errorInvalidEmail": "Érvénytelen email cím",
     "errorEmptyCart": "A kosár üres.",
@@ -237,14 +240,14 @@
     "errorVariantUnavailable": "Az egyik kiválasztott termékváltozat már nem elérhető.",
     "acceptTerms": "Elolvastam és elfogadom az <terms>Általános Szerződési Feltételeket</terms> és az <privacy>Adatkezelési tájékoztatót</privacy>.",
     "errorTermsRequired": "Az ÁSZF és az adatkezelési tájékoztató elfogadása kötelező.",
-    "errorCartChanged": "A kosarad tartalma időközben megváltozott — nézd át a tételeket, majd próbáld újra.",
-    "errorPriceChanged": "Egy termék ára megváltozott. Frissítettük a kosaradat — ellenőrizd az összeget, majd küldd el újra.",
-    "submitHint": "A megrendelés elküldése fizetési kötelezettséget keletkeztet. Online fizetés jelenleg nem érhető el — a fizetés módjáról munkatársunk egyeztet veled."
+    "errorCartChanged": "A kosara tartalma időközben megváltozott — nézze át a tételeket, majd próbálja újra.",
+    "errorPriceChanged": "Egy termék ára megváltozott. Frissítettük a kosarát — ellenőrizze az összeget, majd küldje el újra.",
+    "submitHint": "A megrendelés elküldése fizetési kötelezettséget keletkeztet. Online fizetés jelenleg nem érhető el — a fizetés módjáról munkatársunk egyeztet Önnel."
   },
   "orderConfirmation": {
-    "title": "Köszönjük a rendelésed!",
+    "title": "Köszönjük a rendelését!",
     "orderNumberLabel": "Rendelésszám:",
-    "confirmationSent": "Visszaigazolást küldtünk a(z) {email} email címre. Kollégáink {reason} hamarosan felveszik veled a kapcsolatot.",
+    "confirmationSent": "Visszaigazolást küldtünk a(z) {email} email címre. Kollégáink {reason} hamarosan felveszik Önnel a kapcsolatot.",
     "contactReasonQuote": "a szállítási díj egyeztetése és a rendelés véglegesítése miatt",
     "contactReasonNormal": "a rendelés véglegesítése miatt",
     "orderedProducts": "Rendelt termékek",
@@ -397,13 +400,13 @@
   },
   "notFound": {
     "title": "Ezt az oldalt nem találjuk",
-    "description": "Lehet, hogy a keresett oldal időközben megszűnt vagy új címre költözött. Az alábbi menüpontokból biztosan eljutsz oda, amit keresel.",
+    "description": "Lehet, hogy a keresett oldal időközben megszűnt vagy új címre költözött. Az alábbi menüpontokból biztosan eljut oda, amit keres.",
     "backHome": "Vissza a főoldalra",
     "popularHeading": "Népszerű oldalak"
   },
   "errorPage": {
     "title": "Valami félrement",
-    "description": "Az oldal betöltése közben hiba lépett fel. Próbáld újra — ha továbbra sem működik, keress minket bizalommal.",
+    "description": "Az oldal betöltése közben hiba lépett fel. Kérjük, próbálja újra — ha továbbra sem működik, keressen minket bizalommal.",
     "retry": "Újrapróbálkozás"
   },
   "meta": {

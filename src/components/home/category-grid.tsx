@@ -1,5 +1,5 @@
 import { getTranslations, getLocale } from "next-intl/server";
-import { asc, desc } from "drizzle-orm";
+import { asc, count, desc } from "drizzle-orm";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
@@ -11,7 +11,17 @@ import { localized } from "@/lib/localized";
 
 export async function CategoryGrid() {
   const t = await getTranslations("home");
+  const tc = await getTranslations("category");
   const locale = await getLocale();
+  // A kártya feliratának darabszáma a katalógusból származik, nem
+  // kézzel karbantartott szövegből — így nem tud elcsúszni attól, ami a
+  // kategóriára kattintva ténylegesen látszik.
+  const productCounts = await db
+    .select({ categoryId: products.categoryId, total: count() })
+    .from(products)
+    .groupBy(products.categoryId);
+  const countByCategory = new Map(productCounts.map((r) => [r.categoryId, r.total]));
+
   const items = await db.query.categories.findMany({
     orderBy: [asc(categories.sortOrder), asc(categories.nameHu)],
     with: {
@@ -48,7 +58,13 @@ export async function CategoryGrid() {
           const visual = getCategoryVisual(cat.slug);
           const image = cat.imageUrl ?? cat.products[0]?.mainImage ?? null;
           const name = localized(locale, cat.nameHu, cat.nameEn);
-          const badge = localized(locale, cat.cardBadgeHu ?? "", cat.cardBadgeEn);
+          // A szerkeszthető rész (márkák, jelleg) és a származtatott
+          // darabszám együtt adja a feliratot.
+          const badgePrefix = localized(locale, cat.cardBadgeHu ?? "", cat.cardBadgeEn);
+          const total = countByCategory.get(cat.id) ?? 0;
+          const badge = [badgePrefix, total > 0 ? tc("productCount", { count: total }) : ""]
+            .filter(Boolean)
+            .join(" · ");
           const description = localized(
             locale,
             cat.descriptionHu ?? "",

@@ -2,6 +2,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { localized } from "@/lib/localized";
 import { FeaturedProductsTabs } from "@/components/home/featured-products-tabs";
@@ -34,6 +35,7 @@ export async function FeaturedProducts() {
       inStock: true,
       isNew: true,
       isOnSale: true,
+      specs: true,
     },
     with: { series: true },
   });
@@ -58,15 +60,21 @@ export async function FeaturedProducts() {
 
   return (
     <section className="mx-auto max-w-[1480px] px-[5%] py-22 max-lg:px-6">
-      <div className="mb-11 flex flex-col items-center gap-3 text-center">
+      <div className="mb-11 flex items-end justify-between gap-6 max-sm:flex-col max-sm:items-start">
         <div>
-          <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-coprBlue/30 bg-coprBlue/10 px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] text-coprBlue uppercase">
             {t("featuredEyebrow")}
           </div>
-          <h2 className="mt-3.5 text-4xl font-bold">{t("featuredTitle")}</h2>
+          <h2 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
+            {t("featuredTitle")}
+          </h2>
         </div>
-        <Link href="/jakuzzik" className="text-sm font-bold hover:text-accent">
-          {t("viewAll")} →
+        <Link
+          href="/jakuzzik"
+          className="rounded-control inline-flex shrink-0 items-center gap-2 border-[1.5px] border-ink px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
+        >
+          {t("viewAll")}
+          <ArrowRight className="size-4" strokeWidth={2.5} />
         </Link>
       </div>
       <FeaturedProductsTabs tabs={tabs} />
