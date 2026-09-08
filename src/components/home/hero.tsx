@@ -51,7 +51,7 @@ export function Hero() {
                 {t("ctaPrimary")}
                 <ArrowRight className="size-4" strokeWidth={2.2} />
               </Link>
-              <ContactButton className="inline-flex items-center justify-center border-[1.5px] border-ink px-7 py-4 text-sm font-semibold text-ink">
+              <ContactButton className="inline-flex items-center justify-center border-[1.5px] border-ink bg-white/20 px-7 py-4 text-sm font-semibold text-ink backdrop-blur-sm transition-colors hover:bg-white/40">
                 {t("ctaSecondary")}
               </ContactButton>
             </div>
