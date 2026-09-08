@@ -119,7 +119,9 @@
     "extrasEyebrow": "Extrák",
     "extrasTitle": "Tedd teljessé az élményt",
     "blogEyebrow": "Blog",
-    "blogTitle": "Legfrissebb cikkeink"
+    "blogTitle": "Legfrissebb cikkeink",
+    "tuvTitle": "TÜV Rheinland®",
+    "tuvSubtitle": "Európai biztonsági és minőségi tanúsítvány"
   },
   "category": {
     "productCount": "{count, plural, other {# termék}}",

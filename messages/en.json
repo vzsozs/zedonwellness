@@ -119,7 +119,9 @@
     "extrasEyebrow": "Extras",
     "extrasTitle": "Complete the experience",
     "blogEyebrow": "Blog",
-    "blogTitle": "Latest from our blog"
+    "blogTitle": "Latest from our blog",
+    "tuvTitle": "TÜV Rheinland®",
+    "tuvSubtitle": "European safety and quality certification"
   },
   "category": {
     "productCount": "{count, plural, one {# product} other {# products}}",
