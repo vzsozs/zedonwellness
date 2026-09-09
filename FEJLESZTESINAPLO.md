@@ -528,6 +528,79 @@ Képoptimalizálás (39 `<img>` → `next/image`/`SafeImage`), egy valós 3,94 M
 6. 💡5 (szemantikus színtokenek a `.dark-theme` utility-felülírások helyett) tudatosan
    kimaradt: minden komponenst érint, tisztán vizuális kockázattal — saját kört érdemel.
 
+## 2026-09-08/09 — Főoldal-redesign a „Clude" mockup alapján
+
+A user egy új design mockupot készített (`Ideiglenes/webflow_database/Clude/`, három
+oldalra: főoldal, lista, termék). Az átültetés menetét előre átbeszéltük, és **fontos
+döntés született**: a mockup meleg terrakotta palettáját és serif tipográfiáját **nem**
+vesszük át — a jelenlegi türkiz/coprBlue színvilág és az Inter/Manrope páros marad. Csak
+az **elrendezések** jönnek át. Ezért a mockup `styles.css`-e referenciaként használandó,
+nem forrásként.
+
+A munka szekciónként, fentről lefelé haladt, minden lépés külön committal.
+
+### Amit érdemes tudni a szerkezetről
+
+- **Közös rács.** Minden szekció a `Container` komponensen ül: `max-w-[1480px]` + **5%**
+  oldalbehúzás (mobilon fix 24px). Ez a mockup rácsa, és felváltotta a korábbi fix 64px-es
+  `px-16`-ot. A háttérrel rendelkező szekcióknál (Blog, Videók, Hogyan dolgozunk) a háttér
+  faltól falig fut, csak a tartalom kerül a rácsra. **Új szekciónál ezt kell követni** —
+  lemérve mind a 9 szekció és a lábléc azonos bal/jobb éllel.
+- **Két sugár-token** a `globals.css` `@theme` blokkjában: `--radius-control` (8px, gombok
+  és űrlapmezők) és `--radius-card` (12px, kártyák). A base rétegben egy szabály minden
+  `<button>/<input>/<select>/<textarea>` elemre érvényes, tehát **nem kell komponensenként
+  ismételni**; a Tailwind utility-k későbbi rétege miatt egy explicit `rounded-full`
+  (fejléc kör gombjai) felülírja. A gomb-kinézetű `<Link>`-ek explicit osztályt kapnak,
+  mert azokra az elem-szabály nem hat.
+- **Szekció-fejléc minta.** Eyebrow pill (`rounded-full`, coprBlue 10% háttér) + 42px-es
+  cím. Középre zárva (kategóriák, videók) vagy bal oldalon, jobbra egy „összes…" gombbal
+  (kiemelt termékek, blog).
+- **Kártya-hover minta.** 3px emelkedés + accent keret + erősebb árnyék, 300ms. Nagy
+  médiakártyáknál (kategória) 5px és a háttérkép 1,05-re nagyít.
+
+### Tartalmi döntések
+
+- **Magázódás végig.** Az oldal korábban keverte a tegezést és a magázást (a Virtuális túra
+  és a Videók magázódott, a kosár/pénztár/hibaoldalak tegeződtek). 23 üzenet és az
+  adatvédelmi tájékoztató átírva. **Az admin marad tegező** — belső eszköz.
+- **Származtatott darabszámok.** A kategória-kártyák chipje (`HC Design & OKA · 3 termék`)
+  két részből áll: a szerkeszthető `categories.card_badge_hu/en` mező csak a márka/jelleg
+  részt tárolja, a darabszámot a komponens a katalógusból számolja. Így nem tud elcsúszni
+  attól, amit a látogató a kategóriára kattintva lát.
+- **Kiemelt termékek**: kizárólag a `products.is_featured` kapcsolóból, nem forgalmi
+  adatból — különben tisztítószerekkel telne meg. A kártya spec-sávja a meglévő mezőkből
+  épül: elöl a strukturált `capacity`, utána a `specs` lista első nem-logikai elemei az
+  admin sorrendjében; az ikon a címke kulcsszavaiból áll elő
+  (`scripts/migrate-webflow/list-spec-labels.mts` felmérte, mik fordulnak elő).
+- **Ami tudatosan kimaradt**: a hero statisztika-sávja (a mockup „15+ év / 1 200+
+  telepített" számai kitaláltak), a mockup CTA-sávja (a user nem kérte), a lábléc
+  showroom-címe és nyitvatartása (szintén placeholder volt).
+
+### Buktatók, amikbe belefutottunk
+
+- **A `next/image` kivételt dob nem konfigurált távoli hosztra**, és ezzel az egész oldalt
+  500-ra viszi. Az adatbázisban maradtak Webflow CDN-linkek, a blog képei pedig Supabase-en
+  vannak (nem a trysoro.com-on). Ezért készült a **`SafeImage`** komponens: a saját
+  `/uploads/...` képeket optimalizálja, a külső URL-eket sima `<img>`-ként rendereli.
+  **Adminból jövő képnél mindig ezt kell használni**, ne közvetlenül a `next/image`-et.
+- **A hosszú, szóköz nélküli e-mail címek** kilógtak a mobil láblécből, és 390px-es
+  nézetben 431px-re tolták a dokumentumot. Tanulság a hibakereséshez: az ilyen túlnyúlást
+  **nem lehet elemek `getBoundingClientRect()`-jével megtalálni** (szövegcsomó lóg túl, nem
+  elem) — a `document.documentElement.scrollWidth` viszont megmutatja. Javítás: `break-words`
+  + `min-w-0` a flex-elemen, és egy oszlop `max-sm`-en.
+- **Egy tördelt bekezdés doboza a `max-width` szerint széles, nem a leghosszabb soráé.** A
+  hero TÜV-kártyáján emiatt 37px holt hely maradt a szöveg után, ami egyenetlen jobb
+  margónak látszott, pedig a padding végig 17–17px volt. A `display:table` trükk itt **nem**
+  segített; a megoldás a max-width behangolása volt.
+- **Vizuális ellenőrzés**: a Playwright Chromium telepítve (`~/.cache/ms-playwright`), ezzel
+  készülnek a képernyőképek és a **pontos doboz-mérések**. Érdemes mérni, nem szemre
+  becsülni — kétszer is félremértem képernyőképről, mielőtt lemértem.
+
+### Állapot
+
+A **főoldal kész**. Hátra van a mockupból a lista- (`szaunak.html`) és a termékoldal
+(`hc-1.html`) átültetése.
+
 ## Munkamódszer-jegyzetek jövőbeli sessionöknek
 
 Ez a szakasz nem egy adott munkanaphoz kötött, hanem a **projekttel/userrel való együttműködés bevált mintáit** rögzíti — új session elején érdemes elolvasni a fenti dátumozott bejegyzések mellett.

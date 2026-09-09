@@ -11,7 +11,7 @@ export function SiteFooter() {
 
   return (
     <footer className="mx-auto max-w-[1480px] px-[5%] pb-10 pt-16 max-lg:px-6">
-      <div className="grid grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 border-b border-line pb-12 max-lg:grid-cols-2 max-lg:gap-8">
+      <div className="grid grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 border-b border-line pb-12 max-lg:grid-cols-2 max-lg:gap-8 max-sm:grid-cols-1 max-sm:gap-7">
         <div>
           <Image
             src="/brand/zedonwellness-logo.png"
@@ -28,7 +28,7 @@ export function SiteFooter() {
           <div className="mb-4 text-xs font-bold tracking-wide text-ink uppercase">
             {t("products")}
           </div>
-          <div className="flex flex-col gap-2.5 text-sm text-muted">
+          <div className="flex min-w-0 flex-col gap-2.5 text-sm text-muted">
             <Link href="/jakuzzik" className="text-muted hover:text-accent">
               {nav("jacuzzis")}
             </Link>
@@ -47,7 +47,7 @@ export function SiteFooter() {
           <div className="mb-4 text-xs font-bold tracking-wide text-ink uppercase">
             {t("company")}
           </div>
-          <div className="flex flex-col gap-2.5 text-sm text-muted">
+          <div className="flex min-w-0 flex-col gap-2.5 text-sm text-muted">
             <Link href="/a-ceg" className="text-muted hover:text-accent">
               {t("about")}
             </Link>
@@ -66,17 +66,17 @@ export function SiteFooter() {
           <div className="mb-4 text-xs font-bold tracking-wide text-ink uppercase">
             {t("contactSection")}
           </div>
-          <div className="flex flex-col gap-2.5 text-sm text-muted">
+          <div className="flex min-w-0 flex-col gap-2.5 text-sm text-muted">
             <a
               href={`tel:${COMPANY.phoneHref}`}
-              className="inline-flex items-start gap-2.5 hover:text-accent"
+              className="inline-flex items-start gap-2.5 break-words hover:text-accent"
             >
               <Phone className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
               {COMPANY.phone}
             </a>
             <a
               href={`mailto:${COMPANY.email}`}
-              className="inline-flex items-start gap-2.5 hover:text-accent"
+              className="inline-flex items-start gap-2.5 break-words hover:text-accent"
             >
               <Mail className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
               {COMPANY.email}
@@ -89,17 +89,17 @@ export function SiteFooter() {
           <div className="mt-6 mb-4 text-xs font-bold tracking-wide text-ink uppercase">
             {t("serviceSection")}
           </div>
-          <div className="flex flex-col gap-2.5 text-sm text-muted">
+          <div className="flex min-w-0 flex-col gap-2.5 text-sm text-muted">
             <a
               href={`tel:${COMPANY.service.phoneHref}`}
-              className="inline-flex items-start gap-2.5 hover:text-accent"
+              className="inline-flex items-start gap-2.5 break-words hover:text-accent"
             >
               <Wrench className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
               {COMPANY.service.contactName} — {COMPANY.service.phone}
             </a>
             <a
               href={`mailto:${COMPANY.service.email}`}
-              className="inline-flex items-start gap-2.5 hover:text-accent"
+              className="inline-flex items-start gap-2.5 break-words hover:text-accent"
             >
               <Mail className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
               {COMPANY.service.email}
@@ -111,7 +111,7 @@ export function SiteFooter() {
         <span>
           © {year} Zedonwellness. {t("rights")}
         </span>
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
           <Link href="/impresszum" className="text-muted/70 hover:text-accent">
             {t("imprint")}
           </Link>
