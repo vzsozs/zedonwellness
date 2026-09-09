@@ -133,7 +133,7 @@ export function ProductActions({
             <select
               value={selectedId ?? ""}
               onChange={(e) => setSelectedId(Number(e.target.value))}
-              className="w-full appearance-none border-[1.5px] border-line bg-white px-4 py-3 pr-10 text-sm font-semibold text-ink outline-none focus:border-coprBlue"
+              className="rounded-control w-full appearance-none border-[1.5px] border-line bg-white px-4 py-3 pr-10 text-sm font-semibold text-ink outline-none focus:border-coprBlue"
             >
               {variants.map((v) => (
                 <option key={v.id} value={v.id} disabled={!v.inStock}>
@@ -143,7 +143,7 @@ export function ProductActions({
               ))}
             </select>
             <ChevronDown
-              className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
               strokeWidth={1.8}
             />
           </div>

@@ -228,7 +228,7 @@
     "city": "City",
     "street": "Address (street, number)",
     "noteOptional": "Note (optional)",
-    "submit": "Place order (obligation to pay)",
+    "submit": "Place order",
     "submitting": "Processing…",
     "summary": "Summary",
     "subtotal": "Subtotal",

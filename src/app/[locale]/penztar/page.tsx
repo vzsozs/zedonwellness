@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import { ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/lib/cart-context";
 import { useCurrency } from "@/lib/currency-context";
@@ -43,7 +44,7 @@ export default function CheckoutPage() {
   if (!hydrated) {
     return (
       <main className="mx-auto max-w-2xl px-[5%] pt-10 pb-25 max-lg:px-6">
-        <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
+        <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">{t("title")}</h1>
         <div className="mt-8 h-40 animate-pulse bg-line/60" aria-hidden />
       </main>
     );
@@ -52,7 +53,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <main className="mx-auto max-w-2xl px-[5%] pt-10 pb-25 max-lg:px-6">
-        <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
+        <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">{t("title")}</h1>
         <CartRemovedNotice names={sync.removed} />
         <p className="mt-6 text-sm text-muted">{t("emptyCart")}</p>
         <Link
@@ -73,7 +74,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-[5%] pt-10 pb-25 max-lg:px-6">
-      <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
+      <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">{t("title")}</h1>
 
       <CartRemovedNotice names={sync.removed} />
 
@@ -117,27 +118,26 @@ export default function CheckoutPage() {
             >
               {t("country")}
             </label>
-            <select
-              id="countryCode"
-              name="countryCode"
-              value={countryCode}
-              onChange={(e) => setCountryCode(e.target.value)}
-              required
-              autoComplete="country"
-              className="w-full border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-accent"
-            >
-              {COUNTRIES.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {locale === "en" ? c.en : c.hu}
-                </option>
-              ))}
-            </select>
-            <div className="mt-1.5 text-xs text-muted">
-              {t("zoneLabel")}:{" "}
-              <span className="font-semibold text-ink">
-                {shipping.zone === "domestic" ? t("zoneDomestic") : t("zoneInternational")}
-              </span>{" "}
-              {t("zoneAutoNote")}
+            <div className="relative">
+              <select
+                id="countryCode"
+                name="countryCode"
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                required
+                autoComplete="country"
+                className="rounded-control w-full appearance-none border border-line bg-white px-3.5 py-2.5 pr-10 text-sm outline-none focus:border-accent"
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {locale === "en" ? c.en : c.hu}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                strokeWidth={1.8}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-5 max-sm:grid-cols-1">
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
           <p className="text-xs text-muted">{t("submitHint")}</p>
         </form>
 
-        <div className="w-80 shrink-0 bg-[#f2f8fd] p-6 max-lg:w-full">
+        <div className="rounded-card w-80 shrink-0 border border-line bg-white p-6 max-lg:w-full">
           <h2 className="mb-4 text-sm font-bold tracking-wide text-ink uppercase">
             {t("summary")}
           </h2>
@@ -261,7 +261,7 @@ function Field({
         required={required}
         defaultValue={defaultValue}
         autoComplete={autoComplete}
-        className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
+        className="rounded-control w-full border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-accent"
       />
     </div>
   );
@@ -277,7 +277,7 @@ function TextArea({ label, name }: { label: string; name: string }) {
         id={name}
         name={name}
         rows={3}
-        className="w-full border border-line px-3.5 py-2.5 text-sm outline-none focus:border-accent"
+        className="rounded-control w-full border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-accent"
       />
     </div>
   );

@@ -228,7 +228,7 @@
     "city": "Város",
     "street": "Cím (utca, házszám)",
     "noteOptional": "Megjegyzés (opcionális)",
-    "submit": "Megrendelés elküldése (fizetési kötelezettséggel)",
+    "submit": "Megrendelés elküldése",
     "submitting": "Feldolgozás…",
     "summary": "Összesítő",
     "subtotal": "Részösszeg",

@@ -30,7 +30,9 @@ export default async function OrderConfirmationPage({
   return (
     <main className="mx-auto max-w-2xl px-[5%] pt-14 pb-25 text-center max-lg:px-6">
       <ClearCartOnMount />
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
+      <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
+        {t("title")}
+      </h1>
       <p className="mt-3 text-sm text-muted">
         {t("orderNumberLabel")}{" "}
         <span className="font-mono font-semibold text-ink">{order.orderNumber}</span>

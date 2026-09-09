@@ -24,7 +24,7 @@ export default function CartPage() {
   if (!hydrated) {
     return (
       <main className="mx-auto max-w-4xl px-[5%] pt-10 pb-25 max-lg:px-6">
-        <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
+        <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">{t("title")}</h1>
         <div className="mt-10 h-24 animate-pulse bg-line/60" aria-hidden />
       </main>
     );
@@ -32,7 +32,7 @@ export default function CartPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-[5%] pt-10 pb-25 max-lg:px-6">
-      <h1 className="text-4xl font-semibold max-lg:text-3xl">{t("title")}</h1>
+      <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">{t("title")}</h1>
 
       <CartRemovedNotice names={sync.removed} />
 
@@ -60,7 +60,7 @@ export default function CartPage() {
                   key={key}
                   className="flex items-center gap-5 border-b border-line pb-5 max-sm:flex-wrap"
                 >
-                  <div className="size-24 shrink-0 overflow-hidden">
+                  <div className="rounded-control size-24 shrink-0 overflow-hidden border border-line bg-white">
                     {item.image ? (
                       <SafeImage
                         src={item.image}
@@ -95,7 +95,7 @@ export default function CartPage() {
                     <CartLineNotices issues={sync.issues.get(key)} />
                   </div>
 
-                  <div className="flex items-center gap-2.5 border border-line">
+                  <div className="rounded-control flex items-center gap-2.5 border border-line bg-white">
                     <button
                       type="button"
                       aria-label={t("decreaseQty")}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ProductSeries } from "@/db/schema";
 import { ProductCard, type ProductCardData } from "@/components/product-card";
@@ -152,15 +153,21 @@ export function CategoryBrowser({
         <label className="mb-4 block text-[13px] font-bold tracking-wide text-ink uppercase">
           {t("sortLabel")}
         </label>
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-          className="w-full border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
-        >
-          <option value="name-asc">{t("sortNameAsc")}</option>
-          <option value="price-asc">{t("sortPriceAsc")}</option>
-          <option value="price-desc">{t("sortPriceDesc")}</option>
-        </select>
+        <div className="relative">
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+            className="rounded-control w-full appearance-none border border-line bg-white px-3 py-2 pr-9 text-sm text-ink outline-none focus:border-accent"
+          >
+            <option value="name-asc">{t("sortNameAsc")}</option>
+            <option value="price-asc">{t("sortPriceAsc")}</option>
+            <option value="price-desc">{t("sortPriceDesc")}</option>
+          </select>
+          <ChevronDown
+            className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted"
+            strokeWidth={1.8}
+          />
+        </div>
       </div>
 
       {hasActiveFilters ? (
