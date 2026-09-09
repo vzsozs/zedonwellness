@@ -5,9 +5,10 @@
  * the contact modal (with the real ones) and the top bar — so the site
  * advertised a phone number nobody answers. Everything reads from here now.
  *
- * ⚠️ TODO (user): the `legal` block below is required on a Hungarian webshop
- * (Impresszum, ÁSZF). The values marked TODO are placeholders — replace them
- * with the real company data before going live.
+ * The `legal` block comes from the live site's own published documents
+ * (zedonwellness.com/felhasznalasi-feltetelek and /adatvedelmi-nyilatkozat,
+ * last revised 2025-03-24). Note the operator is a Slovak company, which is
+ * why VAT is 23% (the Slovak standard rate) rather than the Hungarian 27%.
  */
 
 export const COMPANY = {
@@ -31,15 +32,23 @@ export const COMPANY = {
     facebook: "https://www.facebook.com/profile.php?id=100085312058058",
   },
 
+  /** Additional inboxes named in the privacy policy. */
+  sales: "ertekesites@zedonwellness.com",
+  webshop: "webshop@zedonwellness.com",
+
   legal: {
-    /** TODO: exact registered company name (e.g. "Zedon Kft."). */
-    legalName: "TODO — cégnév",
-    /** TODO: registered seat. */
-    address: "TODO — székhely (irányítószám, település, utca, házszám)",
-    /** TODO: company registration number. */
-    registrationNumber: "TODO — cégjegyzékszám",
-    /** TODO: tax number. */
-    taxNumber: "TODO — adószám",
+    legalName: "Zedonwellness s.r.o.",
+    address: "94301 Štúrovo, Hlavná 22, Szlovákia",
+    /** Slovak VAT identification number. */
+    taxNumber: "SK2121666118",
+    representative: "Kocsis Gábor vezérigazgató",
+    /** Standard Slovak VAT rate, as stated in the published terms. */
+    vatRate: "23%",
+    /** Date the published legal documents were last revised. */
+    revisedAt: "2025. március 24.",
+    /** Not published anywhere on the live site — still needed for a
+     * complete Impresszum. */
+    registrationNumber: "TODO — cégjegyzékszám (IČO)",
     /** TODO: hosting provider name + contact (required in the Impresszum). */
     hosting: "TODO — tárhelyszolgáltató neve és elérhetősége",
   },

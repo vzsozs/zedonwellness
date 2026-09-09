@@ -3,15 +3,29 @@ import { setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { COMPANY } from "@/lib/company";
-import { ORDER_ONLY_THRESHOLD_HUF } from "@/lib/config";
-import { formatHuf } from "@/lib/config";
-import { LegalPage, LegalSection, Todo } from "@/components/legal/legal-page";
+import { LegalPage, LegalSection } from "@/components/legal/legal-page";
 
 export const metadata: Metadata = {
-  title: "Általános Szerződési Feltételek",
+  title: "Felhasználási feltételek",
   description:
-    "A Zedonwellness webáruház általános szerződési feltételei: megrendelés, szállítás, elállási jog, jótállás.",
+    "A Zedonwellness webáruház felhasználási feltételei: megrendelés, szállítási díjak, beüzemelés, fizetés, elállás.",
 };
+
+/** Delivery charges as published in the live terms — flat per product
+ * category, not the weight-banded GLS rates the checkout currently
+ * calculates. See the note in the shipping section. */
+const SHIPPING_ROWS: [string, string][] = [
+  ["Vegyszer, vegyszercsomag, szűrőbetét", "3 900 Ft"],
+  ["Szauna, 1–2 személyes", "60 000 Ft"],
+  ["Szauna, 3 személyes", "60 000 Ft"],
+  ["Szauna, 4–6 személyes", "90 000 Ft"],
+  ["Jakuzzi, 100 km-ig", "120 000 Ft"],
+  ["Jakuzzi, 100–200 km", "150 000 Ft"],
+  ["Jakuzzi, 200 km felett", "200 000 Ft"],
+  ["Swim spa", "250 000 Ft"],
+  ["Úszómedence", "350 Ft / km"],
+  ["Hordószauna", "Helyszín ismerete után, egyedi ajánlat alapján"],
+];
 
 export default async function TermsPage({
   params,
@@ -22,18 +36,17 @@ export default async function TermsPage({
   setRequestLocale(locale as Locale);
 
   return (
-    <LegalPage title="Általános Szerződési Feltételek">
-      <p className="rounded-none border-l-[3px] border-amber-500 bg-amber-50 px-4.5 py-3.5 text-sm text-amber-900">
-        <strong>Jogi ellenőrzésre vár.</strong> Ez a dokumentum a webáruház tényleges
-        működése alapján készült vázlat. Élesítés előtt a sárgával jelölt adatokat ki kell
-        tölteni, és a teljes szöveget jogásszal jóvá kell hagyatni.
+    <LegalPage title="Felhasználási feltételek" updatedAt={COMPANY.legal.revisedAt}>
+      <p className="text-sm leading-relaxed text-muted">
+        A vevő kijelenti, hogy a www.zedonwellness.com honlapon található internetes
+        áruház használata előtt megismerte és elfogadta az alábbi feltételeket.
       </p>
 
       <LegalSection title="1. A szolgáltató">
         <p className="text-sm text-muted">
-          Üzemeltető: <Todo>{COMPANY.legal.legalName}</Todo>, székhely:{" "}
-          <Todo>{COMPANY.legal.address}</Todo>, adószám:{" "}
-          <Todo>{COMPANY.legal.taxNumber}</Todo>. Részletes adatok az{" "}
+          {COMPANY.legal.legalName}, székhely: {COMPANY.legal.address}, adószám:{" "}
+          {COMPANY.legal.taxNumber}, önállóan képviseli:{" "}
+          {COMPANY.legal.representative}. További adatok az{" "}
           <Link href="/impresszum" className="text-accent underline">
             Impresszumban
           </Link>
@@ -41,75 +54,129 @@ export default async function TermsPage({
         </p>
       </LegalSection>
 
-      <LegalSection title="2. A megrendelés menete">
-        <p className="text-sm text-muted">
-          A vásárló a kiválasztott terméket a kosárba helyezi, majd a pénztár oldalon
-          megadja a szállítási és számlázási adatait. A megrendelés elküldése fizetési
-          kötelezettséget keletkeztet. A rendelés beérkezéséről a rendszer automatikus
-          visszaigazoló e-mailt küld; ez a visszaigazolás a szerződés létrejöttét jelenti.
-        </p>
-        <p className="mt-3 text-sm text-muted">
-          Online bankkártyás fizetés jelenleg nem érhető el. A fizetés módjáról (átutalás,
-          személyes átvétel) munkatársunk a rendelés után egyeztet a vásárlóval.
+      <LegalSection title="2. Termékinformációk">
+        <p className="text-sm leading-relaxed text-muted">
+          Az internetes áruházban szereplő termékekkel kapcsolatos árakra és technikai
+          adatokra vonatkozó információk tájékoztató jellegűek, a{" "}
+          {COMPANY.legal.legalName} a változtatás jogát fenntartja. A feltüntetett árak
+          bruttó árak, azaz {COMPANY.legal.vatRate} áfát tartalmaznak.
         </p>
       </LegalSection>
 
-      <LegalSection title="3. Árak">
-        <p className="text-sm text-muted">
-          Az árak forintban értendők és tartalmazzák az áfát. Az oldalon feltüntetett euró
-          árak tájékoztató jellegűek. A{" "}
-          <strong>{formatHuf(ORDER_ONLY_THRESHOLD_HUF)}</strong> feletti bruttó értékű
-          rendelések esetén online fizetés nem adható le, ilyenkor a rendelés
-          megrendelésként rögzül, és a fizetés módjáról egyedileg egyeztetünk.
+      <LegalSection title="3. Megrendelés">
+        <p className="text-sm leading-relaxed text-muted">
+          A vásárló az internetes áruház megrendelési űrlapjának kitöltésével és
+          elküldésével megrendeli az általa megadott árut. A {COMPANY.legal.legalName} a
+          megrendelést e-mailben vagy telefonon igazolja vissza, és tájékoztatja a
+          vásárlót a fizetési feltételekről, a kiszállítás módjáról, időpontjáról és
+          annak díjáról.
         </p>
-        <p className="mt-3 text-sm text-muted">
-          Az &bdquo;Ár érdeklődésre&rdquo; jelöléssel ellátott termékek esetén a
-          weboldalon keresztül nem adható le rendelés — ezekre egyedi árajánlatot adunk.
-        </p>
-      </LegalSection>
-
-      <LegalSection title="4. Szállítás">
-        <p className="text-sm text-muted">
-          A kiszállítást GLS futárszolgálat végzi, bel- és külföldre egyaránt. A szállítási
-          díj a csomag össztömege alapján, súlysávosan kerül meghatározásra; a pontos díj a
-          pénztár oldalon jelenik meg. Nagyméretű termékek (jakuzzi, szauna) és 40 kg feletti
-          küldemények esetén a szállítás egyedi ajánlat alapján történik.
-        </p>
-        <p className="mt-3 text-sm text-muted">
-          Várható szállítási határidő: <Todo>TODO — szállítási határidő megadása</Todo>.
+        <p className="mt-3 text-sm leading-relaxed text-muted">
+          A termékek ellenértékének minimum 50%-át előlegként kell befizetni. A
+          {" "}{COMPANY.legal.legalName} a rendeléseket akkor tekinti érvényesnek, amikor
+          az előleg a bankszámlájára beérkezik.
         </p>
       </LegalSection>
 
-      <LegalSection title="5. Elállási jog">
-        <p className="text-sm text-muted">
-          A fogyasztó a 45/2014. (II. 26.) Korm. rendelet alapján a termék átvételétől
-          számított <strong>14 napon belül</strong> indokolás nélkül elállhat a
-          szerződéstől. Az elállási szándékot a{" "}
+      <LegalSection title="4. Szállítási díjak">
+        <p className="text-sm leading-relaxed text-muted">
+          A csomagok átvételére a rendelésben megadott címzett, vagy az azonos címre
+          bejelentett házastársa, rokona, illetve meghatalmazással rendelkező személy
+          jogosult. Személyes átvétel GLS-sel vagy egyeztetés alapján lehetséges.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[420px] text-sm">
+            <tbody className="text-muted">
+              {SHIPPING_ROWS.map(([label, price]) => (
+                <tr key={label} className="border-b border-line last:border-0">
+                  <td className="py-2.5 pr-4">{label}</td>
+                  <td className="py-2.5 text-right font-semibold whitespace-nowrap text-ink">
+                    {price}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </LegalSection>
+
+      <LegalSection title="5. Termékek beüzemelése">
+        <p className="text-sm leading-relaxed text-muted">
+          Termékeinkhez szakszervizünk általi beüzemelés választható.
+        </p>
+        <h3 className="mt-5 mb-2 text-sm font-bold">
+          A masszázsmedence beüzemelési díja tartalmazza
+        </h3>
+        <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm text-muted">
+          <li>a medence kicsomagolását,</li>
+          <li>az elektromos hálózatra való szabványos bekötést,</li>
+          <li>a vízzel való feltöltést,</li>
+          <li>a tömítések, csatlakozások, ragasztások ellenőrzését,</li>
+          <li>a medence kipróbálását és átadását,</li>
+          <li>rövid vízkezelési és használati oktatást,</li>
+          <li>
+            <strong className="text-ink">3 éves teljes körű garanciát.</strong>
+          </li>
+        </ul>
+        <h3 className="mt-5 mb-2 text-sm font-bold">
+          A szauna beüzemelési díja tartalmazza
+        </h3>
+        <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm text-muted">
+          <li>a lapra szerelt termék összeszerelését,</li>
+          <li>az elektromos hálózatra való szabványos bekötést,</li>
+          <li>
+            <strong className="text-ink">2 éves teljes körű garanciát.</strong>
+          </li>
+        </ul>
+      </LegalSection>
+
+      <LegalSection title="6. Fizetési feltételek">
+        <p className="text-sm leading-relaxed text-muted">
+          A vevő a megrendelés ellenértékét és a szállítási díjat az alábbi módokon
+          fizetheti meg. Megrendeléskor 50% előleg fizetendő (készpénzben a
+          telephelyen vagy átutalással), a fennmaradó összeg pedig:
+        </p>
+        <ul className="mt-3 flex list-disc flex-col gap-1.5 pl-5 text-sm text-muted">
+          <li>
+            a szállítmány átvételekor a sofőrnek készpénzben (utánvét) — cég esetén,
+            illetve 1 500 000 Ft-nál magasabb összegnél ez nem érvényesíthető,
+          </li>
+          <li>a küldemény átvételekor a postásnak készpénzben (postai utánvét),</li>
+          <li>
+            a {COMPANY.legal.legalName} bankszámlájára történő előzetes
+            készpénzbefizetéssel vagy átutalással — ekkor a szállítás a fizetés
+            teljesítését követően történik.
+          </li>
+        </ul>
+        <p className="mt-3 text-sm text-muted">
+          Az előleg összege a végösszegből levonásra kerül. Online bankkártyás fizetés
+          jelenleg nem érhető el.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="7. Elállási jog">
+        <p className="text-sm leading-relaxed text-muted">
+          A fogyasztót az uniós fogyasztóvédelmi szabályok alapján a termék átvételétől
+          számított <strong className="text-ink">14 napon belül</strong> indokolás
+          nélküli elállási jog illeti meg. Az elállási szándékot a{" "}
           <a href={`mailto:${COMPANY.email}`} className="text-accent underline">
             {COMPANY.email}
           </a>{" "}
           címen kell jelezni. A terméket a vásárló saját költségén küldi vissza; a
           vételárat az elállás beérkezésétől számított 14 napon belül visszatérítjük.
         </p>
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-sm leading-relaxed text-muted">
           Az elállási jog nem gyakorolható egyedi igény alapján, a vásárló utasítása
           szerint gyártott vagy egyedileg konfigurált termékek esetén.
         </p>
       </LegalSection>
 
-      <LegalSection title="6. Jótállás és szavatosság">
-        <p className="text-sm text-muted">
-          A termékekre a jogszabályban előírt kellékszavatosság, termékszavatosság,
-          illetve — a kötelező jótállás alá eső termékek esetén — jótállás vonatkozik.
-          A jótállás időtartama: <Todo>TODO — jótállási idő termékkörönként</Todo>.
-        </p>
-      </LegalSection>
-
-      <LegalSection title="7. Panaszkezelés és jogorvoslat">
-        <p className="text-sm text-muted">
-          Panaszát a fenti elérhetőségeken jelezheti. Amennyiben a panaszkezelés nem vezet
-          eredményre, a fogyasztó a lakóhelye szerint illetékes békéltető testülethez,
-          illetve a fogyasztóvédelmi hatósághoz fordulhat. Online vitarendezési platform:{" "}
+      <LegalSection title="8. Panaszkezelés és jogorvoslat">
+        <p className="text-sm leading-relaxed text-muted">
+          Panaszát a fenti elérhetőségeken jelezheti. Amennyiben a panaszkezelés nem
+          vezet eredményre, a fogyasztó a lakóhelye szerint illetékes fogyasztóvédelmi
+          fórumhoz fordulhat. Határon átnyúló vásárlás esetén az Európai Fogyasztói
+          Központ, illetve az online vitarendezési platform vehető igénybe:{" "}
           <a
             href="https://ec.europa.eu/consumers/odr"
             target="_blank"
@@ -122,11 +189,11 @@ export default async function TermsPage({
         </p>
       </LegalSection>
 
-      <LegalSection title="8. Adatkezelés">
+      <LegalSection title="9. Adatkezelés">
         <p className="text-sm text-muted">
           A megrendeléssel kapcsolatos adatkezelésről az{" "}
           <Link href="/adatvedelem" className="text-accent underline">
-            Adatkezelési tájékoztatóban
+            Adatvédelmi nyilatkozatban
           </Link>{" "}
           olvashat.
         </p>

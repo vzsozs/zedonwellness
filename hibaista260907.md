@@ -1034,9 +1034,12 @@ szerint eddig többször nem sikerült böngésző nélkül reprodukálni.
 
 ## Ami rád vár
 
-1. **ÁSZF / Adatvédelem / Impresszum** — a sárga `TODO` mezők kitöltése
-   (cégnév, székhely, cégjegyzékszám, adószám, tárhelyszolgáltató, szállítási
-   határidő, jótállási idő), majd jogi jóváhagyás.
+1. **ÁSZF / Adatvédelem / Impresszum** — *2026-09-09-én nagyrészt elkészült*: a
+   szövegek és a cégadatok átvéve az élő oldal saját dokumentumaiból
+   (`/felhasznalasi-feltetelek`, `/adatvedelmi-nyilatkozat`, lezárva 2025-03-24).
+   **Még hiányzik:** a cégjegyzékszám (IČO) és a tárhelyszolgáltató neve — ezek
+   sehol nincsenek publikálva. Emellett a jogi átnézés továbbra is indokolt, mert
+   az élő ÁSZF több ponton eltér a megépített webshoptól (ld. lentebb).
 2. **E-mail** — Resend-fiók + `RESEND_API_KEY`, `MAIL_FROM`,
    `ORDER_NOTIFICATION_EMAIL`. (Vagy szólj, és SMTP-re írom át.)
 3. **Két placeholder termék képe** — `bull-beepitett-grill` és `hanscraft-hordo`
@@ -1047,3 +1050,26 @@ szerint eddig többször nem sikerült böngésző nélkül reprodukálni.
 5. **Vizuális átnézés** — főleg a termékkártya-rács (💡2) és a grill sötét téma
    váltása (P2-4, P2-5).
 6. **Redirect-térkép** a régi Webflow URL-ekről — élesítés előtt, közösen.
+
+
+---
+
+## Kiegészítés — 2026-09-09: a jogi tartalmak behozása
+
+Az élő oldal két dokumentumából (`/felhasznalasi-feltetelek`,
+`/adatvedelmi-nyilatkozat`) átkerültek a valós adatok és szövegek. Ami menet közben
+kiderült, és **döntést igényel**:
+
+- **Az üzemeltető szlovák cég.** `Zedonwellness s.r.o.`, székhely 94301 Štúrovo,
+  Hlavná 22, adószám `SK2121666118`, képviselő Kocsis Gábor. Emiatt az áfa **23%**
+  (a szlovák általános kulcs), nem a magyar 27% — a korábbi vázlatom magyar
+  jogszabályokra (45/2014. Korm. rendelet, magyar békéltető testület) hivatkozott,
+  ez most uniós szintű megfogalmazásra és az ODR platformra változott.
+- **A szállítási díjak ütköznek a megépített rendszerrel.** Az élő ÁSZF fix,
+  termékkategóriánkénti díjakat sorol (szauna 60–90e Ft, jakuzzi távolság szerint
+  120–200e Ft, swim spa 250e Ft, úszómedence 350 Ft/km), a webshop viszont **GLS
+  súlysávos** díjat számol a pénztárban. A két modell nem ugyanaz.
+- **Az 50%-os előleg nincs megvalósítva.** Az ÁSZF szerint a rendelés csak az előleg
+  beérkezésekor érvényes; a checkoutban ilyen lépés nincs.
+- **Az élő ÁSZF-ből hiányzik az elállási jog és a panaszkezelés.** Ezeket a
+  korábbi vázlatból megtartottam, mert fogyasztói webshopnál kötelezőek.

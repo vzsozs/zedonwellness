@@ -21,17 +21,12 @@ export default async function ImprintPage({
     <LegalPage title="Impresszum">
       <LegalSection title="A szolgáltató adatai">
         <dl className="flex flex-col gap-2.5 text-sm">
-          <Row label="Cégnév">
-            <Todo>{COMPANY.legal.legalName}</Todo>
-          </Row>
-          <Row label="Székhely">
-            <Todo>{COMPANY.legal.address}</Todo>
-          </Row>
+          <Row label="Cégnév">{COMPANY.legal.legalName}</Row>
+          <Row label="Székhely">{COMPANY.legal.address}</Row>
+          <Row label="Képviselő">{COMPANY.legal.representative}</Row>
+          <Row label="Adószám">{COMPANY.legal.taxNumber}</Row>
           <Row label="Cégjegyzékszám">
             <Todo>{COMPANY.legal.registrationNumber}</Todo>
-          </Row>
-          <Row label="Adószám">
-            <Todo>{COMPANY.legal.taxNumber}</Todo>
           </Row>
           <Row label="E-mail">
             <a href={`mailto:${COMPANY.email}`} className="text-accent underline">
@@ -46,22 +41,33 @@ export default async function ImprintPage({
         </dl>
       </LegalSection>
 
+      <LegalSection title="További elérhetőségek">
+        <dl className="flex flex-col gap-2.5 text-sm">
+          <Row label="Értékesítés">
+            <a href={`mailto:${COMPANY.sales}`} className="text-accent underline">
+              {COMPANY.sales}
+            </a>
+          </Row>
+          <Row label="Webáruház">
+            <a href={`mailto:${COMPANY.webshop}`} className="text-accent underline">
+              {COMPANY.webshop}
+            </a>
+          </Row>
+          <Row label="Szerviz">
+            <a href={`mailto:${COMPANY.service.email}`} className="text-accent underline">
+              {COMPANY.service.email}
+            </a>{" "}
+            · {COMPANY.service.contactName},{" "}
+            <a href={`tel:${COMPANY.service.phoneHref}`} className="text-accent underline">
+              {COMPANY.service.phone}
+            </a>
+          </Row>
+        </dl>
+      </LegalSection>
+
       <LegalSection title="Tárhelyszolgáltató">
         <p className="text-sm text-muted">
           <Todo>{COMPANY.legal.hosting}</Todo>
-        </p>
-      </LegalSection>
-
-      <LegalSection title="Szerviz elérhetőség">
-        <p className="text-sm text-muted">
-          {COMPANY.service.contactName} —{" "}
-          <a href={`tel:${COMPANY.service.phoneHref}`} className="text-accent underline">
-            {COMPANY.service.phone}
-          </a>
-          {" · "}
-          <a href={`mailto:${COMPANY.service.email}`} className="text-accent underline">
-            {COMPANY.service.email}
-          </a>
         </p>
       </LegalSection>
     </LegalPage>
