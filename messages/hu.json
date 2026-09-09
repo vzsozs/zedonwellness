@@ -88,10 +88,10 @@
     "featuredTitle": "Legnépszerűbb választások",
     "viewAll": "Összes termék megtekintése",
     "virtualTour": {
-      "titleStart": "Fedezze fel új",
-      "titleHighlight": "Virtuális túránkat",
-      "description": "Tekintse meg az Otthon Design (Construma) kiállításon készült pavilonunkat, tegyen egy virtuális sétát a medencéink és szaunáink között.",
-      "cta": "Tovább"
+      "eyebrow": "Interaktív showroom",
+      "title": "Tegyen egy virtuális sétát bemutatótermünkben",
+      "description": "Tekintse meg az Otthon Design és Construma kiállításokon készült exkluzív pavilonunkat közvetlenül otthonából. Ismerje meg a legújabb medence- és szaunaformákat 3D-ben!",
+      "cta": "Virtuális túra indítása"
     },
     "howWeWork": {
       "title": "Hogyan dolgozunk",
@@ -134,7 +134,9 @@
     "blogTitle": "Legfrissebb cikkeink",
     "tuvTitle": "TÜV Rheinland®",
     "tuvSubtitle": "Európai biztonsági és minőségi tanúsítvány",
-    "categoriesSubtitle": "Válasszon prémium jakuzzijaink, egyedi tervezésű szaunáink és professzionális kerti konyháink közül."
+    "categoriesSubtitle": "Válasszon prémium jakuzzijaink, egyedi tervezésű szaunáink és professzionális kerti konyháink közül.",
+    "blogViewAll": "Összes cikk megtekintése",
+    "blogReadMore": "Tovább olvasom"
   },
   "category": {
     "productCount": "{count, plural, other {# termék}}",

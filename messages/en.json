@@ -88,10 +88,10 @@
     "featuredTitle": "Most popular choices",
     "viewAll": "View all products",
     "virtualTour": {
-      "titleStart": "Discover our new",
-      "titleHighlight": "virtual tour",
-      "description": "Take a look at our pavilion built for the Otthon Design (Construma) exhibition, and take a virtual walk between our pools and saunas.",
-      "cta": "Learn more"
+      "eyebrow": "Interactive showroom",
+      "title": "Take a virtual walk through our showroom",
+      "description": "View our exclusive pavilion built for the Otthon Design and Construma exhibitions straight from home. Explore the latest pool and sauna designs in 3D.",
+      "cta": "Start the virtual tour"
     },
     "howWeWork": {
       "title": "How we work",
@@ -134,7 +134,9 @@
     "blogTitle": "Latest from our blog",
     "tuvTitle": "TÜV Rheinland®",
     "tuvSubtitle": "European safety and quality certification",
-    "categoriesSubtitle": "Choose from our premium hot tubs, custom-built saunas and professional outdoor kitchens."
+    "categoriesSubtitle": "Choose from our premium hot tubs, custom-built saunas and professional outdoor kitchens.",
+    "blogViewAll": "View all articles",
+    "blogReadMore": "Read more"
   },
   "category": {
     "productCount": "{count, plural, one {# product} other {# products}}",
