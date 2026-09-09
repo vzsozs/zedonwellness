@@ -35,10 +35,10 @@ export default async function CompanyPage({
     <main>
       {/* Hero */}
       <div className="px-[5%] pt-16 pb-14 text-center max-lg:px-6">
-        <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-coprBlue/30 bg-coprBlue/10 px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
-        <h1 className="mx-auto mt-3.5 max-w-4xl text-4xl font-bold max-lg:text-3xl">
+        <h1 className="mx-auto max-w-4xl text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
           {t("heroTitleStart")} <span className="text-accent">{t("heroTitleHighlight")}</span>
         </h1>
         <p className="mx-auto mt-4 max-w-4xl text-muted">{t("heroSubtitle")}</p>
@@ -47,13 +47,16 @@ export default async function CompanyPage({
       {/* Why us — 4 pillars */}
       <div id="gyar" className="bg-white px-[5%] py-20 max-lg:px-6">
         <div className="mx-auto max-w-[1480px]">
-          <h2 className="text-center text-4xl font-bold max-lg:text-3xl">
+          <h2 className="text-center text-[42px] leading-tight font-bold tracking-[-0.01em] max-lg:text-3xl">
             {t("pillarsTitle")}
           </h2>
           <div className="mt-12 grid grid-cols-4 gap-7 max-lg:grid-cols-2">
             {PILLARS.map((pillar) => (
-              <div key={pillar.key} className="border border-line">
-                <div className="flex h-40 items-center justify-center bg-paper-muted p-6">
+              <div
+                key={pillar.key}
+                className="rounded-card overflow-hidden border border-line bg-white transition-all duration-300 hover:-translate-y-[3px] hover:border-accent hover:shadow-[0_16px_40px_-6px_rgba(15,45,80,0.14)]"
+              >
+                <div className="flex h-40 items-center justify-center bg-accent-soft p-6">
                   <Image
                     src={pillar.image}
                     alt=""
@@ -78,13 +81,13 @@ export default async function CompanyPage({
       {/* Service */}
       <div id="szerviz" className="bg-[#ebf6fe] px-[5%] py-20 max-lg:px-6">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold max-lg:text-3xl">{t("serviceTitle")}</h2>
+          <h2 className="text-[42px] leading-tight font-bold tracking-[-0.01em] max-lg:text-3xl">{t("serviceTitle")}</h2>
           <p className="mt-4 text-muted">{t("serviceDescription0")}</p>
           <p className="mt-4 text-muted">{t("serviceDescription1")}</p>
           <p className="mt-4 text-muted">{t("serviceDescription2")}</p>
         </div>
 
-        <div className="mx-auto mt-12 max-w-4xl bg-white p-8 max-lg:p-6">
+        <div className="rounded-card mx-auto mt-12 max-w-4xl border border-line bg-white p-8 max-lg:p-6">
           <h3 className="text-center text-lg font-bold">{t("pricingTitle")}</h3>
           <div className="mt-6">
             {PRICING_ROWS.map((row) => (
@@ -105,7 +108,7 @@ export default async function CompanyPage({
 
         {/* Maintenance guide — collapsed by default */}
         <details className="group mx-auto mt-6 max-w-4xl">
-          <summary className="flex cursor-pointer list-none items-center justify-between border border-line px-6 py-4 text-sm font-semibold marker:content-none">
+          <summary className="rounded-card flex cursor-pointer list-none items-center justify-between border border-line bg-white px-6 py-4 text-sm font-semibold transition-colors marker:content-none hover:border-ink">
             {t("maintenance.toggleLabel")}
             <ChevronDown
               className="size-4 shrink-0 transition-transform group-open:rotate-180"
@@ -139,7 +142,7 @@ export default async function CompanyPage({
                       alt=""
                       width={128}
                       height={96}
-                      className="h-24 w-32 shrink-0 border border-line object-cover"
+                      className="rounded-control h-24 w-32 shrink-0 border border-line object-cover"
                     />
                   ) : null}
                 </div>
@@ -164,7 +167,7 @@ export default async function CompanyPage({
                   width={300}
                   height={300}
                   sizes="(max-width: 1024px) 45vw, 250px"
-                  className="aspect-square w-full border border-line object-cover"
+                  className="rounded-card aspect-square w-full border border-line object-cover"
                 />
               ))}
             </div>
@@ -212,16 +215,16 @@ export default async function CompanyPage({
             height={40}
             className="mx-auto h-10 w-auto object-contain"
           />
-          <h2 className="mt-6 text-4xl font-bold max-lg:text-3xl">{t("distributorTitle")}</h2>
+          <h2 className="mt-6 text-[42px] leading-tight font-bold tracking-[-0.01em] max-lg:text-3xl">{t("distributorTitle")}</h2>
           <p className="mt-4 text-muted">{t("distributorDescription")}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <span className="border border-line bg-paper-muted px-4 py-2 text-xs font-semibold">
+            <span className="rounded-full border border-accent/20 bg-accent-soft px-4 py-2 text-xs font-semibold text-accent-dark">
               {t("distributorBadge1")}
             </span>
-            <span className="border border-line bg-paper-muted px-4 py-2 text-xs font-semibold">
+            <span className="rounded-full border border-accent/20 bg-accent-soft px-4 py-2 text-xs font-semibold text-accent-dark">
               {t("distributorBadge2")}
             </span>
-            <span className="border border-line bg-paper-muted px-4 py-2 text-xs font-semibold">
+            <span className="rounded-full border border-accent/20 bg-accent-soft px-4 py-2 text-xs font-semibold text-accent-dark">
               {t("distributorBadge3")}
             </span>
           </div>
@@ -233,7 +236,7 @@ export default async function CompanyPage({
             width={900}
             height={500}
             sizes="(max-width: 1024px) 100vw, 900px"
-            className="h-auto w-full object-contain"
+            className="rounded-card h-auto w-full object-contain"
           />
           <p className="mt-4 text-center text-xs text-muted">{t("partnersCaption")}</p>
         </div>
@@ -247,10 +250,10 @@ export default async function CompanyPage({
             alt="Aqua Excellent"
             width={160}
             height={80}
-            className="h-20 w-auto shrink-0 border border-line object-contain p-3"
+            className="rounded-card h-20 w-auto shrink-0 border border-line bg-white object-contain p-3"
           />
           <div>
-            <h2 className="text-4xl font-bold max-lg:text-3xl">{t("waterTitle")}</h2>
+            <h2 className="text-[42px] leading-tight font-bold tracking-[-0.01em] max-lg:text-3xl">{t("waterTitle")}</h2>
             <p className="mt-4 text-muted">{t("waterDescription")}</p>
           </div>
         </div>

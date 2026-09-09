@@ -40,11 +40,14 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
   return (
     <main className="mx-auto max-w-[1480px]">
-      <div className="px-[5%] pt-16 pb-10 text-center max-lg:px-6">
-        <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+      <div className="mx-auto max-w-[760px] px-[5%] pt-16 pb-10 text-center max-lg:px-6">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-coprBlue/30 bg-coprBlue/10 px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
-        <h1 className="mt-3.5 text-4xl font-bold max-lg:text-3xl">{t("title")}</h1>
+        <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
+          {t("title")}
+        </h1>
+        <p className="mt-4 text-[17px] leading-[1.7] text-muted">{t("metaDescription")}</p>
       </div>
 
       <div className="px-[5%] pb-25 max-lg:px-6">

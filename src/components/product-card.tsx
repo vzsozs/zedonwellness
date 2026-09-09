@@ -124,9 +124,13 @@ export function ProductCard({ product }: { product: ProductCardData }) {
               {t("badgeNew")}
             </span>
           ) : null}
+          {/* Non-token colours on purpose: these badges sit on the photo,
+              not on the page surface, so they must stay dark-on-white even
+              under the grill dark theme — which flips `text-ink` but leaves
+              `bg-white/90` alone. */}
           <span
             className={`rounded-control px-2.5 py-1 text-[10.5px] font-bold tracking-wide ${
-              product.inStock ? "bg-white/90 text-ink" : "bg-muted text-white"
+              product.inStock ? "bg-white/90 text-neutral-900" : "bg-muted text-white"
             }`}
           >
             {product.inStock ? t("badgeInStock") : t("badgeOutOfStock")}

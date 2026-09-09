@@ -13,16 +13,18 @@ export function BlogArticle({
   backLabel: string;
 }) {
   return (
-    <article className="mx-auto max-w-3xl px-[5%] pb-25 max-lg:px-6">
+    <article className="mx-auto max-w-3xl px-[5%] pt-12 pb-25 max-lg:px-6 max-lg:pt-8">
       <Link
         href="/blog"
-        className="mb-8 inline-flex items-center gap-2 border border-line px-4 py-2 text-sm font-semibold hover:text-accent"
+        className="rounded-control mb-8 inline-flex items-center gap-2 border-[1.5px] border-ink px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
       >
         <ArrowLeft className="size-4" strokeWidth={2.2} />
         {backLabel}
       </Link>
 
-      <h1 className="text-3xl font-bold max-lg:text-2xl">{article.title}</h1>
+      <h1 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
+        {article.title}
+      </h1>
       <time className="mt-3 block text-sm text-muted" dateTime={article.isoDate}>
         {article.date}
       </time>
@@ -34,7 +36,7 @@ export function BlogArticle({
           width={1000}
           height={560}
           sizes="(max-width: 1024px) 100vw, 768px"
-          className="mt-8 h-auto w-full object-cover"
+          className="rounded-card mt-8 h-auto w-full object-cover"
         />
       ) : null}
 

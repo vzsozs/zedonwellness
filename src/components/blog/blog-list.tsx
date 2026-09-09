@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { BlogCard } from "@/components/blog/blog-card";
 import type { SoroArticle } from "@/lib/soro";
-import Image from "next/image";
 
 const PAGE_SIZE = 20;
 
@@ -130,32 +129,9 @@ export function BlogList({ articles }: { articles: SoroArticle[] }) {
       {shown.length === 0 ? (
         <p className="text-center text-muted">{t("noResults")}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-7 max-sm:grid-cols-1">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-7 max-sm:grid-cols-1">
           {shown.map((post) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="group border border-line bg-white"
-            >
-              <div className="relative h-44 overflow-hidden bg-paper-muted">
-                {post.image ? (
-                  <Image
-                    src={post.image}
-                    alt=""
-                    fill
-                    sizes="(max-width: 640px) 100vw, 45vw"
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                  />
-                ) : null}
-              </div>
-              <div className="p-6">
-                <h2 className="text-lg font-bold group-hover:text-accent">{post.title}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{post.excerpt}</p>
-                <time className="mt-3 block text-xs text-muted" dateTime={post.isoDate}>
-                  {post.date}
-                </time>
-              </div>
-            </Link>
+            <BlogCard key={post.slug} post={post} />
           ))}
         </div>
       )}
