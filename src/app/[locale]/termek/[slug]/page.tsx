@@ -99,6 +99,8 @@ export default async function ProductPage({
         inStock: true,
         isNew: true,
         isOnSale: true,
+        specs: true,
+        categoryId: true,
       },
     with: { series: true },
   });
@@ -214,7 +216,7 @@ export default async function ProductPage({
   };
 
   return (
-    <main className="mx-auto max-w-[1600px]">
+    <main className="mx-auto max-w-[1480px]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(productLd) }}
@@ -414,7 +416,7 @@ export default async function ProductPage({
       {related.length > 0 ? (
         <div className="px-[5%] pb-25 max-lg:px-6">
           <h2 className="mb-7.5 text-[26px] font-semibold">{t("relatedHeading")}</h2>
-          <div className="grid grid-cols-4 gap-6 max-lg:grid-cols-2">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6 max-sm:grid-cols-1">
             {related.map((p) => (
               <ProductCard key={p.slug} product={p} />
             ))}

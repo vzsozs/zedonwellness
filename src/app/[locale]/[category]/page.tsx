@@ -68,6 +68,8 @@ export default async function CategoryPage({ params }: Props) {
         inStock: true,
         isNew: true,
         isOnSale: true,
+        specs: true,
+        categoryId: true,
       },
       with: { series: true },
     }),
@@ -100,18 +102,18 @@ export default async function CategoryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbLd) }}
       />
-      <div className="px-[5%] pt-10 max-lg:px-6">
-        <div className="text-[13px] text-muted/80">
-          <Link href="/" className="hover:text-accent">
-            {tc("home")}
-          </Link>{" "}
-          / {tc("products")} / <span className="font-semibold text-ink">{name}</span>
-        </div>
-      </div>
-
       <CategoryBrowser
+        breadcrumb={
+          <div className="text-[13px] text-muted/80">
+            <Link href="/" className="hover:text-accent">
+              {tc("home")}
+            </Link>{" "}
+            / {tc("products")} / <span className="font-semibold text-ink">{name}</span>
+          </div>
+        }
         name={name}
         description={description}
+        eyebrow={localized(locale, category.cardBadgeHu ?? "", category.cardBadgeEn)}
         products={productList}
         seriesList={seriesList}
         banner={categorySlug === "szaunak" ? <SaunaBanner /> : null}

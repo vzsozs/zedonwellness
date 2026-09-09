@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { ProductSeries } from "@/db/schema";
 import { ProductCard, type ProductCardData } from "@/components/product-card";
+import { Container } from "@/components/layout/container";
 import { PriceRangeSlider } from "./price-range-slider";
 
 type SortOrder = "name-asc" | "price-asc" | "price-desc";
@@ -11,15 +12,20 @@ type SortOrder = "name-asc" | "price-asc" | "price-desc";
 export function CategoryBrowser({
   name,
   description,
+  eyebrow,
   products,
   seriesList,
   banner,
+  breadcrumb,
 }: {
   name: string;
   description: string;
+  /** Small label above the title — the category's card badge. */
+  eyebrow?: string;
   products: ProductCardData[];
   seriesList: ProductSeries[];
   banner?: ReactNode;
+  breadcrumb?: ReactNode;
 }) {
   const t = useTranslations("category");
 
@@ -169,23 +175,75 @@ export function CategoryBrowser({
     </>
   );
 
+  /** Series shortcuts in the hero. They drive the same state as the
+   * sidebar checkboxes rather than a second, parallel filter — two
+   * controls for one thing is how filter UIs get out of sync. */
+  const seriesCounts = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const p of products) {
+      if (p.seriesId !== null) map.set(p.seriesId, (map.get(p.seriesId) ?? 0) + 1);
+    }
+    return map;
+  }, [products]);
+
   return (
-    <div className="px-[5%] max-lg:px-6">
+    <div>
+      {/* Dark banner from the redesign mockup, in our palette. */}
+      <section className="relative isolate overflow-hidden border-b border-white/10 bg-[linear-gradient(135deg,#111a19_0%,#1b2a28_50%,#111a19_100%)] py-16 text-white max-lg:py-12">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-32 right-[5%] size-[550px] rounded-full bg-[radial-gradient(circle,rgba(4,187,240,0.16)_0%,rgba(14,140,154,0.05)_50%,transparent_70%)]"
+        />
+        <Container className="relative">
+          {eyebrow ? (
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-coprBlue/35 bg-coprBlue/15 px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] text-coprBlue uppercase">
+              {eyebrow}
+            </div>
+          ) : null}
+          <h1 className="max-w-4xl text-[48px] leading-tight font-bold tracking-[-0.01em] max-lg:text-4xl max-sm:text-3xl">
+            {name}
+          </h1>
+          {description ? (
+            <p className="mt-3.5 max-w-[720px] text-[16.5px] leading-[1.7] text-white/70">
+              {description}
+            </p>
+          ) : null}
+
+          {seriesList.length > 0 ? (
+            <div className="mt-7 flex flex-wrap gap-2.5">
+              <ChipButton
+                active={selectedSeriesIds.length === 0}
+                count={products.length}
+                onClick={() => setSelectedSeriesIds([])}
+              >
+                {t("allModels")}
+              </ChipButton>
+              {seriesList.map((series) => (
+                <ChipButton
+                  key={series.id}
+                  active={selectedSeriesIds.includes(series.id)}
+                  count={seriesCounts.get(series.id) ?? 0}
+                  onClick={() => toggle(selectedSeriesIds, series.id, setSelectedSeriesIds)}
+                >
+                  {series.name}
+                </ChipButton>
+              ))}
+            </div>
+          ) : null}
+        </Container>
+      </section>
+
+      <Container>
+      {breadcrumb ? <div className="pt-6">{breadcrumb}</div> : null}
       {banner ? <div className="mt-8">{banner}</div> : null}
 
-      <div className="mt-5 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3">
-        <div>
-          <h1 className="text-4xl font-semibold max-lg:text-3xl">{name}</h1>
-          {description ? (
-            <p className="mt-2.5 max-w-xl text-sm text-muted">{description}</p>
-          ) : null}
-        </div>
+      <div className="mt-8 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("productCount", { count: filtered.length })}
         </div>
       </div>
 
-      <div className="flex gap-10 pt-9 pb-25 max-lg:flex-col">
+      <div className="flex gap-10 pt-6 pb-25 max-lg:flex-col">
         {/* Desktop filters */}
         <aside className="w-64 shrink-0 max-lg:hidden">
           <div className="bg-[#f2f8fd] p-6">{filterFieldset}</div>
@@ -205,7 +263,7 @@ export function CategoryBrowser({
               {hasActiveFilters ? t("noResults") : t("comingSoon")}
             </p>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-6 gap-y-6.5 max-sm:grid-cols-1">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-6 gap-y-6.5 max-sm:grid-cols-1">
               {filtered.map((product) => (
                 <ProductCard key={product.slug} product={product} />
               ))}
@@ -213,6 +271,41 @@ export function CategoryBrowser({
           )}
         </div>
       </div>
+      </Container>
     </div>
+  );
+}
+
+function ChipButton({
+  active,
+  count,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  count: number;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex items-center gap-2 rounded-full border px-[18px] py-2 text-[13px] font-semibold transition-colors ${
+        active
+          ? "border-coprBlue bg-coprBlue text-white shadow-[0_0_16px_rgba(4,187,240,0.3)]"
+          : "border-white/15 bg-white/[0.06] text-white/85 hover:bg-white/[0.12]"
+      }`}
+    >
+      {children}
+      <span
+        className={`rounded-full px-1.5 py-0.5 text-[11px] ${
+          active ? "bg-black/20" : "bg-black/25 text-white/70"
+        }`}
+      >
+        {count}
+      </span>
+    </button>
   );
 }

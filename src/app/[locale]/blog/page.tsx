@@ -39,7 +39,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const articles = await getSoroArticles();
 
   return (
-    <main className="mx-auto max-w-[1400px]">
+    <main className="mx-auto max-w-[1480px]">
       <div className="px-[5%] pt-16 pb-10 text-center max-lg:px-6">
         <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
           {t("eyebrow")}

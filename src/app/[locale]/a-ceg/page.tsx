@@ -46,7 +46,7 @@ export default async function CompanyPage({
 
       {/* Why us — 4 pillars */}
       <div id="gyar" className="bg-white px-[5%] py-20 max-lg:px-6">
-        <div className="mx-auto max-w-[1400px]">
+        <div className="mx-auto max-w-[1480px]">
           <h2 className="text-center text-4xl font-bold max-lg:text-3xl">
             {t("pillarsTitle")}
           </h2>

@@ -50,6 +50,8 @@ export default async function SearchPage({
             inStock: true,
             isNew: true,
             isOnSale: true,
+            specs: true,
+            categoryId: true,
           },
           with: { series: true },
         })
@@ -68,7 +70,7 @@ export default async function SearchPage({
     : [];
 
   return (
-    <main className="px-[5%] pt-10 pb-25 max-lg:px-6">
+    <main className="mx-auto max-w-[1480px] px-[5%] pt-10 pb-25 max-lg:px-6">
       <h1 className="text-3xl font-semibold max-lg:text-2xl">{t("heading")}</h1>
       <p className="mt-2.5 text-sm text-muted">
         {query ? t("resultCount", { count: results.length, query }) : t("prompt")}
@@ -77,7 +79,7 @@ export default async function SearchPage({
       {query && results.length === 0 ? (
         <p className="mt-10 text-sm text-muted">{t("noResults")}</p>
       ) : results.length > 0 ? (
-        <div className="mt-10 grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-6 gap-y-6.5 max-sm:grid-cols-1">
+        <div className="mt-10 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-6 gap-y-6.5 max-sm:grid-cols-1">
           {results.map((product) => (
             <ProductCard key={product.slug} product={product} />
           ))}

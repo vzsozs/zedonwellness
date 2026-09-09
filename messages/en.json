@@ -155,7 +155,8 @@
     "saunaBannerGallery": "Gallery",
     "saunaBannerContact": "Contact",
     "noResults": "No products match the filter in this category.",
-    "comingSoon": "Products will be available in this category soon."
+    "comingSoon": "Products will be available in this category soon.",
+    "allModels": "All models"
   },
   "product": {
     "seriesSuffix": "series",

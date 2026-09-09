@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  FeaturedProductCard,
-  type FeaturedProductData,
-} from "@/components/home/featured-product-card";
+import { ProductCard, type ProductCardData } from "@/components/product-card";
 
 export function FeaturedProductsTabs({
   tabs,
 }: {
-  tabs: { slug: string; name: string; products: FeaturedProductData[] }[];
+  tabs: { slug: string; name: string; products: ProductCardData[] }[];
 }) {
   const [active, setActive] = useState(tabs[0]?.slug);
   const current = tabs.find((tab) => tab.slug === active) ?? tabs[0];
@@ -34,9 +31,9 @@ export function FeaturedProductsTabs({
           ))}
         </div>
       ) : null}
-      <div className="grid grid-cols-3 gap-7 max-lg:grid-cols-2 max-sm:grid-cols-1">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-7 max-sm:grid-cols-1">
         {current.products.map((p) => (
-          <FeaturedProductCard key={p.slug} product={p} />
+          <ProductCard key={p.slug} product={p} />
         ))}
       </div>
     </div>
