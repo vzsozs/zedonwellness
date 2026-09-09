@@ -5,7 +5,9 @@ services:
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER:-zw_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-zw_password}
+      # No default on purpose: a missing DB_PASSWORD must stop the stack,
+      # not silently start production on a well-known password.
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD kötelező — állítsd be a .env fájlban}
       POSTGRES_DB: ${DB_NAME:-zw_shop}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -13,6 +15,31 @@ services:
     # The web container talks to it over the internal zw_network instead.
     ports:
       - "127.0.0.1:5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-zw_user} -d ${DB_NAME:-zw_shop}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - zw_network
+
+  # Runs the pending Drizzle migrations, then exits. The web service waits
+  # for it to finish successfully, so a deploy can no longer start the app
+  # against a schema that hasn't been migrated yet — previously this was a
+  # manual step over an SSH tunnel that was easy to forget.
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    container_name: zw-shop-migrate
+    restart: "no"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - zw_network
 
@@ -28,8 +55,17 @@ services:
       - ./uploads:/app/uploads
     networks:
       - zw_network
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:

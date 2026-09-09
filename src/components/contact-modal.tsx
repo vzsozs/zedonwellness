@@ -3,7 +3,9 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { X, Mail, Phone, Facebook } from "lucide-react";
+import { COMPANY } from "@/lib/company";
 import { useGrillThemeActive } from "@/lib/grill-theme-context";
+import Image from "next/image";
 
 export function ContactModal({
   open,
@@ -49,15 +51,19 @@ export function ContactModal({
         </button>
 
         {isGrill ? (
-          <img
+          <Image
             src="/ZedonGrill-logo-Eng-update.svg"
             alt="ZedonGrill"
+            width={280}
+            height={112}
             className="mx-auto h-28 w-auto"
           />
         ) : (
-          <img
+          <Image
             src="/brand/zedonwellness-logo.png"
             alt="Zedonwellness"
+            width={191}
+            height={32}
             className="mx-auto h-8 w-auto"
           />
         )}
@@ -68,18 +74,18 @@ export function ContactModal({
           </div>
           <div className="mt-3.5 flex flex-col items-center gap-2 text-sm">
             <a
-              href={`mailto:${isGrill ? "sales@zedongrill.com" : "info@zedonwellness.com"}`}
+              href={`mailto:${isGrill ? COMPANY.grill.email : COMPANY.email}`}
               className="inline-flex items-center gap-2 hover:text-accent"
             >
               <Mail className="size-4 shrink-0" strokeWidth={1.8} />
-              {isGrill ? "sales@zedongrill.com" : "info@zedonwellness.com"}
+              {isGrill ? COMPANY.grill.email : COMPANY.email}
             </a>
             <a
-              href="tel:+36309513808"
+              href={`tel:${COMPANY.phoneHref}`}
               className="inline-flex items-center gap-2 hover:text-accent"
             >
               <Phone className="size-4 shrink-0" strokeWidth={1.8} />
-              +36 30 951 3808
+              {COMPANY.phone}
             </a>
           </div>
         </div>
@@ -91,18 +97,18 @@ export function ContactModal({
             </div>
             <div className="mt-3.5 flex flex-col items-center gap-2 text-sm">
               <a
-                href="mailto:szerviz@zedonwellness.com"
+                href={`mailto:${COMPANY.service.email}`}
                 className="inline-flex items-center gap-2 hover:text-accent"
               >
                 <Mail className="size-4 shrink-0" strokeWidth={1.8} />
-                szerviz@zedonwellness.com
+                {COMPANY.service.email}
               </a>
               <a
-                href="tel:+36709449442"
+                href={`tel:${COMPANY.service.phoneHref}`}
                 className="inline-flex items-center gap-2 hover:text-accent"
               >
                 <Phone className="size-4 shrink-0" strokeWidth={1.8} />
-                Kiss György — +36 70 944 9442
+                {COMPANY.service.contactName} — {COMPANY.service.phone}
               </a>
             </div>
           </div>
@@ -115,12 +121,12 @@ export function ContactModal({
           <a
             href={
               isGrill
-                ? "https://www.facebook.com/profile.php?id=100085312058058"
-                : "https://www.facebook.com/zedonwellness/"
+                ? COMPANY.grill.facebook
+                : COMPANY.facebook
             }
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3.5 inline-flex items-center gap-2 border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+            className="rounded-control mt-3.5 inline-flex items-center gap-2 border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
           >
             <Facebook className="size-4" strokeWidth={1.8} />
             Facebook

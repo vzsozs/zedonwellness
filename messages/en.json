@@ -13,7 +13,16 @@
     "home": "Home",
     "products": "Products",
     "search": "Search",
-    "searchPlaceholder": "Search…"
+    "searchPlaceholder": "Search…",
+    "close": "Close",
+    "previousImage": "Previous image",
+    "nextImage": "Next image",
+    "imageViewer": "Image viewer",
+    "zoomImage": "Zoom image",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "yes": "Yes",
+    "no": "No"
   },
   "contactModal": {
     "close": "Close",
@@ -40,10 +49,11 @@
     "filterKarbantartas": "Maintenance",
     "filterGrillek": "Grills",
     "searchPlaceholder": "Search articles…",
-    "noResults": "No articles match this filter."
+    "noResults": "No articles match this filter.",
+    "metaDescription": "Advice, tips and news from the world of wellness, saunas and grills — by the Zedonwellness experts."
   },
   "topbar": {
-    "phone": "Free consultation: +36 1 234 5678",
+    "phone": "Free consultation: <highlight>{phone}</highlight>",
     "shipping": "Nationwide delivery"
   },
   "home": {
@@ -54,22 +64,34 @@
     "ctaPrimary": "Explore products",
     "ctaSecondary": "Contact",
     "trust": {
-      "warranty": "5-year warranty",
-      "shipping": "Nationwide home delivery",
-      "service": "In-house service team",
-      "consulting": "On-site expert consultation"
+      "warranty": {
+        "title": "3-year full warranty",
+        "description": "Direct manufacturer parts supply and official service."
+      },
+      "shipping": {
+        "title": "Nationwide delivery",
+        "description": "With our own fleet, including crane assistance and commissioning."
+      },
+      "service": {
+        "title": "In-house service team",
+        "description": "Fast fault repair, maintenance and winterising services."
+      },
+      "consulting": {
+        "title": "On-site consultation",
+        "description": "Our colleagues survey your garden and terrace free of charge."
+      }
     },
     "categoriesEyebrow": "Product categories",
-    "categoriesTitle": "Explore our range",
-    "categoriesCta": "View",
-    "featuredEyebrow": "Featured products",
-    "featuredTitle": "Our most popular models",
-    "viewAll": "All products",
+    "categoriesTitle": "Explore our exclusive wellness range",
+    "categoriesCta": "View the range",
+    "featuredEyebrow": "Featured models",
+    "featuredTitle": "Most popular choices",
+    "viewAll": "View all products",
     "virtualTour": {
-      "titleStart": "Discover our new",
-      "titleHighlight": "virtual tour",
-      "description": "Take a look at our pavilion built for the Otthon Design (Construma) exhibition, and take a virtual walk between our pools and saunas.",
-      "cta": "Learn more"
+      "eyebrow": "Interactive showroom",
+      "title": "Take a virtual walk through our showroom",
+      "description": "View our exclusive pavilion built for the Otthon Design and Construma exhibitions straight from home. Explore the latest pool and sauna designs in 3D.",
+      "cta": "Start the virtual tour"
     },
     "howWeWork": {
       "title": "How we work",
@@ -109,7 +131,12 @@
     "extrasEyebrow": "Extras",
     "extrasTitle": "Complete the experience",
     "blogEyebrow": "Blog",
-    "blogTitle": "Latest from our blog"
+    "blogTitle": "Latest from our blog",
+    "tuvTitle": "TÜV Rheinland®",
+    "tuvSubtitle": "European safety and quality certification",
+    "categoriesSubtitle": "Choose from our premium hot tubs, custom-built saunas and professional outdoor kitchens.",
+    "blogViewAll": "View all articles",
+    "blogReadMore": "Read more"
   },
   "category": {
     "productCount": "{count, plural, one {# product} other {# products}}",
@@ -157,7 +184,10 @@
     "favoriteAria": "Add to favorites",
     "badgeNew": "NEW",
     "badgeSale": "SALE",
-    "badgeOutOfStock": "OUT OF STOCK"
+    "badgeOutOfStock": "OUT OF STOCK",
+    "badgeInStock": "In stock",
+    "detailsCta": "Details",
+    "capacityValue": "Seats {count}"
   },
   "cart": {
     "title": "Cart",
@@ -170,7 +200,16 @@
     "removeItem": "Remove from cart",
     "shippingNote": "Shipping cost will be calculated in the next step, after entering your address.",
     "subtotal": "Subtotal",
-    "continue": "Continue to checkout"
+    "continue": "Continue to checkout",
+    "blockedNote": "One of the items in your cart cannot be ordered right now — remove it to continue to checkout.",
+    "issues": {
+      "unavailable": "This product is no longer available.",
+      "variantUnavailable": "The selected variant is no longer available.",
+      "outOfStock": "Currently out of stock.",
+      "priceOnRequest": "This product has no online price — please request a quote.",
+      "priceChanged": "The price changed since this was added to your cart. The price shown above is the valid one.",
+      "removed": "Removed from your cart because it is no longer available: {names}"
+    }
   },
   "checkout": {
     "title": "Checkout",
@@ -188,7 +227,7 @@
     "city": "City",
     "street": "Address (street, number)",
     "noteOptional": "Note (optional)",
-    "submit": "Place order",
+    "submit": "Place order (obligation to pay)",
     "submitting": "Processing…",
     "summary": "Summary",
     "subtotal": "Subtotal",
@@ -200,7 +239,12 @@
     "errorInvalidEmail": "Invalid email address",
     "errorEmptyCart": "The cart is empty.",
     "errorProductUnavailable": "One of the products is no longer available.",
-    "errorVariantUnavailable": "One of the selected product variants is no longer available."
+    "errorVariantUnavailable": "One of the selected product variants is no longer available.",
+    "acceptTerms": "I have read and accept the <terms>Terms and Conditions</terms> and the <privacy>Privacy Policy</privacy>.",
+    "errorTermsRequired": "You must accept the Terms and Conditions and the Privacy Policy.",
+    "errorCartChanged": "Your cart changed in the meantime — please review the items and try again.",
+    "errorPriceChanged": "A price changed. We refreshed your cart — check the total and submit again.",
+    "submitHint": "Placing this order creates an obligation to pay. Online payment is not available yet — our colleague will agree the payment method with you."
   },
   "orderConfirmation": {
     "title": "Thank you for your order!",
@@ -245,11 +289,26 @@
     "pricingTitle": "Service pricing",
     "pricingNote": "Prices are indicative and do not constitute an offer.",
     "pricing": {
-      "callout": { "label": "Nationwide callout fee", "price": "60,000 HUF + VAT" },
-      "hourly": { "label": "Service hourly rate", "price": "18,000 HUF / hour + VAT" },
-      "maintenance": { "label": "Maintenance / water change", "price": "120,000 HUF + VAT" },
-      "commissioning": { "label": "Commissioning (jacuzzi / sauna / swim spa)", "price": "120,000 HUF + VAT" },
-      "assessment": { "label": "Expert condition assessment", "price": "69,900 HUF + VAT" }
+      "callout": {
+        "label": "Nationwide callout fee",
+        "price": "60,000 HUF + VAT"
+      },
+      "hourly": {
+        "label": "Service hourly rate",
+        "price": "18,000 HUF / hour + VAT"
+      },
+      "maintenance": {
+        "label": "Maintenance / water change",
+        "price": "120,000 HUF + VAT"
+      },
+      "commissioning": {
+        "label": "Commissioning (jacuzzi / sauna / swim spa)",
+        "price": "120,000 HUF + VAT"
+      },
+      "assessment": {
+        "label": "Expert condition assessment",
+        "price": "69,900 HUF + VAT"
+      }
     },
     "pricingFootnote": "* A final quote requires knowing the pool type, the issue and its current condition.",
     "maintenance": {
@@ -338,6 +397,23 @@
     "contactSection": "Contact",
     "rights": "All rights reserved.",
     "privacy": "Privacy policy",
-    "terms": "Terms of use"
+    "terms": "Terms of use",
+    "imprint": "Imprint",
+    "serviceSection": "Service"
+  },
+  "notFound": {
+    "title": "We couldn't find that page",
+    "description": "The page you are looking for may have been removed or moved to a new address. The links below will get you where you need to go.",
+    "backHome": "Back to homepage",
+    "popularHeading": "Popular pages"
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "description": "An error occurred while loading this page. Please try again — if it keeps happening, get in touch with us.",
+    "retry": "Try again"
+  },
+  "meta": {
+    "defaultTitle": "Zedonwellness — hot tubs, saunas, grills",
+    "defaultDescription": "Premium hot tubs, saunas and grills — from design to installation. TÜV Rheinland certified quality, in-house manufacturing, nationwide delivery."
   }
 }

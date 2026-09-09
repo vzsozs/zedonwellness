@@ -27,6 +27,9 @@ export default function ImportProductsPage() {
         </p>
         <p className="mt-2">
           Legegyszerűbb, ha a{" "}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- 
+              route handler that streams a CSV download, not a page: next/link
+              would prefetch it and trigger a spurious export. */}
           <a href="/admin/products/export" className="font-semibold text-accent hover:text-accent-dark">
             CSV exportot
           </a>{" "}

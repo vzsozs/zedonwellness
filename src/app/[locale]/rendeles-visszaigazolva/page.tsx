@@ -28,7 +28,7 @@ export default async function OrderConfirmationPage({
   if (!order) notFound();
 
   return (
-    <main className="mx-auto max-w-2xl px-16 pt-14 pb-25 text-center max-lg:px-6">
+    <main className="mx-auto max-w-2xl px-[5%] pt-14 pb-25 text-center max-lg:px-6">
       <ClearCartOnMount />
       <h1 className="text-3xl font-semibold">{t("title")}</h1>
       <p className="mt-3 text-sm text-muted">
@@ -84,7 +84,7 @@ export default async function OrderConfirmationPage({
 
       <Link
         href="/"
-        className="mt-8 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
+        className="rounded-control mt-8 inline-block border-[1.5px] border-ink px-6 py-3 text-sm font-semibold hover:bg-ink hover:text-white"
       >
         {t("backToHome")}
       </Link>

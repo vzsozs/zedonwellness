@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { shippingRates } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { createShippingRate, deleteShippingRate } from "./actions";
+import { ActionForm } from "@/components/admin/action-form";
+import { ActionButton } from "@/components/admin/action-button";
 
 const ZONE_LABEL = { domestic: "Belföld", international: "Külföld" } as const;
 
@@ -44,16 +46,14 @@ export default async function ShippingPage() {
                     : `${Number(r.priceHuf ?? 0).toLocaleString("hu-HU")} Ft`}
                 </td>
                 <td className="px-5 py-3 text-right">
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteShippingRate(r.id);
-                    }}
+                  <ActionButton
+                    action={deleteShippingRate.bind(null, r.id)}
+                    confirmMessage="Biztosan törlöd ezt a súlysávot?"
+                    aria-label="Törlés"
+                    className="text-red-600 hover:text-red-800 disabled:opacity-50"
                   >
-                    <button type="submit" aria-label="Törlés" className="text-red-600 hover:text-red-800">
-                      <Trash2 className="size-4" strokeWidth={1.8} />
-                    </button>
-                  </form>
+                    <Trash2 className="size-4" strokeWidth={1.8} />
+                  </ActionButton>
                 </td>
               </tr>
             ))}
@@ -70,7 +70,7 @@ export default async function ShippingPage() {
 
       <div className="max-w-md border border-line bg-white p-6">
         <h2 className="mb-5 text-base font-semibold">Új súlysáv</h2>
-        <form action={createShippingRate} className="flex flex-col gap-4">
+        <ActionForm action={createShippingRate} className="flex flex-col gap-4">
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-muted">
               Zóna
@@ -104,7 +104,7 @@ export default async function ShippingPage() {
           >
             Létrehozás
           </button>
-        </form>
+        </ActionForm>
       </div>
     </div>
   );

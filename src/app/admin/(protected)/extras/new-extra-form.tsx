@@ -3,17 +3,17 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
+import { useActionError } from "@/components/admin/use-action-error";
 import { createExtra } from "./actions";
 
 export function NewExtraForm({ eurHufRate }: { eurHufRate: number }) {
   const [state, formAction, pending] = useActionState(createExtra, initialActionState);
-  const [modalOpen, setModalOpen] = useState(false);
+  const actionError = useActionError(state);
   const [priceEur, setPriceEur] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const wasPending = useRef(false);
 
   useEffect(() => {
-    if (state.error) setModalOpen(true);
     // Reset the form after a successful create (pending just turned false
     // and there's no error to show).
     if (wasPending.current && !pending && !state.error) {
@@ -26,8 +26,8 @@ export function NewExtraForm({ eurHufRate }: { eurHufRate: number }) {
   return (
     <div className="max-w-md border border-line bg-white p-6">
       <ErrorModal
-        message={modalOpen ? state.error : null}
-        onClose={() => setModalOpen(false)}
+        message={actionError.message}
+        onClose={actionError.dismiss}
       />
       <h2 className="mb-5 text-base font-semibold">Új extra</h2>
       <form ref={formRef} action={formAction} className="flex flex-col gap-4">

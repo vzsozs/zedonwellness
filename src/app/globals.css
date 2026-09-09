@@ -19,6 +19,26 @@
 
   --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  /* Corner radii — one source for the whole site, so "rounded buttons"
+     stays one decision rather than a number retyped in fifty places.
+     `control` covers anything you click or type into, `card` the raised
+     surfaces. Product/category photos deliberately stay square: rounding
+     them clips the corner of the actual photo. */
+  --radius-control: 8px;
+  --radius-card: 12px;
+}
+
+@layer base {
+  /* Applies to every real control without touching a single component.
+     Tailwind utilities sit in a later layer, so `rounded-full` on the
+     header's circular icon buttons still wins over this. */
+  button,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    border-radius: var(--radius-control);
+  }
 }
 
 body {
@@ -32,22 +52,29 @@ body {
    shared Tailwind utilities (bg-white, text-ink, border-line, …), so the
    theme is applied by overriding those utility classes rather than by
    re-theming every component individually. */
-body,
-body .bg-white,
-body .bg-paper-muted,
-body .bg-ink,
-body .text-ink,
-body .border-ink,
-body .text-muted,
-body .border-line,
-body .bg-line,
-body .bg-\[\#f2f8fd\],
-body .bg-\[\#f4faff\],
-body .text-accent,
-body .bg-accent,
-body .text-coprBlue,
-body .bg-coprBlue,
-body .border-coprBlue {
+
+/* The two-second cross-fade is scoped to `.theme-transition`, which
+   GrillThemeProvider puts on <html> only for the duration of an actual
+   theme switch. It used to sit unconditionally on every themed utility
+   class, which meant every ordinary hover on the site — footer links,
+   breadcrumbs, outline buttons — also took two seconds to respond. */
+.theme-transition,
+.theme-transition body,
+.theme-transition .bg-white,
+.theme-transition .bg-paper-muted,
+.theme-transition .bg-ink,
+.theme-transition .text-ink,
+.theme-transition .border-ink,
+.theme-transition .text-muted,
+.theme-transition .border-line,
+.theme-transition .bg-line,
+.theme-transition .bg-\[\#f2f8fd\],
+.theme-transition .bg-\[\#f4faff\],
+.theme-transition .text-accent,
+.theme-transition .bg-accent,
+.theme-transition .text-coprBlue,
+.theme-transition .bg-coprBlue,
+.theme-transition .border-coprBlue {
   transition:
     background-color 2s ease,
     color 2s ease,
@@ -55,8 +82,8 @@ body .border-coprBlue {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body,
-  body * {
+  .theme-transition,
+  .theme-transition * {
     transition: none !important;
   }
 }
@@ -171,7 +198,7 @@ h3 {
   cursor: pointer;
 }
 
-/* Blog article body (/blog?post=...) — raw HTML from the Soro CMS
+/* Blog article body (/blog/[slug]) — sanitised HTML from the Soro CMS
    (headings, paragraphs, lists, links, images), styled to match the rest
    of the site's typography since it arrives as plain markup, no classes. */
 .blog-article-content {
@@ -219,4 +246,15 @@ h3 {
   width: 100%;
   height: auto;
   margin: 24px 0;
+}
+
+/* Legal pages (/impresszum, /aszf, /adatvedelem) — plain prose, so the
+   spacing lives here instead of on every paragraph. */
+.legal-content p {
+  line-height: 1.75;
+}
+
+.legal-content table th,
+.legal-content table td {
+  vertical-align: top;
 }

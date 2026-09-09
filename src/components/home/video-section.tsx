@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
+import Image from "next/image";
+import { Container } from "@/components/layout/container";
 
 const VIDEOS = [
   { id: "ubkWMKEfyNE", titleKey: "massage" },
@@ -16,16 +18,19 @@ export function VideoSection() {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   return (
-    <section className="bg-[#cee0e9] px-16 py-22 max-lg:px-6">
-      <div className="mb-11 text-center">
-        <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+    <section className="bg-[#cee0e9] py-22">
+      <Container>
+      <div className="mx-auto mb-11 max-w-[760px] text-center">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-coprBlue/30 bg-coprBlue/10 px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
-        <h2 className="mt-3.5 text-4xl font-bold">{t("title")}</h2>
+        <h2 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
+          {t("title")}
+        </h2>
       </div>
-      <div className="mx-auto grid w-4/5 grid-cols-2 gap-7 max-lg:w-full max-lg:grid-cols-1">
+      <div className="grid grid-cols-2 gap-7 max-lg:grid-cols-1">
         {VIDEOS.map((video) => (
-          <div key={video.id} className="group relative aspect-video overflow-hidden bg-ink">
+          <div key={video.id} className="rounded-card group relative aspect-video overflow-hidden bg-ink">
             {playingId === video.id ? (
               <iframe
                 src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
@@ -40,10 +45,12 @@ export function VideoSection() {
                 onClick={() => setPlayingId(video.id)}
                 className="relative block h-full w-full cursor-pointer"
               >
-                <img
+                <Image
                   src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
                   alt={t(`${video.titleKey}.title`)}
-                  className="h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-70"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 320px"
+                  className="object-cover opacity-90 transition-opacity group-hover:opacity-70"
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
                 <span className="absolute inset-0 flex items-center justify-center">
@@ -59,6 +66,7 @@ export function VideoSection() {
           </div>
         ))}
       </div>
+      </Container>
     </section>
   );
 }

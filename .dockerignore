@@ -1,0 +1,38 @@
+# Build context hygiene. Without this file `COPY . .` shipped ~1 GB into the
+# builder image — including .env.local (DB password, AUTH_SECRET, Stripe
+# keys), which then stayed readable in that image layer.
+
+# Secrets — never in an image layer
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output (reinstalled/rebuilt inside the image)
+node_modules
+.next
+out
+build
+*.tsbuildinfo
+
+# Version control and local tooling
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# Runtime data — mounted as a volume in production, not baked in (~136 MB)
+uploads
+
+# One-off migration source data and design artefacts
+Ideiglenes
+design-mockups
+scripts/migrate-webflow/asset-map.json
+database
+
+# Docs
+*.md
+!README.md
+
+# OS noise
+.DS_Store

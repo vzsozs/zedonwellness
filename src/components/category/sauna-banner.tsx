@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ContactButton } from "@/components/contact-button";
 import { ImageLightbox } from "@/components/image-lightbox";
+import Image from "next/image";
 
 const GALLERY_IMAGES = [
   "/e-szauna-02.webp",
@@ -20,7 +21,7 @@ export function SaunaBanner() {
 
   return (
     <div className="mb-9 flex items-center gap-6 border border-line bg-[#f2f8fd] px-8 py-4 max-lg:flex-col max-lg:text-center">
-      <img src="/Egyedi_szauna.svg" alt="" className="h-24 w-24 shrink-0" />
+      <Image src="/Egyedi_szauna.svg" alt="" width={96} height={96} className="h-24 w-24 shrink-0" />
       <div className="min-w-0 flex-1">
         <h2 className="text-base font-semibold">{t("saunaBannerTitle")}</h2>
         <p className="mt-1 text-sm leading-relaxed text-muted">{t("saunaBannerText")}</p>

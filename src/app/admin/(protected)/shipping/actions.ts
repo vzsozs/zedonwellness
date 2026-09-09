@@ -5,43 +5,70 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { shippingRates } from "@/db/schema";
+import { requireAdmin } from "@/lib/require-admin";
+import { type ActionState, toActionError } from "@/lib/action-state";
 
+const idSchema = z.coerce.number().int().positive();
 const checkbox = z.union([z.literal("on"), z.null()]).transform(Boolean);
 
-const shippingSchema = z.object({
-  zone: z.enum(["domestic", "international"]),
-  minKg: z.coerce.number().nonnegative(),
-  maxKg: z
-    .union([z.coerce.number().positive(), z.literal("")])
-    .optional()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
-  priceHuf: z
-    .union([z.coerce.number().int().nonnegative(), z.literal("")])
-    .optional()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
-  requiresQuote: checkbox,
-});
-
-export async function createShippingRate(formData: FormData) {
-  const parsed = shippingSchema.parse({
-    zone: formData.get("zone"),
-    minKg: formData.get("minKg"),
-    maxKg: formData.get("maxKg") ?? "",
-    priceHuf: formData.get("priceHuf") ?? "",
-    requiresQuote: formData.get("requiresQuote") as "on" | null,
+const shippingSchema = z
+  .object({
+    zone: z.enum(["domestic", "international"]),
+    minKg: z.coerce.number().nonnegative(),
+    maxKg: z
+      .union([z.coerce.number().positive(), z.literal("")])
+      .optional()
+      .transform((v) => (v === "" || v === undefined ? null : v)),
+    priceHuf: z
+      .union([z.coerce.number().int().nonnegative(), z.literal("")])
+      .optional()
+      .transform((v) => (v === "" || v === undefined ? null : v)),
+    requiresQuote: checkbox,
+  })
+  .refine((v) => v.maxKg === null || v.maxKg > v.minKg, {
+    message: "A felső súlyhatárnak nagyobbnak kell lennie az alsónál.",
+    path: ["maxKg"],
+  })
+  .refine((v) => v.requiresQuote || v.priceHuf !== null, {
+    message: 'Adj meg díjat, vagy jelöld be az "Egyedi ajánlat" opciót.',
+    path: ["priceHuf"],
   });
 
-  await db.insert(shippingRates).values({
-    zone: parsed.zone,
-    minKg: String(parsed.minKg),
-    maxKg: parsed.maxKg === null ? null : String(parsed.maxKg),
-    priceHuf: parsed.priceHuf === null ? null : String(parsed.priceHuf),
-    requiresQuote: parsed.requiresQuote,
-  });
-  revalidatePath("/admin/shipping");
+export async function createShippingRate(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    const parsed = shippingSchema.parse({
+      zone: formData.get("zone"),
+      minKg: formData.get("minKg"),
+      maxKg: formData.get("maxKg") ?? "",
+      priceHuf: formData.get("priceHuf") ?? "",
+      requiresQuote: formData.get("requiresQuote") as "on" | null,
+    });
+
+    await db.insert(shippingRates).values({
+      zone: parsed.zone,
+      minKg: String(parsed.minKg),
+      maxKg: parsed.maxKg === null ? null : String(parsed.maxKg),
+      priceHuf: parsed.priceHuf === null ? null : String(parsed.priceHuf),
+      requiresQuote: parsed.requiresQuote,
+    });
+    revalidatePath("/admin/shipping");
+    return {};
+  } catch (err) {
+    return toActionError(err);
+  }
 }
 
-export async function deleteShippingRate(id: number) {
-  await db.delete(shippingRates).where(eq(shippingRates.id, id));
-  revalidatePath("/admin/shipping");
+export async function deleteShippingRate(id: number): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    await db.delete(shippingRates).where(eq(shippingRates.id, idSchema.parse(id)));
+    revalidatePath("/admin/shipping");
+    return {};
+  } catch (err) {
+    return toActionError(err);
+  }
 }

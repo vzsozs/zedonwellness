@@ -23,23 +23,19 @@ export function ImageGalleryField({
     existingImages.map((url) => ({ key: nextKey(), type: "existing", url })),
   );
   const [newFiles, setNewFiles] = useState<File[]>([]);
-  const [mainKey, setMainKey] = useState<string | null>(null);
-  const [cardKey, setCardKey] = useState<string | null>(null);
+  // Resolved in the lazy initialisers, against the slots built just above.
+  // This used to be a mount effect that called setState twice, which meant
+  // the form rendered once with no image selected and then re-rendered.
+  const [mainKey, setMainKey] = useState<string | null>(() => {
+    const idx = existingImages.findIndex((u) => u === mainImage);
+    if (idx >= 0 && slots[idx]) return slots[idx].key;
+    return slots[0]?.key ?? null;
+  });
+  const [cardKey, setCardKey] = useState<string | null>(() => {
+    const idx = existingImages.findIndex((u) => u === cardImage);
+    return idx >= 0 && slots[idx] ? slots[idx].key : null;
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Resolve initial main/card keys against the initial slots (runs once).
-  useEffect(() => {
-    if (mainKey === null) {
-      const idx = existingImages.findIndex((u) => u === mainImage);
-      if (idx >= 0 && slots[idx]) setMainKey(slots[idx].key);
-      else if (slots.length > 0) setMainKey(slots[0].key);
-    }
-    if (cardKey === null) {
-      const idx = existingImages.findIndex((u) => u === cardImage);
-      if (idx >= 0 && slots[idx]) setCardKey(slots[idx].key);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Keep the real file input's FileList in sync with `newFiles`, so the
   // form submits exactly the files still present after removals — order

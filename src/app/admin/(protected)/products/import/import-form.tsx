@@ -1,22 +1,20 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState } from "react";
 import { importProductsCsv, type ImportState } from "./actions";
 import { ErrorModal } from "@/components/admin/error-modal";
+import { useActionError } from "@/components/admin/use-action-error";
 
 const initialState: ImportState = {};
 
 export function ImportForm() {
   const [state, formAction, pending] = useActionState(importProductsCsv, initialState);
-  const [modalOpen, setModalOpen] = useState(false);
+  const actionError = useActionError(state);
 
-  useEffect(() => {
-    if (state.error) setModalOpen(true);
-  }, [state]);
 
   return (
     <div className="flex flex-col gap-6">
-      <ErrorModal message={modalOpen ? state.error : null} onClose={() => setModalOpen(false)} />
+      <ErrorModal message={actionError.message} onClose={actionError.dismiss} />
 
       <form action={formAction} className="max-w-md border border-line bg-white p-6">
         <label className="mb-1.5 block text-xs font-semibold text-muted">CSV fájl</label>

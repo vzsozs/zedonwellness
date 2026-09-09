@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { Search, ShoppingBag, Menu, X } from "lucide-react";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Search, ShoppingBag, Menu, X, Phone, Truck } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useCurrency, currencyForLocale } from "@/lib/currency-context";
 import { useGrillThemeActive } from "@/lib/grill-theme-context";
 import { useContactModal } from "@/lib/contact-modal-context";
+import { COMPANY } from "@/lib/company";
+import Image from "next/image";
 
 const links = [
   { href: "/jakuzzik", key: "jacuzzis" as const },
@@ -24,6 +26,7 @@ export function SiteHeader() {
   const tb = useTranslations("topbar");
   const tc = useTranslations("common");
   const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -31,6 +34,16 @@ export function SiteHeader() {
   const { currency, setCurrency } = useCurrency();
   const isGrillTheme = useGrillThemeActive();
   const { open: openContact } = useContactModal();
+
+  /** Switching language keeps you on the same page. It used to link to "/",
+   * so changing language from a product page dumped you on the homepage —
+   * and left the hreflang pairs pointing at content nobody could reach by
+   * clicking. */
+  function switchLocale(next: "hu" | "en") {
+    setCurrency(currencyForLocale(next));
+    router.replace(pathname, { locale: next });
+    setMenuOpen(false);
+  }
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -43,29 +56,44 @@ export function SiteHeader() {
 
   return (
     <header>
-      <div className="flex items-center justify-between gap-6 bg-ink px-16 py-2.5 text-xs tracking-wide text-line max-lg:px-6">
-        <div className="flex gap-7 max-md:hidden">
-          <span>{tb("phone")}</span>
-          <span>{tb("shipping")}</span>
+      <div className="flex items-center justify-between gap-6 bg-ink px-[5%] py-2.5 text-xs tracking-wide text-line max-lg:px-6">
+        <div className="flex items-center gap-6 max-md:hidden">
+          <span className="flex items-center gap-[7px]">
+            <Phone className="size-[15px] shrink-0" strokeWidth={2.2} />
+            {tb.rich("phone", {
+              phone: COMPANY.phone,
+              // The number is the actionable part of the sentence, so it
+              // gets the emphasis — and is dialable on a phone.
+              highlight: (chunks) => (
+                <a href={`tel:${COMPANY.phoneHref}`} className="font-semibold text-white hover:underline">
+                  {chunks}
+                </a>
+              ),
+            })}
+          </span>
+          <span className="flex items-center gap-[7px]">
+            <Truck className="size-[15px] shrink-0" strokeWidth={2.2} />
+            {tb("shipping")}
+          </span>
         </div>
         <div className="ml-auto flex items-center gap-4">
           <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              locale="hu"
-              onClick={() => setCurrency(currencyForLocale("hu"))}
+            <button
+              type="button"
+              onClick={() => switchLocale("hu")}
+              aria-current={locale === "hu" ? "true" : undefined}
               className={locale === "hu" ? "font-bold text-white" : "text-line/60"}
             >
               HU
-            </Link>
-            <Link
-              href="/"
-              locale="en"
-              onClick={() => setCurrency(currencyForLocale("en"))}
+            </button>
+            <button
+              type="button"
+              onClick={() => switchLocale("en")}
+              aria-current={locale === "en" ? "true" : undefined}
               className={locale === "en" ? "font-bold text-white" : "text-line/60"}
             >
               EN
-            </Link>
+            </button>
           </div>
           <span className="text-line/30">|</span>
           <div className="flex items-center gap-4">
@@ -87,23 +115,30 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b border-line bg-white px-16 py-5 max-lg:px-6">
+      <div className="flex h-[82px] items-center justify-between border-b border-line bg-white px-[5%] max-lg:h-auto max-lg:px-6 max-lg:py-4">
         <Link
           href="/"
-          className="relative h-14 w-[191px] shrink-0"
+          /* Sized to the taller of the two logos, since they sit stacked
+             and cross-fade between the wellness and grill themes. */
+          className="relative h-[66px] w-[228px] shrink-0 max-sm:w-[190px]"
           onClick={() => setMenuOpen(false)}
         >
-          <img
+          <Image
             src="/brand/zedonwellness-logo.png"
             alt="Zedonwellness"
-            className={`absolute top-1/2 left-0 h-8 w-auto -translate-y-1/2 transition-opacity duration-[2000ms] ease-in-out ${
+            width={228}
+            height={38}
+            priority
+            className={`absolute top-1/2 left-0 h-[38px] w-auto -translate-y-1/2 max-sm:h-8 transition-opacity duration-[2000ms] ease-in-out ${
               isGrillTheme ? "opacity-0" : "opacity-100"
             }`}
           />
-          <img
+          <Image
             src="/ZedonGrill-logo-Eng-update.svg"
             alt="ZedonGrill"
-            className={`absolute top-1/2 left-0 h-14 w-auto -translate-y-1/2 transition-opacity duration-[2000ms] ease-in-out ${
+            width={165}
+            height={66}
+            className={`absolute top-1/2 left-0 h-[66px] w-auto -translate-y-1/2 max-sm:h-14 transition-opacity duration-[2000ms] ease-in-out ${
               isGrillTheme ? "opacity-100" : "opacity-0"
             }`}
           />
@@ -120,19 +155,21 @@ export function SiteHeader() {
           </button>
         </nav>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-[18px]">
           <div className="relative max-lg:hidden">
             <button
               type="button"
               aria-label={tc("search")}
+              aria-expanded={searchOpen}
               onClick={() => setSearchOpen((v) => !v)}
+              className="flex size-[42px] items-center justify-center rounded-full border border-line bg-white text-ink transition-colors hover:border-ink"
             >
-              <Search className="size-5 text-ink" strokeWidth={1.8} />
+              <Search className="size-[19px]" strokeWidth={2} />
             </button>
             {searchOpen ? (
               <form
                 onSubmit={submitSearch}
-                className="absolute top-full right-0 z-10 mt-3 flex w-72 border border-line bg-white p-1.5 shadow-[0_8px_28px_rgba(15,45,80,0.12)]"
+                className="rounded-card absolute top-full right-0 z-10 mt-3 flex w-72 border border-line bg-white p-1.5 shadow-[0_8px_28px_rgba(15,45,80,0.12)]"
               >
                 <input
                   autoFocus
@@ -152,25 +189,29 @@ export function SiteHeader() {
               </form>
             ) : null}
           </div>
-          <Link href="/kosar" className="relative" aria-label={t("cart")}>
-            <ShoppingBag className="size-5 text-ink" strokeWidth={1.8} />
+          <Link
+            href="/kosar"
+            aria-label={t("cart")}
+            className="relative flex size-[42px] items-center justify-center rounded-full border border-line bg-white text-ink transition-colors hover:border-ink"
+          >
+            <ShoppingBag className="size-[19px]" strokeWidth={2} />
             {itemCount > 0 ? (
-              <span className="absolute -top-2 -right-2 flex size-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white">
+              <span className="absolute -top-[3px] -right-[3px] flex size-[19px] items-center justify-center rounded-full bg-accent text-[10px] font-extrabold text-white">
                 {itemCount}
               </span>
             ) : null}
           </Link>
           <button
             type="button"
-            aria-label={menuOpen ? "Menü bezárása" : "Menü megnyitása"}
+            aria-label={menuOpen ? tc("closeMenu") : tc("openMenu")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="hidden max-lg:block"
+            className="hidden size-[42px] items-center justify-center rounded-full border border-line bg-white text-ink max-lg:flex"
           >
             {menuOpen ? (
-              <X className="size-6 text-ink" strokeWidth={1.8} />
+              <X className="size-[19px]" strokeWidth={2} />
             ) : (
-              <Menu className="size-6 text-ink" strokeWidth={1.8} />
+              <Menu className="size-[19px]" strokeWidth={2} />
             )}
           </button>
         </div>

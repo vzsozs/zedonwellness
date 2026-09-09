@@ -1,18 +1,18 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
+import { useActionError } from "@/components/admin/use-action-error";
 import { createFeature } from "./actions";
 
 export function NewFeatureForm({ groupId }: { groupId: number }) {
   const [state, formAction, pending] = useActionState(createFeature, initialActionState);
-  const [modalOpen, setModalOpen] = useState(false);
+  const actionError = useActionError(state);
   const formRef = useRef<HTMLFormElement>(null);
   const wasPending = useRef(false);
 
   useEffect(() => {
-    if (state.error) setModalOpen(true);
     if (wasPending.current && !pending && !state.error) {
       formRef.current?.reset();
     }
@@ -22,8 +22,8 @@ export function NewFeatureForm({ groupId }: { groupId: number }) {
   return (
     <div className="max-w-sm border border-line bg-white p-5">
       <ErrorModal
-        message={modalOpen ? state.error : null}
-        onClose={() => setModalOpen(false)}
+        message={actionError.message}
+        onClose={actionError.dismiss}
       />
       <h3 className="mb-4 text-sm font-semibold">Új jellemző</h3>
       <form ref={formRef} action={formAction} className="flex flex-col gap-3">

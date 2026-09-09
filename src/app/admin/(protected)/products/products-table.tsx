@@ -6,6 +6,7 @@ import { Search, Pencil, Trash2 } from "lucide-react";
 import type { Category, Product } from "@/db/schema";
 import { formatEur } from "@/lib/currency";
 import { deleteProduct } from "./actions";
+import { ActionButton } from "@/components/admin/action-button";
 
 type ProductRow = Product & { category: Category | null };
 
@@ -80,14 +81,14 @@ export function ProductsTable({ items }: { items: ProductRow[] }) {
                     >
                       <Pencil className="size-4" strokeWidth={1.8} />
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => deleteProduct(p.id)}
+                    <ActionButton
+                      action={deleteProduct.bind(null, p.id)}
+                      confirmMessage={`Biztosan törlöd a(z) "${p.nameHu}" terméket?`}
                       aria-label="Törlés"
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600 hover:text-red-800 disabled:opacity-50"
                     >
                       <Trash2 className="size-4" strokeWidth={1.8} />
-                    </button>
+                    </ActionButton>
                   </div>
                 </td>
               </tr>

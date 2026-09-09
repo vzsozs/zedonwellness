@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, type ReactNode } from "react";
+import { useActionState, type ReactNode } from "react";
 import type {
   Category,
   Extra,
@@ -13,6 +13,7 @@ import type {
 import type { ActionState } from "@/lib/action-state";
 import { initialActionState } from "@/lib/action-state";
 import { ErrorModal } from "@/components/admin/error-modal";
+import { useActionError } from "@/components/admin/use-action-error";
 import { NameSlugFields } from "./name-slug-fields";
 import { CategorySeriesFields } from "./category-series-fields";
 import { ImageGalleryField } from "./image-gallery-field";
@@ -50,17 +51,14 @@ export function ProductForm({
   eurHufRate: number;
 }) {
   const [state, formAction, pending] = useActionState(action, initialActionState);
-  const [modalOpen, setModalOpen] = useState(false);
+  const actionError = useActionError(state);
 
-  useEffect(() => {
-    if (state.error) setModalOpen(true);
-  }, [state]);
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
       <ErrorModal
-        message={modalOpen ? state.error : null}
-        onClose={() => setModalOpen(false)}
+        message={actionError.message}
+        onClose={actionError.dismiss}
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -223,6 +221,7 @@ export function ProductForm({
           >
             <VariantSkusEditor
               defaultVariants={(values?.variants ?? []).map((v) => ({
+                id: v.id,
                 nameHu: v.nameHu,
                 nameEn: v.nameEn,
                 sku: v.sku,

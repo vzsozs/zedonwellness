@@ -2,11 +2,10 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import type { Product, ProductSeries } from "@/db/schema";
-import { ProductCard } from "@/components/product-card";
+import type { ProductSeries } from "@/db/schema";
+import { ProductCard, type ProductCardData } from "@/components/product-card";
 import { PriceRangeSlider } from "./price-range-slider";
 
-type ProductWithSeries = Product & { series?: ProductSeries | null };
 type SortOrder = "name-asc" | "price-asc" | "price-desc";
 
 export function CategoryBrowser({
@@ -18,7 +17,7 @@ export function CategoryBrowser({
 }: {
   name: string;
   description: string;
-  products: ProductWithSeries[];
+  products: ProductCardData[];
   seriesList: ProductSeries[];
   banner?: ReactNode;
 }) {
@@ -171,7 +170,7 @@ export function CategoryBrowser({
   );
 
   return (
-    <div className="px-16 max-lg:px-6">
+    <div className="px-[5%] max-lg:px-6">
       {banner ? <div className="mt-8">{banner}</div> : null}
 
       <div className="mt-5 flex items-end justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3">
@@ -206,7 +205,7 @@ export function CategoryBrowser({
               {hasActiveFilters ? t("noResults") : t("comingSoon")}
             </p>
           ) : (
-            <div className="grid grid-cols-3 gap-x-6 gap-y-6.5 max-lg:grid-cols-2 max-sm:grid-cols-1">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-6 gap-y-6.5 max-sm:grid-cols-1">
               {filtered.map((product) => (
                 <ProductCard key={product.slug} product={product} />
               ))}

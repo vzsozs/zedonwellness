@@ -13,7 +13,16 @@
     "home": "Főoldal",
     "products": "Termékek",
     "search": "Keresés",
-    "searchPlaceholder": "Keresés…"
+    "searchPlaceholder": "Keresés…",
+    "close": "Bezárás",
+    "previousImage": "Előző kép",
+    "nextImage": "Következő kép",
+    "imageViewer": "Képnézegető",
+    "zoomImage": "Kép nagyítása",
+    "openMenu": "Menü megnyitása",
+    "closeMenu": "Menü bezárása",
+    "yes": "Igen",
+    "no": "Nem"
   },
   "contactModal": {
     "close": "Bezárás",
@@ -40,10 +49,11 @@
     "filterKarbantartas": "Karbantartás",
     "filterGrillek": "Grillek",
     "searchPlaceholder": "Keresés a cikkek között…",
-    "noResults": "Nincs a szűrésnek megfelelő cikk."
+    "noResults": "Nincs a szűrésnek megfelelő cikk.",
+    "metaDescription": "Tanácsok, tippek és hírek a wellness, szauna és grill világából — a Zedonwellness szakértőitől."
   },
   "topbar": {
-    "phone": "Ingyenes szaktanácsadás: +36 1 234 5678",
+    "phone": "Ingyenes szaktanácsadás: <highlight>{phone}</highlight>",
     "shipping": "Országos kiszállítás"
   },
   "home": {
@@ -54,22 +64,34 @@
     "ctaPrimary": "Termékek felfedezése",
     "ctaSecondary": "Kapcsolat",
     "trust": {
-      "warranty": "5 év garancia",
-      "shipping": "Országos házhozszállítás",
-      "service": "Saját szerviz háttér",
-      "consulting": "Helyszíni szaktanácsadás"
+      "warranty": {
+        "title": "3 év teljeskörű garancia",
+        "description": "Közvetlen gyártói alkatrészellátás és hivatalos szakszerviz."
+      },
+      "shipping": {
+        "title": "Országos házhozszállítás",
+        "description": "Saját szállítóflottával, daruzási és beüzemelési segítséggel."
+      },
+      "service": {
+        "title": "Saját szervizcsapat",
+        "description": "Gyors hibaelhárítás, karbantartási és téliesítési szolgáltatások."
+      },
+      "consulting": {
+        "title": "Helyszíni szaktanácsadás",
+        "description": "Kollégáink díjmentesen felmérik a kertjét és a teraszát."
+      }
     },
     "categoriesEyebrow": "Termékkategóriák",
-    "categoriesTitle": "Fedezd fel a kínálatot",
-    "categoriesCta": "Megnézem",
-    "featuredEyebrow": "Kiemelt termékek",
-    "featuredTitle": "Legnépszerűbb modelljeink",
-    "viewAll": "Összes termék",
+    "categoriesTitle": "Fedezze fel exkluzív wellness kínálatunkat",
+    "categoriesCta": "Kínálat megtekintése",
+    "featuredEyebrow": "Kiemelt modellek",
+    "featuredTitle": "Legnépszerűbb választások",
+    "viewAll": "Összes termék megtekintése",
     "virtualTour": {
-      "titleStart": "Fedezze fel új",
-      "titleHighlight": "Virtuális túránkat",
-      "description": "Tekintse meg az Otthon Design (Construma) kiállításon készült pavilonunkat, tegyen egy virtuális sétát a medencéink és szaunáink között.",
-      "cta": "Tovább"
+      "eyebrow": "Interaktív showroom",
+      "title": "Tegyen egy virtuális sétát bemutatótermünkben",
+      "description": "Tekintse meg az Otthon Design és Construma kiállításokon készült exkluzív pavilonunkat közvetlenül otthonából. Ismerje meg a legújabb medence- és szaunaformákat 3D-ben!",
+      "cta": "Virtuális túra indítása"
     },
     "howWeWork": {
       "title": "Hogyan dolgozunk",
@@ -107,9 +129,14 @@
       }
     },
     "extrasEyebrow": "Extrák",
-    "extrasTitle": "Tedd teljessé az élményt",
+    "extrasTitle": "Tegye teljessé az élményt",
     "blogEyebrow": "Blog",
-    "blogTitle": "Legfrissebb cikkeink"
+    "blogTitle": "Legfrissebb cikkeink",
+    "tuvTitle": "TÜV Rheinland®",
+    "tuvSubtitle": "Európai biztonsági és minőségi tanúsítvány",
+    "categoriesSubtitle": "Válasszon prémium jakuzzijaink, egyedi tervezésű szaunáink és professzionális kerti konyháink közül.",
+    "blogViewAll": "Összes cikk megtekintése",
+    "blogReadMore": "Tovább olvasom"
   },
   "category": {
     "productCount": "{count, plural, other {# termék}}",
@@ -135,12 +162,12 @@
     "arHeading": "3D / AR (kiterjesztett valóság)",
     "viewInAr": "Megtekintés kiterjesztett valóságban",
     "extrasHeading": "Rendelhető extrák",
-    "orderOnlyNote": "Ez a termék {threshold} feletti értékű, ezért online fizetés nem elérhető — a rendelés leadása után kollégáink 1 munkanapon belül felveszik veled a kapcsolatot az egyeztetéshez.",
+    "orderOnlyNote": "Ez a termék {threshold} feletti értékű, ezért online fizetés nem elérhető — a rendelés leadása után kollégáink 1 munkanapon belül felveszik Önnel a kapcsolatot az egyeztetéshez.",
     "specsHeading": "Specifikációk",
     "includedByDefault": "Alapból benne",
     "includedLabel": "TARTALMAZZA",
     "contactHeading": "Kapcsolat",
-    "contactText": "Kérdésed van a termékkel kapcsolatban? Kollégáink szívesen segítenek a választásban, a helyszíni felmérés és a telepítés részleteiben.",
+    "contactText": "Kérdése van a termékkel kapcsolatban? Kollégáink szívesen segítenek a választásban, a helyszíni felmérés és a telepítés részleteiben.",
     "contactCta": "Kapcsolatfelvétel",
     "relatedHeading": "Hasonló termékek",
     "chooseVariant": "Opciók",
@@ -150,18 +177,21 @@
     "addedToCart": "Kosárba téve ✓",
     "orderNow": "Megrendelés leadása",
     "priceOnRequestLabel": "Hamarosan",
-    "priceOnRequestNote": "Ennél a terméknél még nincs online ár feltüntetve — kollégáink szívesen tájékoztatnak az árról és az elérhetőségről.",
+    "priceOnRequestNote": "Ennél a terméknél még nincs online ár feltüntetve — kollégáink szívesen tájékoztatják az árról és az elérhetőségről.",
     "documentsHeading": "Letölthető dokumentumok",
     "featuresHeading": "Kiegészítők",
     "addToCart": "Kosárba",
     "favoriteAria": "Kedvencekhez adás",
     "badgeNew": "ÚJDONSÁG",
     "badgeSale": "AKCIÓ",
-    "badgeOutOfStock": "ELFOGYOTT"
+    "badgeOutOfStock": "ELFOGYOTT",
+    "badgeInStock": "Raktáron",
+    "detailsCta": "Részletek",
+    "capacityValue": "{count} személyes"
   },
   "cart": {
     "title": "Kosár",
-    "empty": "A kosarad jelenleg üres.",
+    "empty": "A kosara jelenleg üres.",
     "backToProducts": "Vissza a termékekhez",
     "orderOnlyNote": "Csak megrendelhető termék",
     "missingWeight": "Súlyadat hiányzik — a szállítási díj egyeztetéssel kerül meghatározásra",
@@ -170,11 +200,20 @@
     "removeItem": "Törlés a kosárból",
     "shippingNote": "A szállítási díj a következő lépésben, a cím megadása után kerül kiszámításra.",
     "subtotal": "Részösszeg",
-    "continue": "Tovább a megrendeléshez"
+    "continue": "Tovább a megrendeléshez",
+    "blockedNote": "A kosárban lévő tételek egyike jelenleg nem rendelhető — távolítsa el, hogy továbbléphessen a pénztárhoz.",
+    "issues": {
+      "unavailable": "Ez a termék már nem elérhető.",
+      "variantUnavailable": "A választott változat már nem elérhető.",
+      "outOfStock": "Jelenleg elfogyott.",
+      "priceOnRequest": "Ennek a terméknek nincs online ára — kérjen ajánlatot.",
+      "priceChanged": "A termék ára megváltozott, amióta a kosarába került. A fenti ár az érvényes.",
+      "removed": "A kosarából eltávolítottuk a következőt, mert már nem elérhető: {names}"
+    }
   },
   "checkout": {
     "title": "Megrendelés",
-    "emptyCart": "A kosarad üres, nincs mit megrendelni.",
+    "emptyCart": "A kosara üres, nincs mit megrendelni.",
     "backToProducts": "Vissza a termékekhez",
     "fullName": "Teljes név",
     "email": "Email cím",
@@ -188,24 +227,29 @@
     "city": "Város",
     "street": "Cím (utca, házszám)",
     "noteOptional": "Megjegyzés (opcionális)",
-    "submit": "Megrendelés elküldése",
+    "submit": "Megrendelés elküldése (fizetési kötelezettséggel)",
     "submitting": "Feldolgozás…",
     "summary": "Összesítő",
     "subtotal": "Részösszeg",
     "shipping": "Szállítás (GLS)",
     "customQuote": "Egyedi ajánlat",
     "total": "Összesen",
-    "quoteNote": "A szállítási díjról (súlyadat vagy 40 kg feletti csomag miatt) kollégáink a rendelés leadása után egyeztetnek veled.",
+    "quoteNote": "A szállítási díjról (súlyadat vagy 40 kg feletti csomag miatt) kollégáink a rendelés leadása után egyeztetnek Önnel.",
     "errorRequired": "Kötelező",
     "errorInvalidEmail": "Érvénytelen email cím",
     "errorEmptyCart": "A kosár üres.",
     "errorProductUnavailable": "Az egyik termék már nem elérhető.",
-    "errorVariantUnavailable": "Az egyik kiválasztott termékváltozat már nem elérhető."
+    "errorVariantUnavailable": "Az egyik kiválasztott termékváltozat már nem elérhető.",
+    "acceptTerms": "Elolvastam és elfogadom az <terms>Általános Szerződési Feltételeket</terms> és az <privacy>Adatkezelési tájékoztatót</privacy>.",
+    "errorTermsRequired": "Az ÁSZF és az adatkezelési tájékoztató elfogadása kötelező.",
+    "errorCartChanged": "A kosara tartalma időközben megváltozott — nézze át a tételeket, majd próbálja újra.",
+    "errorPriceChanged": "Egy termék ára megváltozott. Frissítettük a kosarát — ellenőrizze az összeget, majd küldje el újra.",
+    "submitHint": "A megrendelés elküldése fizetési kötelezettséget keletkeztet. Online fizetés jelenleg nem érhető el — a fizetés módjáról munkatársunk egyeztet Önnel."
   },
   "orderConfirmation": {
-    "title": "Köszönjük a rendelésed!",
+    "title": "Köszönjük a rendelését!",
     "orderNumberLabel": "Rendelésszám:",
-    "confirmationSent": "Visszaigazolást küldtünk a(z) {email} email címre. Kollégáink {reason} hamarosan felveszik veled a kapcsolatot.",
+    "confirmationSent": "Visszaigazolást küldtünk a(z) {email} email címre. Kollégáink {reason} hamarosan felveszik Önnel a kapcsolatot.",
     "contactReasonQuote": "a szállítási díj egyeztetése és a rendelés véglegesítése miatt",
     "contactReasonNormal": "a rendelés véglegesítése miatt",
     "orderedProducts": "Rendelt termékek",
@@ -245,11 +289,26 @@
     "pricingTitle": "Szervizszolgáltatások díjai",
     "pricingNote": "Az árak tájékoztató jellegűek, ajánlatnak nem minősülnek.",
     "pricing": {
-      "callout": { "label": "Kiszállási díj országosan", "price": "60 000 Ft + áfa" },
-      "hourly": { "label": "Szervizelési óradíj", "price": "18 000 Ft / óra + áfa" },
-      "maintenance": { "label": "Karbantartás / vízcsere", "price": "120 000 Ft + áfa" },
-      "commissioning": { "label": "Beüzemelés (jakuzzi / szauna / Swim spa)", "price": "120 000 Ft + áfa" },
-      "assessment": { "label": "Szakvélemény a medence állapotáról", "price": "69 900 Ft + áfa" }
+      "callout": {
+        "label": "Kiszállási díj országosan",
+        "price": "60 000 Ft + áfa"
+      },
+      "hourly": {
+        "label": "Szervizelési óradíj",
+        "price": "18 000 Ft / óra + áfa"
+      },
+      "maintenance": {
+        "label": "Karbantartás / vízcsere",
+        "price": "120 000 Ft + áfa"
+      },
+      "commissioning": {
+        "label": "Beüzemelés (jakuzzi / szauna / Swim spa)",
+        "price": "120 000 Ft + áfa"
+      },
+      "assessment": {
+        "label": "Szakvélemény a medence állapotáról",
+        "price": "69 900 Ft + áfa"
+      }
     },
     "pricingFootnote": "* Végleges árajánlathoz a medence típusa, a probléma, valamint az állapot ismerete szükséges.",
     "maintenance": {
@@ -285,7 +344,7 @@
       "quarterly": {
         "title": "3–4 havonta: vízcsere",
         "text": "A medencét ilyenkor teljesen le kell engedni és friss vízzel feltölteni, a szűrőbetéteket pedig kicserélni. A feltöltést mindig a szűrőházon keresztül végezze — ha nem így teszi, a keringető rendszer levegősödhet, ami károsíthatja a medencében lévő fűtőtestet."
-        },
+      },
       "yearly": {
         "title": "Évente",
         "text": "Ajánlott a medence átvizsgáltatása szakszervizzel — egy helyszíni ellenőrzés alkalmával felmérjük az állapotát, és a szükséges javításokat gyakran azonnal, helyszínen el tudjuk végezni."
@@ -338,6 +397,23 @@
     "contactSection": "Kapcsolat",
     "rights": "Minden jog fenntartva.",
     "privacy": "Adatvédelmi nyilatkozat",
-    "terms": "Felhasználási feltételek"
+    "terms": "Felhasználási feltételek",
+    "imprint": "Impresszum",
+    "serviceSection": "Szerviz"
+  },
+  "notFound": {
+    "title": "Ezt az oldalt nem találjuk",
+    "description": "Lehet, hogy a keresett oldal időközben megszűnt vagy új címre költözött. Az alábbi menüpontokból biztosan eljut oda, amit keres.",
+    "backHome": "Vissza a főoldalra",
+    "popularHeading": "Népszerű oldalak"
+  },
+  "errorPage": {
+    "title": "Valami félrement",
+    "description": "Az oldal betöltése közben hiba lépett fel. Kérjük, próbálja újra — ha továbbra sem működik, keressen minket bizalommal.",
+    "retry": "Újrapróbálkozás"
+  },
+  "meta": {
+    "defaultTitle": "Zedonwellness — jakuzzi, szauna, grill",
+    "defaultDescription": "Prémium jakuzzik, szaunák és grillek — tervezéstől a telepítésig. TÜV Rheinland tanúsított minőség, saját gyártás, országos kiszállítás."
   }
 }

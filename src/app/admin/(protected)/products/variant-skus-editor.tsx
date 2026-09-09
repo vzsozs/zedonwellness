@@ -5,6 +5,11 @@ import { Plus, X, ImagePlus } from "lucide-react";
 
 type Sku = {
   key: string;
+  // DB row id for a variant that already exists — null for a row added in
+  // this editing session. Sent along so the server can update the existing
+  // row instead of deleting and re-inserting it (which would churn the id
+  // that placed orders reference).
+  id: number | null;
   nameHu: string;
   nameEn: string;
   sku: string;
@@ -23,6 +28,7 @@ export function VariantSkusEditor({
   defaultVariants,
 }: {
   defaultVariants: {
+    id: number;
     nameHu: string;
     nameEn: string | null;
     sku: string | null;
@@ -36,6 +42,7 @@ export function VariantSkusEditor({
   const [skus, setSkus] = useState<Sku[]>(() =>
     defaultVariants.map((v) => ({
       key: nextKey(),
+      id: v.id,
       nameHu: v.nameHu,
       nameEn: v.nameEn ?? "",
       sku: v.sku ?? "",
@@ -52,6 +59,7 @@ export function VariantSkusEditor({
       ...s,
       {
         key: nextKey(),
+        id: null,
         nameHu: "",
         nameEn: "",
         sku: "",
@@ -86,6 +94,7 @@ export function VariantSkusEditor({
   const payload = JSON.stringify(
     skus.map((s) => ({
       key: s.key,
+      id: s.id,
       nameHu: s.nameHu,
       nameEn: s.nameEn,
       sku: s.sku,

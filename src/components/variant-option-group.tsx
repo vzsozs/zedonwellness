@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ImageLightbox } from "./image-lightbox";
 import { localized } from "@/lib/localized";
+import { SafeImage } from "@/components/safe-image";
 
 export function VariantOptionGroup({
   group,
@@ -21,8 +22,15 @@ export function VariantOptionGroup({
     .map((c) => c.imageUrl)
     .filter((u): u is string => Boolean(u));
 
-  let imagePosition = -1;
   const groupName = localized(locale, group.nameHu, group.nameEn);
+
+  // Lightbox indices are computed up front rather than by incrementing a
+  // counter inside the JSX map — mutating a variable while rendering is
+  // the kind of thing that silently breaks under concurrent rendering.
+  const lightboxIndexByChoice = new Map<number, number>();
+  group.choices.forEach((choice, i) => {
+    if (choice.imageUrl) lightboxIndexByChoice.set(i, lightboxIndexByChoice.size);
+  });
 
   return (
     <div>
@@ -32,8 +40,7 @@ export function VariantOptionGroup({
       <div className="flex flex-wrap gap-3">
         {group.choices.map((choice, i) => {
           const hasImage = Boolean(choice.imageUrl);
-          if (hasImage) imagePosition += 1;
-          const thisPosition = imagePosition;
+          const thisPosition = lightboxIndexByChoice.get(i) ?? 0;
           const choiceName = localized(locale, choice.nameHu, choice.nameEn);
           return (
             <div key={`${choice.nameHu}-${i}`} className="w-22">
@@ -44,9 +51,11 @@ export function VariantOptionGroup({
                   aria-label={choiceName}
                   className="h-20 w-22 overflow-hidden border border-line hover:border-ink"
                 >
-                  <img
+                  <SafeImage
                     src={choice.imageUrl!}
                     alt={choiceName}
+                    width={88}
+                    height={80}
                     className="h-full w-full object-cover"
                   />
                 </button>

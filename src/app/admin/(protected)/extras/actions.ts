@@ -8,7 +8,10 @@ import { extras } from "@/db/schema";
 import { saveUploadedImage } from "@/lib/upload";
 import { getEurHufRate } from "@/lib/settings";
 import { eurToHuf } from "@/lib/currency";
+import { requireAdmin } from "@/lib/require-admin";
 import { type ActionState, toActionError } from "@/lib/action-state";
+
+const idSchema = z.coerce.number().int().positive();
 
 const extraSchema = z.object({
   nameHu: z.string().min(1, "Kötelező"),
@@ -43,6 +46,7 @@ export async function createExtra(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    await requireAdmin();
     const parsed = readForm(formData);
     const imageUrl = await resolveImage(formData, null);
     const rate = await getEurHufRate();
@@ -68,7 +72,9 @@ export async function updateExtra(
   formData: FormData,
 ): Promise<ActionState> {
   try {
-    const current = await db.query.extras.findFirst({ where: eq(extras.id, id) });
+    await requireAdmin();
+    const extraId = idSchema.parse(id);
+    const current = await db.query.extras.findFirst({ where: eq(extras.id, extraId) });
     const parsed = readForm(formData);
     const imageUrl = await resolveImage(formData, current?.imageUrl ?? null);
     const rate = await getEurHufRate();
@@ -81,7 +87,7 @@ export async function updateExtra(
         priceHuf: String(priceHuf),
         imageUrl,
       })
-      .where(eq(extras.id, id));
+      .where(eq(extras.id, extraId));
     revalidatePath("/admin/extras");
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -91,9 +97,15 @@ export async function updateExtra(
   }
 }
 
-export async function deleteExtra(id: number) {
-  await db.delete(extras).where(eq(extras.id, id));
-  revalidatePath("/admin/extras");
-  revalidatePath("/admin/products");
-  revalidatePath("/", "layout");
+export async function deleteExtra(id: number): Promise<ActionState> {
+  try {
+    await requireAdmin();
+    await db.delete(extras).where(eq(extras.id, idSchema.parse(id)));
+    revalidatePath("/admin/extras");
+    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
+    return {};
+  } catch (err) {
+    return toActionError(err);
+  }
 }

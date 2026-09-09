@@ -441,6 +441,166 @@ A user kérésére a site-wide "Kapcsolat" gomb (és a rajta kívül eső, korá
 - Architektúra: `ContactModalProvider` (`src/lib/contact-modal-context.tsx`) az egész app-ot becsomagolja a locale-layoutban, egyetlen `<ContactModal>` példányt tart életben; bármelyik gomb (`<ContactButton>`, kliens-komponens) csak `useContactModal().open()`-t hív — így egy szerver-komponens oldalba (pl. a termékrészletező) is simán beilleszthető, csak magát a gombot kell kliens-komponensnek jelölni, az oldal többi része maradhat szerver-oldali.
 - **Grill-témás variáns**: a modal saját maga érzékeli a `useGrillThemeActive()` hookkal, hogy a sötét Grill-téma aktív-e, és ilyenkor automatikusan a ZedonGrill logót (dupla méretben, user kérésére), a `sales@zedongrill.com` e-mailt és a grill Facebook-oldalt mutatja, a Szerviz blokk pedig teljesen kimarad — nincs külön prop-babrálás, bárhonnan nyitva jó tartalmat mutat.
 
+## 2026-09-07/08 — Teljeskörű kód-audit és a feltárt 42 hiba javítása
+
+A user kérése: olvasd végig a fejlesztési naplót, auditáld az egész kódbázist, írd le a
+találatokat egy `hibaista260907.md`-be, majd javítsuk ki mindet. Kifejezetten kérte, hogy
+ahol valami *működik, de sokkal jobban is meg lehetne csinálni*, azt is jelezzem.
+
+Az audit eredménye és a tételes javítási napló a **`hibaista260907.md`**-ben van (1049 sor);
+ide csak az kerül, amit egy következő session-nek tudnia kell.
+
+### A négy legsúlyosabb találat
+
+- **Az összes admin Server Action hitelesítés nélkül hívható volt.** A `(protected)/layout.tsx`
+  `auth()` hívása csak az *oldalak renderelését* védi — a Server Actionök önálló, publikus
+  HTTP-végpontok, action-ID-vel címezve, oda a layout redirectje sosem fut le. 21 action volt
+  őrizetlen, köztük a `deleteProduct`, az `updateExchangeRate` és a `createProduct`
+  (fájlfeltöltéssel együtt). **Ez a projekt legfontosabb visszatérő tanulsága:** egy
+  `"use server"` fájl minden exportja hálózatról hívható végpont — a védelemnek magában az
+  actionben kell lennie. Új `src/lib/require-admin.ts`, és `src/app/admin/__tests__/action-auth.test.ts`
+  őrzi (23 teszt, ami azt is ellenőrzi, hogy session nélkül a DB-hez hozzá sem nyúlt).
+- **Checkout árcsalás:** a `variantId` nem volt a `productId`-hoz kötve, tehát egy drága
+  termék mellé oda lehetett tenni egy olcsó variáns azonosítóját. Emellett a készlet, a
+  `priceOnRequest` („Hamarosan" → `priceHuf = "0"`, azaz 0 Ft-os rendelés) és a darabszám
+  sem volt szerveroldalon ellenőrizve.
+- **Nem volt `.dockerignore`,** így a `COPY . .` a `.env.local`-t (DB-jelszó, `AUTH_SECRET`,
+  Stripe kulcsok) beleégette a builder image rétegébe, a 838 MB `node_modules` és a 136 MB
+  `uploads` mellé.
+- **Az árfolyam-frissítés nem számolta újra a katalógust.** A HUF ár mentéskor fagyott be,
+  az EUR viszont megjelenítéskor számolódott vissza az *aktuális* árfolyammal — egy 5 000 €-ra
+  felvitt termék az árfolyam 400→390 változása után 5 128,21 €-ként jelent meg.
+
+### Architekturális döntések, amiket érdemes ismerni
+
+- **`src/lib/cart-validation.ts` (`resolveCart`) az egyetlen igazság a kosárról.** A `/kosar`,
+  a `/penztar` és a `createOrder` mind ezen keresztül árazza újra a tételeket, ezért a vevő
+  által látott és a ténylegesen rögzített ár nem tud eltérni. Új kosár-szabály bevezetésekor
+  **ide** kell írni, ne a hívási helyekre.
+- **`SafeImage` (`src/components/safe-image.tsx`), ne közvetlen `next/image`** olyan képnél,
+  ami adminból jön. A `next/image` *kivételt dob* nem konfigurált távoli hosztra, ami az egész
+  oldalt 500-ra viszi — az adatbázisban pedig még mindig vannak Webflow CDN-linkek. A `SafeImage`
+  a saját `/uploads/...` képeket optimalizálja, a külsőket sima `<img>`-ként rendereli.
+- **A grill sötét téma már az első festés előtt aktiválódik** egy inline szkripttel (a layoutban
+  útvonal alapján, a termékoldalon a `GrillTheme`-en át, mert a szerver ismeri a kategóriát).
+  A 2 másodperces cross-fade a `.theme-transition` osztályhoz van kötve, amit a provider csak a
+  váltás idejére tesz fel — korábban ez globális szabály volt, és **minden hover-effektet
+  2 másodpercessé tett** az egész oldalon.
+- **Az `orders.items` snapshot marad, de a `product_variants.id` már nem churn-öl:** a
+  variáns-szinkron upsertel (a szerkesztő átadja a DB-id-t), nem `DELETE`+`INSERT`-el.
+
+### Új eszközök a projektben
+
+- **`npm test`** — vitest, 94 teszt 12 fájlban, futó szerver és DB nélkül. A tesztek írás
+  közben két valódi hibát találtak: a főoldal canonical URL-je záró perjel nélkül készült,
+  és a `resolvePrice` üres EUR-mezős ága (ami a napló szerint egyszer egy valós termék árát
+  0 Ft-ra írta) csak most kapott regressziós védőhálót.
+- **`npm run lint` most először fut le.** Az `eslint.config.mjs` `FlatCompat`-ja az ESLint
+  9.39-cel „Converting circular structure to JSON"-nel elszállt — vagyis a kódban lévő
+  `eslint-disable` kommentek addig **semmit nem tiltottak le**. Natív flat configra váltva
+  65 problémát talált; mind javítva, jelenleg 0 hiba / 0 figyelmeztetés.
+- **`.mcp.json`** — Playwright MCP (izolált headless Chromium), a naplóban többször felmerült
+  igény szerint. Beállítás: `.mcp.json.README.md`.
+- **`/api/health`** — a DB-t is pingeli, ezt használja a compose healthcheckje.
+
+### Deploy-változás — figyelni kell rá
+
+A `docker-compose.yml` kapott egy `migrate` service-t (a `Dockerfile` új `migrator` stage-e),
+ami lefuttatja a migrációkat és kilép; a `web` `service_completed_successfully` feltétellel
+indul utána. **A migráció innentől nem kézi lépés.** Emellett a `DB_PASSWORD`-nek már nincs
+alapértelmezett értéke: hiányában a stack szándékosan nem indul el.
+
+### Mérhető eredmény
+
+Képoptimalizálás (39 `<img>` → `next/image`/`SafeImage`), egy valós 3,94 MB-os termékfotón:
+256 px-es kártyaképként **24 KB** AVIF (−99,4%), 640 px-en 122 KB, 1200 px-en 334 KB.
+
+### Nyitott, a userre váró pontok
+
+1. ÁSZF / Adatvédelem / Impresszum sárga `TODO` mezői (cégnév, székhely, cégjegyzékszám,
+   adószám, tárhelyszolgáltató, szállítási határidő, jótállási idő) + jogi jóváhagyás.
+2. E-mail küldés élesítése: Resend-fiók és a `RESEND_API_KEY` / `MAIL_FROM` /
+   `ORDER_NOTIFICATION_EMAIL` változók. (A kód enélkül is működik, csak naplóz.)
+3. A `bull-beepitett-grill` és `hanscraft-hordo` termékek képei még Webflow CDN-re mutatnak.
+4. Élesítéskor: `NEXT_PUBLIC_STAGING_NOINDEX=false` és a valós `NEXT_PUBLIC_APP_URL` —
+   ebből épül minden canonical, hreflang és sitemap URL.
+5. A régi Webflow URL-ek **redirect-térképe** — tudatosan nem készült el, kézi párosítást igényel.
+6. 💡5 (szemantikus színtokenek a `.dark-theme` utility-felülírások helyett) tudatosan
+   kimaradt: minden komponenst érint, tisztán vizuális kockázattal — saját kört érdemel.
+
+## 2026-09-08/09 — Főoldal-redesign a „Clude" mockup alapján
+
+A user egy új design mockupot készített (`Ideiglenes/webflow_database/Clude/`, három
+oldalra: főoldal, lista, termék). Az átültetés menetét előre átbeszéltük, és **fontos
+döntés született**: a mockup meleg terrakotta palettáját és serif tipográfiáját **nem**
+vesszük át — a jelenlegi türkiz/coprBlue színvilág és az Inter/Manrope páros marad. Csak
+az **elrendezések** jönnek át. Ezért a mockup `styles.css`-e referenciaként használandó,
+nem forrásként.
+
+A munka szekciónként, fentről lefelé haladt, minden lépés külön committal.
+
+### Amit érdemes tudni a szerkezetről
+
+- **Közös rács.** Minden szekció a `Container` komponensen ül: `max-w-[1480px]` + **5%**
+  oldalbehúzás (mobilon fix 24px). Ez a mockup rácsa, és felváltotta a korábbi fix 64px-es
+  `px-16`-ot. A háttérrel rendelkező szekcióknál (Blog, Videók, Hogyan dolgozunk) a háttér
+  faltól falig fut, csak a tartalom kerül a rácsra. **Új szekciónál ezt kell követni** —
+  lemérve mind a 9 szekció és a lábléc azonos bal/jobb éllel.
+- **Két sugár-token** a `globals.css` `@theme` blokkjában: `--radius-control` (8px, gombok
+  és űrlapmezők) és `--radius-card` (12px, kártyák). A base rétegben egy szabály minden
+  `<button>/<input>/<select>/<textarea>` elemre érvényes, tehát **nem kell komponensenként
+  ismételni**; a Tailwind utility-k későbbi rétege miatt egy explicit `rounded-full`
+  (fejléc kör gombjai) felülírja. A gomb-kinézetű `<Link>`-ek explicit osztályt kapnak,
+  mert azokra az elem-szabály nem hat.
+- **Szekció-fejléc minta.** Eyebrow pill (`rounded-full`, coprBlue 10% háttér) + 42px-es
+  cím. Középre zárva (kategóriák, videók) vagy bal oldalon, jobbra egy „összes…" gombbal
+  (kiemelt termékek, blog).
+- **Kártya-hover minta.** 3px emelkedés + accent keret + erősebb árnyék, 300ms. Nagy
+  médiakártyáknál (kategória) 5px és a háttérkép 1,05-re nagyít.
+
+### Tartalmi döntések
+
+- **Magázódás végig.** Az oldal korábban keverte a tegezést és a magázást (a Virtuális túra
+  és a Videók magázódott, a kosár/pénztár/hibaoldalak tegeződtek). 23 üzenet és az
+  adatvédelmi tájékoztató átírva. **Az admin marad tegező** — belső eszköz.
+- **Származtatott darabszámok.** A kategória-kártyák chipje (`HC Design & OKA · 3 termék`)
+  két részből áll: a szerkeszthető `categories.card_badge_hu/en` mező csak a márka/jelleg
+  részt tárolja, a darabszámot a komponens a katalógusból számolja. Így nem tud elcsúszni
+  attól, amit a látogató a kategóriára kattintva lát.
+- **Kiemelt termékek**: kizárólag a `products.is_featured` kapcsolóból, nem forgalmi
+  adatból — különben tisztítószerekkel telne meg. A kártya spec-sávja a meglévő mezőkből
+  épül: elöl a strukturált `capacity`, utána a `specs` lista első nem-logikai elemei az
+  admin sorrendjében; az ikon a címke kulcsszavaiból áll elő
+  (`scripts/migrate-webflow/list-spec-labels.mts` felmérte, mik fordulnak elő).
+- **Ami tudatosan kimaradt**: a hero statisztika-sávja (a mockup „15+ év / 1 200+
+  telepített" számai kitaláltak), a mockup CTA-sávja (a user nem kérte), a lábléc
+  showroom-címe és nyitvatartása (szintén placeholder volt).
+
+### Buktatók, amikbe belefutottunk
+
+- **A `next/image` kivételt dob nem konfigurált távoli hosztra**, és ezzel az egész oldalt
+  500-ra viszi. Az adatbázisban maradtak Webflow CDN-linkek, a blog képei pedig Supabase-en
+  vannak (nem a trysoro.com-on). Ezért készült a **`SafeImage`** komponens: a saját
+  `/uploads/...` képeket optimalizálja, a külső URL-eket sima `<img>`-ként rendereli.
+  **Adminból jövő képnél mindig ezt kell használni**, ne közvetlenül a `next/image`-et.
+- **A hosszú, szóköz nélküli e-mail címek** kilógtak a mobil láblécből, és 390px-es
+  nézetben 431px-re tolták a dokumentumot. Tanulság a hibakereséshez: az ilyen túlnyúlást
+  **nem lehet elemek `getBoundingClientRect()`-jével megtalálni** (szövegcsomó lóg túl, nem
+  elem) — a `document.documentElement.scrollWidth` viszont megmutatja. Javítás: `break-words`
+  + `min-w-0` a flex-elemen, és egy oszlop `max-sm`-en.
+- **Egy tördelt bekezdés doboza a `max-width` szerint széles, nem a leghosszabb soráé.** A
+  hero TÜV-kártyáján emiatt 37px holt hely maradt a szöveg után, ami egyenetlen jobb
+  margónak látszott, pedig a padding végig 17–17px volt. A `display:table` trükk itt **nem**
+  segített; a megoldás a max-width behangolása volt.
+- **Vizuális ellenőrzés**: a Playwright Chromium telepítve (`~/.cache/ms-playwright`), ezzel
+  készülnek a képernyőképek és a **pontos doboz-mérések**. Érdemes mérni, nem szemre
+  becsülni — kétszer is félremértem képernyőképről, mielőtt lemértem.
+
+### Állapot
+
+A **főoldal kész**. Hátra van a mockupból a lista- (`szaunak.html`) és a termékoldal
+(`hc-1.html`) átültetése.
+
 ## Munkamódszer-jegyzetek jövőbeli sessionöknek
 
 Ez a szakasz nem egy adott munkanaphoz kötött, hanem a **projekttel/userrel való együttműködés bevált mintáit** rögzíti — új session elején érdemes elolvasni a fenti dátumozott bejegyzések mellett.
@@ -450,5 +610,9 @@ Ez a szakasz nem egy adott munkanaphoz kötött, hanem a **projekttel/userrel va
 - **Visszatérő fejlesztői bosszúság, ami session közben (általában napváltáskor) újra előjön**: a távoli Postgres DB-hez vezető SSH-alagút (`ssh -i ~/.ssh/hhm_shop_deploy_key -f -N -L 127.0.0.1:5434:127.0.0.1:5434 root@185.208.227.129`) időnként "beragad" (a TCP port nyitva marad, de a forgalom nem megy át, `curl localhost:3000` lefagy/timeoutol, a böngészőben "Runtime TypeError: network error" jelenik meg). **Megoldás mindig ugyanaz**: a régi ssh-folyamat kilövése (`ps aux | grep 5434`, `kill <pid>`), majd a fenti parancs újrafuttatása. Ez most már többször megtörtént különböző napokon — ha a dev szerver "lefagy"-nak tűnik, ez legyen az első gyanú, nem kódhiba.
 - **Séma-változtatás menete ebben a projektben**: `src/db/schema/index.ts` szerkesztése → `npm run db:generate` (drizzle-kit generál egy sorszámozott SQL migrációt a `src/db/migrations/`-ba) → `npm run db:migrate` (rááll a távoli DB-re az SSH-alagúton át). Egyszerű jsonb-mező TS-típusbővítéshez (pl. `specs` elemek új opcionális `type` mezője) nem kell migráció, csak a `.$type<...>()` generic bővítése.
 - **Git**: csak akkor commitolni/pusholni, ha a user explicit kéri ("mehet a git-re", "mehet a repóba is") — soha nem automatikusan egy-egy feladat végén.
-- **Ellenőrzési rutin minden kódváltoztatás után**: `npx tsc --noEmit -p .` a repo gyökeréből (nem kell build/dev-szerver-újraindítás, a futó `next dev` hot-reloadol), utána Chrome-kapcsolaton (`mcp__claude-in-chrome__*` eszközök) keresztül élő vizuális ellenőrzés a ténylegesen érintett oldal(ak)on — a user rendszeresen vizuális/UI-pixel szintű visszajelzést ad (betűméret, szín, margó pontos px/rem értékig), tehát ez a lépés nem elhagyható.
+- **Ellenőrzési rutin minden kódváltoztatás után** (2026-09-08 óta bővebb): `npx tsc --noEmit -p .`,
+  `npm run lint` és `npm test` — mindhárom gyors és futó szerver nélkül megy. Fontos: a `tsc`
+  **nem** fog ki mindent, amit a build igen (pl. hogy egy `"use server"` fájl csak async
+  függvényeket exportálhat), tehát nagyobb kör után `npm run build` is kell. Utána a régi rutin: (nem kell build/dev-szerver-újraindítás, a futó `next dev` hot-reloadol), utána Chrome-kapcsolaton (`mcp__claude-in-chrome__*` eszközök) keresztül élő vizuális ellenőrzés a ténylegesen érintett oldal(ak)on — a user rendszeresen vizuális/UI-pixel szintű visszajelzést ad (betűméret, szín, margó pontos px/rem értékig), tehát ez a lépés nem elhagyható.
 - **Egyszeri admin-adatmódosító szkriptek helye**: `scripts/migrate-webflow/` (bár a mappanév a Webflow-migrációra utal, azóta minden egyszeri DB-módosító script — pl. ár-visszatöltés, kategória-leírás pótlás — ide került). Minta: `dotenv` betöltése `.env.local`+`.env`-ből a fájl tetején, `db` importja **dinamikus importtal** a `config()` hívások UTÁN (statikus import a fájl tetején az ES-modul hoisting miatt előbb futna le, mint a `dotenv.config()`, és rossz/hiányzó `DATABASE_URL`-lel próbálna kapcsolódni).
+- **Playwright MCP szerver — beállítandó, ha legközelebb nekiállunk ennek a projektnek**: a naplóban több helyen előjött, hogy egy Server Action/form-submit hibát böngésző nélkül, HTTP-szinten nem sikerült megbízhatóan reprodukálni/tesztelni (l. 2026-09-01 "képfeltöltés összeomlás" bejegyzés). Egy Playwright MCP szerverrel egy saját, elszigetelt fejtelen böngészőt tudnék indítani ilyen esetekre — a `mcp__claude-in-chrome__*` eszközöktől eltérően nem a user élő böngészőjét/session-jét használná. Ezt a usernek fel kell tennie/be kell konfigurálnia, amikor legközelebb ebben a projektben dolgozunk.
