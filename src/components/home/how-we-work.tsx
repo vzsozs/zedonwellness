@@ -16,7 +16,7 @@ export function HowWeWork() {
     <section className="bg-[#17201f] py-22">
       <Container>
       <div className="mb-14 text-center">
-        <h2 className="text-4xl font-bold text-white max-lg:text-3xl">
+        <h2 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-white max-lg:text-3xl">
           {t("title")}
         </h2>
       </div>

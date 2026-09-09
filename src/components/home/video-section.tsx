@@ -20,15 +20,17 @@ export function VideoSection() {
   return (
     <section className="bg-[#cee0e9] py-22">
       <Container>
-      <div className="mb-11 text-center">
-        <div className="text-xs font-bold tracking-[0.14em] text-coprBlue uppercase">
+      <div className="mx-auto mb-11 max-w-[760px] text-center">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-coprBlue/30 bg-coprBlue/10 px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] text-coprBlue uppercase">
           {t("eyebrow")}
         </div>
-        <h2 className="mt-3.5 text-4xl font-bold">{t("title")}</h2>
+        <h2 className="text-[42px] leading-tight font-bold tracking-[-0.01em] text-ink max-lg:text-3xl">
+          {t("title")}
+        </h2>
       </div>
-      <div className="mx-auto grid w-4/5 grid-cols-2 gap-7 max-lg:w-full max-lg:grid-cols-1">
+      <div className="grid grid-cols-2 gap-7 max-lg:grid-cols-1">
         {VIDEOS.map((video) => (
-          <div key={video.id} className="group relative aspect-video overflow-hidden bg-ink">
+          <div key={video.id} className="rounded-card group relative aspect-video overflow-hidden bg-ink">
             {playingId === video.id ? (
               <iframe
                 src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}

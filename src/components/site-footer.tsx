@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { Mail, Phone, Wrench } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { COMPANY } from "@/lib/company";
 import Image from "next/image";
@@ -66,11 +67,42 @@ export function SiteFooter() {
             {t("contactSection")}
           </div>
           <div className="flex flex-col gap-2.5 text-sm text-muted">
-            <a href={`tel:${COMPANY.phoneHref}`} className="hover:text-accent">
+            <a
+              href={`tel:${COMPANY.phoneHref}`}
+              className="inline-flex items-start gap-2.5 hover:text-accent"
+            >
+              <Phone className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
               {COMPANY.phone}
             </a>
-            <a href={`mailto:${COMPANY.email}`} className="hover:text-accent">
+            <a
+              href={`mailto:${COMPANY.email}`}
+              className="inline-flex items-start gap-2.5 hover:text-accent"
+            >
+              <Mail className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
               {COMPANY.email}
+            </a>
+          </div>
+
+          {/* The service line is a separate contact with its own inbox and
+              named colleague — it was only reachable from the contact
+              modal before, which is easy to miss. */}
+          <div className="mt-6 mb-4 text-xs font-bold tracking-wide text-ink uppercase">
+            {t("serviceSection")}
+          </div>
+          <div className="flex flex-col gap-2.5 text-sm text-muted">
+            <a
+              href={`tel:${COMPANY.service.phoneHref}`}
+              className="inline-flex items-start gap-2.5 hover:text-accent"
+            >
+              <Wrench className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
+              {COMPANY.service.contactName} — {COMPANY.service.phone}
+            </a>
+            <a
+              href={`mailto:${COMPANY.service.email}`}
+              className="inline-flex items-start gap-2.5 hover:text-accent"
+            >
+              <Mail className="mt-0.5 size-[18px] shrink-0 text-accent" strokeWidth={1.8} />
+              {COMPANY.service.email}
             </a>
           </div>
         </div>
