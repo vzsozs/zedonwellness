@@ -205,9 +205,25 @@ Az élő ÁSZF és a megépített webshop **három ponton eltér**:
 
 ### Fejlesztési feladat
 
-- **Termékoldal redesign** a mockup `hc-1.html`-je alapján — ez van hátra.
-  Eldöntendő lesz: kell-e a füles specifikáció-táblázat, az extrák mátrix és a
-  ragadós galéria-oszlop.
+- ~~**Termékoldal redesign**~~ — a user 2026-09-11-én úgy döntött, hogy a
+  termékoldal jó úgy, ahogy van. Nem kell hozzányúlni.
+- **Mentési szkript** (2026-09-11-én megbeszélve, később csináljuk meg). Egy
+  parancs, ami az adatbázist **és** az `uploads/` mappát egy csomagba menti —
+  a kettő külön mit sem ér, mert a DB csak útvonalakat tárol, a ~136 MB kép a
+  lemezen él. Érdemes időzítve is futtatni a szerveren. Kézi minta addig:
+  `docker exec zw-shop-db pg_dump -U zw_user -d zw_shop -Fc`, l. a
+  `database/backups/` mappát.
+- **CSV export/import kibővítése** (2026-09-11, később). A CSV **marad tömeges
+  szerkesztő eszköz**, nem lesz mentés — de a hiányzó termék-mezőket fel kell
+  venni. Ma 22 lapos oszlop megy ki; hiányzik a hosszú leírás (HU/EN), a
+  galéria, a főkép/kártyakép, a specifikáció, a variáns-opciók, a dokumentumok,
+  az „ár kérésre" és a specifikáció-pozíció. Az oszlopszerződés egy helyen van:
+  `src/app/admin/(protected)/products/csv-columns.ts`.
+  **Két csapda, amit a bővítéskor kezelni kell:** (1) egy üresen hagyott
+  jelölőnégyzet-cella ma *nem*-et jelent, tehát egy hiányzó oszlop csendben
+  kikapcsolja a „Raktáron"/„Kiemelt" jelölőket; (2) a párosítás **szlug**
+  szerint megy, az `id` oszlopot a beolvasás nem használja, így egy átírt szlug
+  nem átnevez, hanem új terméket hoz létre a régi mellé.
 - **Webflow redirect-térkép** élesítés előtt — kézi slug-párosítást igényel.
 - **Szemantikus színtokenek** (💡5 a hibalistában): a `.dark-theme` ma
   utility-osztályokat ír felül, ami törékeny. Tudatosan halasztva, mert minden
