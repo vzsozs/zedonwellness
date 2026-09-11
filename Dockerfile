@@ -4,7 +4,12 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci
+# The lockfile is written by npm 12, which resolves auto-installed peer
+# dependencies differently from the npm 10 bundled with node:22 — that older
+# npm rejects the lock as out of sync ("Missing: @swc/helpers@… from lock
+# file"). Pin the same major here so the image installs exactly what the
+# lockfile describes.
+RUN npm i -g npm@12 && npm ci
 
 FROM base AS builder
 WORKDIR /app
