@@ -38,7 +38,7 @@ export function ContactModal({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md bg-white p-10 text-center max-lg:p-7"
+        className="rounded-card relative w-full max-w-md bg-white p-10 text-center max-lg:p-7"
         onClick={(e) => e.stopPropagation()}
       >
         <button

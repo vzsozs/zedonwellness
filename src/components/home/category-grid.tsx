@@ -1,4 +1,4 @@
-import { getTranslations, getLocale } from "next-intl/server";
+	import { getTranslations, getLocale } from "next-intl/server";
 import { asc, count, desc } from "drizzle-orm";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/db";
@@ -90,13 +90,13 @@ export async function CategoryGrid() {
                 />
               )}
               {/* Dark scrim so the copy stays readable whatever photo sits
-                  behind it — near-transparent at the top, almost solid at
-                  the bottom where the text is. */}
-              <div className="absolute inset-0 -z-[5] bg-[linear-gradient(180deg,rgba(15,32,30,0.05)_0%,rgba(15,32,30,0.75)_65%,rgba(15,32,30,0.95)_100%)]" />
+                  behind it — fully clear down to the upper two fifths, then
+                  darkening over the lower band where the text sits. */}
+              <div className="absolute inset-0 -z-[5] bg-[linear-gradient(180deg,rgba(15,32,30,0)_0%,rgba(15,32,30,0.2)_40%,rgba(15,32,30,0.7)_78%,rgba(15,32,30,0.8)_100%)]" />
 
               <div className="relative text-white">
                 {badge ? (
-                  <div className="mb-2 text-[11px] font-bold tracking-[0.08em] text-coprBlue uppercase">
+                  <div className="mb-2.5 inline-flex items-center rounded-full border border-white/25 bg-white/15 px-3 py-1 text-[11px] font-extrabold tracking-[0.08em] text-[#5cd3f5] uppercase backdrop-blur-sm">
                     {badge}
                   </div>
                 ) : null}

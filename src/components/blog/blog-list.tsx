@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import { LayoutGrid, Search } from "lucide-react";
 import { BlogCard } from "@/components/blog/blog-card";
 import type { SoroArticle } from "@/lib/soro";
 
@@ -88,41 +88,54 @@ export function BlogList({ articles }: { articles: SoroArticle[] }) {
 
   return (
     <div>
+      {/* Two wrappers that are `display: contents` on desktop — the row stays
+          one flat flex line there — but become real boxes under 640px: the
+          chips in a 2-column grid, then the "all" button and the search field
+          side by side. `sm:order-first` keeps the button leading on desktop
+          even though it sits later in the DOM. */}
       <div className="mb-10 flex flex-wrap items-center justify-center gap-3 max-sm:flex-col max-sm:items-stretch">
-        <button
-          type="button"
-          onClick={() => selectCategory(null)}
-          className={`px-5 py-2.5 text-sm font-semibold transition-colors ${
-            activeCategory === null
-              ? "bg-accent text-white"
-              : "bg-white text-ink hover:bg-accent-soft"
-          }`}
-        >
-          {t("filterAll")}
-        </button>
-        {availableCategories.map((cat) => (
+        <div className="contents max-sm:grid max-sm:grid-cols-2 max-sm:gap-3">
+          {availableCategories.map((cat) => (
+            <button
+              key={cat.key}
+              type="button"
+              onClick={() => selectCategory(cat.key)}
+              className={`px-5 py-2.5 text-sm font-semibold transition-colors ${
+                activeCategory === cat.key
+                  ? "bg-accent text-white"
+                  : "bg-white text-ink hover:bg-accent-soft"
+              }`}
+            >
+              {t(cat.labelKey)}
+            </button>
+          ))}
+        </div>
+
+        <div className="contents max-sm:flex max-sm:items-center max-sm:gap-3">
           <button
-            key={cat.key}
             type="button"
-            onClick={() => selectCategory(cat.key)}
-            className={`px-5 py-2.5 text-sm font-semibold transition-colors ${
-              activeCategory === cat.key
+            onClick={() => selectCategory(null)}
+            aria-label={t("filterAll")}
+            title={t("filterAll")}
+            className={`flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold transition-colors sm:order-first max-sm:size-11 max-sm:px-0 ${
+              activeCategory === null
                 ? "bg-accent text-white"
                 : "bg-white text-ink hover:bg-accent-soft"
             }`}
           >
-            {t(cat.labelKey)}
+            <LayoutGrid className="size-4 shrink-0" strokeWidth={2} />
+            <span className="max-sm:hidden">{t("filterAll")}</span>
           </button>
-        ))}
-        <div className="relative ml-auto w-64 max-sm:ml-0 max-sm:w-full">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => changeQuery(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className="w-full border border-line bg-white py-2.5 pr-4 pl-9 text-sm outline-none focus:border-accent"
-          />
+          <div className="relative ml-auto w-64 max-sm:ml-0 max-sm:w-auto max-sm:min-w-0 max-sm:flex-1">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => changeQuery(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="w-full border border-line bg-white py-2.5 pr-4 pl-9 text-sm outline-none focus:border-accent max-sm:h-11"
+            />
+          </div>
         </div>
       </div>
 
