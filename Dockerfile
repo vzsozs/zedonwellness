@@ -16,6 +16,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Next inlines every NEXT_PUBLIC_* value at BUILD time, so passing them only
+# through the runtime env_file leaves the built output with the defaults —
+# which silently ships a staging site with `Allow: /` in robots.txt and
+# localhost canonical URLs. They have to arrive as build args instead.
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_STAGING_NOINDEX
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_STAGING_NOINDEX=$NEXT_PUBLIC_STAGING_NOINDEX
+
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build

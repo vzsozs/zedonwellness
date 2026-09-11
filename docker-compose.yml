@@ -47,6 +47,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Build-time copies of the NEXT_PUBLIC_* values — see the Dockerfile's
+      # builder stage. Without these the image is built with the defaults no
+      # matter what .env says at runtime.
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?NEXT_PUBLIC_APP_URL kötelező}
+        NEXT_PUBLIC_STAGING_NOINDEX: ${NEXT_PUBLIC_STAGING_NOINDEX:-true}
     env_file:
       - .env
     container_name: zw-shop-web
